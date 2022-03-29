@@ -15,8 +15,6 @@
         type="text/css" />
     <link href="https://clanvent-alpha.laravel-script.com/admin/css/metismenu.min.css" rel="stylesheet" type="text/css">
     <link href="https://clanvent-alpha.laravel-script.com/admin/css/slick.css" rel="stylesheet" type="text/css">
-    <link href="{{ asset('css/icons.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('css/flaticon.css') }}" rel="stylesheet" type="text/css" />
     <link href="https://clanvent-alpha.laravel-script.com/admin/css/style.css" rel="stylesheet" type="text/css" />
     <!-- Sweet Alert -->
     <link href="https://clanvent-alpha.laravel-script.com/admin/plugins/sweet-alert2/sweetalert2.min.css"

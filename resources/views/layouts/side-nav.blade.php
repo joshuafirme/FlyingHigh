@@ -32,13 +32,12 @@
                     <ul class="submenu">
                         <li class=""><a href="{{ url('users') }}">Users</a>
                         </li>
-                        <li class=""><a
-                                href="https://clanvent-alpha.laravel-script.com/admin/roles">Roles</a></li>
+                        <li class=""><a href="{{ url('role') }}">Roles</a></li>
                     </ul>
                 </li>
 
                 <li class="">
-                    <a href="https://clanvent-alpha.laravel-script.com/admin/warehouses" class="">
+                    <a href="{{ url('/hub') }}" class="">
                         <img src="https://img.icons8.com/ios/25/000000/warehouse-1.png" /><span> Warehouse </span>
                     </a>
                 </li>

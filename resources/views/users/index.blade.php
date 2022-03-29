@@ -23,55 +23,101 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="header-title">User List</h4>
-                            <table class="table" id="dataTableBuilder">
+                            <div class="mt-3 mb-3">
+
+                                @include('layouts.alerts')
+
+                                <div>
+                                    <button type="button" id="btn-create"
+                                        class="btn btn-sm btn-primary w-auto open-modal" modal-type="create">
+                                        Create <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
+
+                                <div class="float-right">
+                                    <form action="" method="get">
+                                        <div class="input-group mb-3">
+                                            <input type="text" name="key" class="form-control" placeholder="Search"
+                                                aria-label="Search" required>
+                                            <button class="btn btn-outline-secondary" type="submit"><i
+                                                    class="fa fa-search"></i></button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <table class="table table-borderless table-hover" id="users-table">
                                 <thead>
                                     <tr>
-                                        <th title="SL">SL</th>
-                                        <th title="Avatar">Avatar</th>
-                                        <th title="Name">Name</th>
-                                        <th title="Email">Email</th>
-                                        <th title="Phone">Phone</th>
-                                        <th title="Role">Role</th>
-                                        <th title="Status">Status</th>
-                                        <th title="ACTION" width="55px" class="text-center">ACTION</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Role</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Created at</th>
+                                        <th scope="col">Action</th>
                                     </tr>
                                 </thead>
+                                <tbody>
+                                    @if (count($users))
+                                        @foreach ($users as $item)
+                                            <tr id="record-id-{{ $item->id }}">
+                                                <td>{{ $item->name }}</td>
+                                                <td>{{ $item->email }}</td>
+                                                <td><span
+                                                        class="badge rounded-pill bg-primary">{{ $item->role }}</span>
+                                                </td>
+                                                <td>@php
+                                                    if ($item->status == 1) {
+                                                        echo '<span class="badge rounded-pill bg-success">Active</span>';
+                                                    } elseif ($item->status == 0) {
+                                                        echo '<span class="badge rounded-pill bg-danger">Inactive</span>';
+                                                    }
+                                                @endphp</td>
+                                                <td>{{ Utils::formatDate($item->created_at) }}</td>
+                                                <td>
+                                                    <a class="btn btn-edit open-modal" modal-type="update"
+                                                        data-info="{{ json_encode($item) }} "><i
+                                                            class="fa fa-edit"></i></a>
+                                                    @if ($item->role != 'Admin')
+                                                        <a class="btn delete-record" data-id="{{ $item->id }}"
+                                                            object="users" data-toggle="modal"
+                                                            data-target="#delete-record-modal">
+                                                            <i class="fa fa-trash" style="color: red;"></i>
+                                                        </a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="6">
+                                                <div class="alert alert-danger alert-dismissible fade show"
+                                                    role="alert">
+                                                    No data found.
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endif
+
+                                </tbody>
                             </table>
+                            @php
+                                echo $users->links('pagination::bootstrap-4');
+                            @endphp
                         </div>
                     </div>
                 </div>
             </div>
 
-        </div>
-    </div>
-
-
-    <!-- Invoice live url  -->
-    <div class="modal fade" id="liveInvoiceUrl" tabindex="-1" role="dialog" aria-labelledby="liveInvoiceUrlTitle"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Invoice Live URL</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="live-invoice-token" disabled>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary copy-url-btn">Copy URL</button>
-                </div>
-            </div>
         </div>
     </div>
 </div>
 
+@include('users.modals')
+
 @include('layouts.footer')
+
+@include('scripts._global_scripts')
+
+@include('users.script')

@@ -28,11 +28,11 @@
                 modal.find('.modal-title').text('Create User');
                 modal.find('#change-password').remove();
 
-                let password_container = '<div class="col-md-12 password-container">';
+                let password_container = '<div class="col-md-12 mt-3 password-container">';
                 password_container +=
                     '<label for="validationCustom02" class="form-label">Password</label>';
                 password_container +=
-                    '<input type="password" class="form-control" name="password" required>';
+                    '<input type="password" class="form-control" name="password" required  autocomplete="new-password">';
                 password_container += '</div>';
                 modal.find('.modal-body').append(password_container);
                 modal.find('form').attr('action', "{{ route('users.store') }}");
