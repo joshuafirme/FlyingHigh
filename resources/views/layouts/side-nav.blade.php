@@ -38,7 +38,7 @@
 
                 <li class="">
                     <a href="{{ url('/hub') }}" class="">
-                        <img src="https://img.icons8.com/ios/25/000000/warehouse-1.png" /><span> Warehouse </span>
+                        <img src="https://img.icons8.com/ios/25/000000/warehouse-1.png" /><span> Hub </span>
                     </a>
                 </li>
 
@@ -57,8 +57,7 @@
                             </span>
                         </span></a>
                     <ul class="submenu">
-                        <li class=""><a
-                                href="https://clanvent-alpha.laravel-script.com/admin/products">Product</a></li>
+                        <li class=""><a href="{{ url('/product') }}">Product</a></li>
                         <li class=""><a
                                 href="https://clanvent-alpha.laravel-script.com/admin/product-categories">Product
                                 Category</a>

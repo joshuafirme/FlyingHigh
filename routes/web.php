@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\HubController;
+use App\Http\Controllers\ProductController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,6 +31,14 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/role', RoleController::class);
     Route::post('/role/update/{id}', [RoleController::class, 'update']);
+
+    Route::post('/hub/update/{id}', [HubController::class, 'update']);
+    Route::get('/hub/search', [HubController::class, 'search'])->name('searchHub');
+    Route::resource('/hub', HubController::class);
+    
+    Route::post('/product/update/{id}', [ProductController::class, 'update']);
+    Route::get('/product/search', [ProductController::class, 'search'])->name('searchProduct');
+    Route::resource('/product', ProductController::class);
 });
 
 

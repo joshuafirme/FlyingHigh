@@ -19,7 +19,7 @@
     // preloader
     MainApp.prototype.preloader = function () {
         $(window).on('load', function(){
-            $('.ic-preloader').delay(1000).fadeOut("slow");
+            $('.ic-preloader').fadeOut("slow");
         })
     },
     // scroll menu 
