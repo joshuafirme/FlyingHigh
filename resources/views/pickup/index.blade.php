@@ -1,4 +1,4 @@
-@section('title', 'Product')
+@section('title', 'Pick-up')
 @include('layouts.header')
 
 @include('layouts.top-nav')
@@ -12,8 +12,8 @@
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Products</a></li>
-                            <li class="breadcrumb-item active">Products List</li>
+                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Pick-up</a></li>
+                            <li class="breadcrumb-item active">Pick-up List</li>
                         </ol>
                     </div>
                 </div>
@@ -23,32 +23,6 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="mt-3 mb-3">
-
-                                @include('layouts.alerts')
-
-                                <div class="d-flex">
-                                    <button type="button" id="btn-create"
-                                        class="btn btn-sm btn-primary w-auto open-modal m-1" modal-type="create">
-                                        <i class="fa fa-plus"></i> Create
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-primary w-autos m-1" data-toggle="modal"
-                                        data-target="#transferModal">
-                                        Import
-                                    </button>
-                                </div>
-
-                                <div class="float-right">
-                                    <form action="{{ route('searchProduct') }}" method="get">
-                                        <div class="input-group mb-3">
-                                            <input type="text" name="key" class="form-control" placeholder="Search"
-                                                aria-label="Search" required>
-                                            <button class="btn btn-outline-secondary" type="submit"><i
-                                                    class="fa fa-search"></i></button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
                             <table class="table table-borderless table-hover">
                                 <thead>
                                     <tr>
@@ -59,30 +33,21 @@
                                         <th scope="col">JTE lot code</th>
                                         <th scope="col">Supplier lot code</th>
                                         <th scope="col">Expiration</th>
-                                        <th scope="col">Status</th>
                                         <th scope="col">Created at</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if (count($products))
-                                        @foreach ($products as $item)
+                                    @if (count($pickups))
+                                        @foreach ($pickups as $item)
                                             <tr id="record-id-{{ $item->id }}">
                                                 <td>{{ $item->sku }}</td>
                                                 <td>{{ $item->description }}</td>
-                                                <td>{{ $item->qty }}</td>
+                                                <td>{{ $item->stock }}</td>
                                                 <td>{{ $item->buffer_stock }}</td>
                                                 <td>{{ $item->jde_lot_code ? $item->jde_lot_code : 'N/A' }}</td>
                                                 <td>{{ $item->supplier_lot_code ? $item->supplier_lot_code : 'N/A' }}
-                                                </td>
                                                 <td>{{ $item->expiration }}</td>
-                                                <td>@php
-                                                    if ($item->status == 1) {
-                                                        echo '<span class="badge rounded-pill bg-success">Active</span>';
-                                                    } elseif ($item->status == 0) {
-                                                        echo '<span class="badge rounded-pill bg-danger">Inactive</span>';
-                                                    }
-                                                @endphp</td>
                                                 <td>{{ Utils::formatDate($item->created_at) }}</td>
                                                 <td>
                                                     <div class="btn-group">
@@ -90,25 +55,11 @@
                                                             role="button" aria-haspopup="true" aria-expanded="false"><i
                                                                 class="fas fa-ellipsis-v"></i></a>
                                                         <div class="dropdown-menu">
-                                                            <a class="btn dropdown-item btn-transfer"
-                                                                data-target="#transferModal" data-toggle="modal"
+                                                            <a class="btn dropdown-item btn-pickup"
+                                                                data-target="#pickupModal" data-toggle="modal"
                                                                 data-sku="{{ $item->sku }}"
                                                                 data-desc="{{ $item->description }}"><i
-                                                                    class="fa fa-exchange-alt"></i> Transfer to Hub</a>
-                                                            <a class="btn btn-edit open-modal dropdown-item"
-                                                                modal-type="update"
-                                                                data-info="{{ json_encode($item) }} "><i
-                                                                    class="fa fa-edit"></i> Edit</a>
-                                                            @if ($item->role != 'Admin')
-                                                                <a class="btn delete-record dropdown-item"
-                                                                    data-id="{{ $item->id }}" object="product"
-                                                                    data-toggle="modal"
-                                                                    data-target="#delete-record-modal">
-                                                                    <i class="fa fa-trash" style="color: red;">
-                                                                        Delete</i>
-                                                                </a>
-                                                            @endif
-
+                                                                    class="fa fa-exchange-alt"></i> Pick-ups</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -143,10 +94,10 @@
     </div>
 </div>
 
-@include('product.modals')
+@include('hubs-inventory.modals')
 
 @include('layouts.footer')
 
 @include('scripts._global_scripts')
 
-@include('product.script')
+@include('hubs-inventory.script')

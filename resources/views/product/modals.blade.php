@@ -28,11 +28,11 @@
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">JTE lot code</label>
-                    <input type="text" class="form-control" name="jde_lot_code" required>
+                    <input type="text" class="form-control" name="jde_lot_code">
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Supplier lot code</label>
-                    <input type="text" class="form-control" name="supplier_lot_code" required>
+                    <input type="text" class="form-control" name="supplier_lot_code">
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Expiration</label>

@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\HubController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\PickupController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,9 +34,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('/role', RoleController::class);
     Route::post('/role/update/{id}', [RoleController::class, 'update']);
 
+    Route::get('/hubs/{slug}/{hub_id}', [HubController::class, 'hubInventory']);
+
     Route::post('/hub/update/{id}', [HubController::class, 'update']);
     Route::get('/hub/search', [HubController::class, 'search'])->name('searchHub');
     Route::resource('/hub', HubController::class);
+
+    Route::get('/pickup', [PickupController::class, 'index']);
 
     Route::post('/client/update/{id}', [ClientController::class, 'update']);
     Route::get('/client/search', [ClientController::class, 'search'])->name('searchClient');

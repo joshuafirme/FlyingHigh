@@ -33,7 +33,7 @@
                         <li class=""><a href="{{ url('users') }}">Users</a>
                         </li>
                         <li class=""><a href="{{ url('role') }}">Roles</a></li>
-                        <li class=""><a href="{{ url('/hub') }}">Hubs</a></li>
+                        <li class=""><a href="{{ url('/hub') }}">Hub</a></li>
                     </ul>
                 </li>
 
@@ -72,7 +72,7 @@
                 </li>-->
 
                 <li class="">
-                    <a class="" href="{{ url('/pick-up') }}" class="">
+                    <a class="" href="{{ url('/pickup') }}" class="">
                         <img
                             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABVklEQVRIid3TP0scURQF8J+yWyyooE3wC2hnKUFsRVCSRpBAahURhVR+gSBYWNgJYmlhIyim18LKysZPENEtjCsYCG6hxdyBddmZnciQgAcO3Hvee/e8f5f3gp4Saw3jU8THuG03WcZAlyIP2MkYG8cRfkQ+i8+4aDV5xmYXk3XZJz/HFg4jn8M3TLabpPEChiL+hd0Oc9rxGx/wGHk/btAHvR0W1DAYrGUUbccVplvy6dBe4blAobw5E2hgL9jAx3Sw00n+FlWs4B5PwUZo1aK77DZnAydeX21N8tO+l2VyjZEO+ih+lmWS9et60jWVEO4KGN3lmEzhUvIWJD9zrEDNwljCGer4E6zjFIt5C9ewWtYuKhn6UIaehyr2I/6KZjpQRp+kBgeYCR5o6ZGyTOYlTbgdfAqtVJN9fJFcUTPi9OpKM8nFPzHJwqqkkd7Clf+w3/eEF1NQVOD4fG8qAAAAAElFTkSuQmCC" />
                         <span>
@@ -99,10 +99,8 @@
                             $hubs = App\Models\Hub::where('status', 1)->get();
                         @endphp
                         @foreach ($hubs as $item)
-                            @php
-                                $slug = \Str::slug($item->name, '-');
-                            @endphp
-                            <li class=""><a href="{{ url('/hubs/' . $slug) }}">{{ $item->name }}</a>
+                            <li class=""><a
+                                    href="{{ url('/hubs/' . $item->slug . '/' . $item->id) }}">{{ $item->name }}</a>
                             </li>
                         @endforeach
                 </li>
