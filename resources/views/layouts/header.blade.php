@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>@yield('title') | </title>
+    <title>@yield('title') | Flying High</title>
     <meta content="Dashboard" name="description" />
     <meta name="csrf-token" content="jtuZZgSJMUGRsEosBxyoHUrmkjJOR1E6CgJIGzpG" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">

@@ -42,5 +42,38 @@
             tm.find('[name=description]').val(description);
         });
 
+        $('#transfer-form').submit(function(event) {
+            $('#btn-transfer').html("Please wait...");
+
+            $.ajax({
+                    type: 'POST',
+                    url: "{{ url('/product/transfer') }}",
+                    data: $(this).serialize()
+                })
+                .done(function(data) {
+                    console.log(data)
+                    if (data.success && data.message == 'transfer_success') {
+                        Swal.fire(
+                            'Transfer success!',
+                            '',
+                            'success'
+                        );
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Not enough stock!',
+                        })
+                    }
+
+                    $('#btn-transfer').html("Transfer");
+                })
+                .fail(function() {
+                    alert("Posting failed. Please try again.");
+                });
+
+            return false;
+        });
+
     });
 </script>

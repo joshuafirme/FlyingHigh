@@ -41,9 +41,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/client/search', [ClientController::class, 'search'])->name('searchClient');
     Route::resource('/client', ClientController::class);
     
+    Route::post('/product/transfer', [ProductController::class, 'transfer']);
     Route::post('/product/update/{id}', [ProductController::class, 'update']);
     Route::get('/product/search', [ProductController::class, 'search'])->name('searchProduct');
     Route::resource('/product', ProductController::class);
+
 });
 
 

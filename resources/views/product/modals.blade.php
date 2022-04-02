@@ -58,7 +58,7 @@
 <!-- Transfer modal -->
 <div class="modal fade" id="transferModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <form action="#" method="post" class="modal-content">
+        <form id="transfer-form" action="#" method="post" class="modal-content">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title">Transfer to Hub</h5>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="col-md-12 mt-3">
                     <label for="validationCustom04" class="form-label">Hub</label>
-                    <select class="form-control" name="status" required>
+                    <select class="form-control" name="hub_id" required>
                         <option selected disabled value="">Choose...</option>
                         @foreach ($hubs as $item)
                             <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -86,12 +86,12 @@
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Quantity</label>
-                    <input type="number" class="form-control" name="qty" required>
+                    <input type="number" class="form-control" name="stock" required>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
-                <button class="btn btn-sm btn-primary" type="submit">Transfer</button>
+                <button class="btn btn-sm btn-primary" id="btn-transfer" type="submit">Transfer</button>
             </div>
         </form>
     </div>
