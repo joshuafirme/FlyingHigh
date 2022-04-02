@@ -32,5 +32,15 @@
                 }
             }
         });
+
+        $('.btn-transfer').click(function() {
+            let v = $(this);
+            let sku = v.attr('data-sku');
+            let description = v.attr('data-desc');
+            let tm = $('#transferModal');
+            tm.find('[name=sku]').val(sku);
+            tm.find('[name=description]').val(description);
+        });
+
     });
 </script>

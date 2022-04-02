@@ -62,8 +62,8 @@
                                                             data-info="{{ json_encode($item) }} "><i
                                                                 class="fa fa-edit"></i></a>
                                                         <a class="btn delete-record" data-id="{{ $item->id }}"
-                                                            object="role" data-bs-toggle="modal"
-                                                            data-bs-target="#delete-record-modal">
+                                                            object="role" data-toggle="modal"
+                                                            data-target="#delete-record-modal">
                                                             <i class="fa fa-trash" style="color: red;"></i>
                                                         </a>
                                                     @endif

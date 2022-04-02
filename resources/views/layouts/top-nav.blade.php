@@ -2,12 +2,14 @@
 <div class="topbar">
     <!-- LOGO -->
     <div class="topbar-left">
-        <a href="https://clanvent-alpha.laravel-script.com/admin/dashboard" class="logo">
+        <a href="{{ url('/dashboard') }}" class="logo">
             <span>
-                <img src=https://clanvent-alpha.laravel-script.com/images/logo.png class="ic-logo-height" alt="logo">
+                <img src="https://i0.wp.com/flyinghighexpress.com/wp-content/uploads/2019/02/cropped-flyinghighenergyexpress-logoicon.png?fit=192%2C192&ssl=1"
+                    class="ic-logo-height" width="80" alt="logo">
             </span>
             <i>
-                <img src=https://clanvent-alpha.laravel-script.com/images/logo.png class="ic-logo-small" alt="logo">
+                <img src="https://i0.wp.com/flyinghighexpress.com/wp-content/uploads/2019/02/cropped-flyinghighenergyexpress-logoicon.png?fit=192%2C192&ssl=1"
+                    class="ic-logo-small" alt="logo">
             </i>
         </a>
         <div class="float-right">

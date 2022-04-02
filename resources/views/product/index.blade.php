@@ -1,3 +1,4 @@
+@section('title', 'Product')
 @include('layouts.header')
 
 @include('layouts.top-nav')
@@ -26,10 +27,14 @@
 
                                 @include('layouts.alerts')
 
-                                <div>
+                                <div class="d-flex">
                                     <button type="button" id="btn-create"
-                                        class="btn btn-sm btn-primary w-auto open-modal" modal-type="create">
-                                        Create <i class="bi bi-plus"></i>
+                                        class="btn btn-sm btn-primary w-auto open-modal m-1" modal-type="create">
+                                        <i class="fa fa-plus"></i> Create
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary w-autos m-1" data-toggle="modal"
+                                        data-target="#transferModal">
+                                        Import
                                     </button>
                                 </div>
 
@@ -79,16 +84,32 @@
                                                 @endphp</td>
                                                 <td>{{ Utils::formatDate($item->created_at) }}</td>
                                                 <td>
-                                                    <a class="btn btn-edit open-modal" modal-type="update"
-                                                        data-info="{{ json_encode($item) }} "><i
-                                                            class="fa fa-edit"></i></a>
-                                                    @if ($item->role != 'Admin')
-                                                        <a class="btn delete-record" data-id="{{ $item->id }}"
-                                                            object="product" data-toggle="modal"
-                                                            data-target="#delete-record-modal">
-                                                            <i class="fa fa-trash" style="color: red;"></i>
-                                                        </a>
-                                                    @endif
+                                                    <div class="btn-group">
+                                                        <a href="#" class="btn btn-dark btn-sm" data-toggle="dropdown"
+                                                            role="button" aria-haspopup="true" aria-expanded="false"><i
+                                                                class="fas fa-ellipsis-v"></i></a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="btn dropdown-item btn-transfer"
+                                                                data-target="#transferModal" data-toggle="modal"
+                                                                data-sku="{{ $item->sku }}"
+                                                                data-desc="{{ $item->description }}"><i
+                                                                    class="fa fa-exchange-alt"></i> Transfer to Hub</a>
+                                                            <a class="btn btn-edit open-modal dropdown-item"
+                                                                modal-type="update"
+                                                                data-info="{{ json_encode($item) }} "><i
+                                                                    class="fa fa-edit"></i> Edit</a>
+                                                            @if ($item->role != 'Admin')
+                                                                <a class="btn delete-record dropdown-item"
+                                                                    data-id="{{ $item->id }}" object="product"
+                                                                    data-toggle="modal"
+                                                                    data-target="#delete-record-modal">
+                                                                    <i class="fa fa-trash" style="color: red;">
+                                                                        Delete</i>
+                                                                </a>
+                                                            @endif
+
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach

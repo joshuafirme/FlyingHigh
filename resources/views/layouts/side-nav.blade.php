@@ -70,10 +70,28 @@
                     </ul>
                 </li>
 
-                <li class="">
-                    <a href="{{ url('/hub') }}" class="">
-                        <img src="https://img.icons8.com/ios/25/000000/warehouse-1.png" /><span> Hubs </span>
-                    </a>
+                <li>
+                    <a href="#" class=""><img
+                            src="https://img.icons8.com/ios/25/000000/warehouse-1.png" /><span>
+                            Hub
+                            <span class="float-right menu-arrow">
+                                <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="10 15 15 20 20 15"></polyline>
+                                    <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
+                                </svg>
+                            </span>
+                        </span></a>
+                    <ul class="submenu">
+                        <li class="">
+                            <a href="https://clanvent-alpha.laravel-script.com/admin/sales-return-create">Transfer</a>
+                        </li>
+                        <li>
+                            <a href="{{ url('/hub') }}">Hub List</a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li class="">

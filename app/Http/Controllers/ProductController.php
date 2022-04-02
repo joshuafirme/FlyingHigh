@@ -4,16 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Hub;
 use Utils;
 
 class ProductController extends Controller
 {
     public function index() {
         $products = Product::paginate(10);
-
+        $hubs = Hub::where('status', 1)->get();
         $page_title = "products";
         $products = Product::paginate();
-        return view('product.index', compact('page_title', 'products'));
+        return view('product.index', compact('page_title', 'products', 'hubs'));
     }
 
     /**

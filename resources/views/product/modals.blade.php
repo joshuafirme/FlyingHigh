@@ -1,3 +1,4 @@
+<!-- Create update -->
 <div class="modal fade" id="postModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <form action="#" method="post" class="modal-content">
@@ -52,4 +53,46 @@
             </div>
         </form>
     </div>
-</div><!-- End Large Modal-->
+</div><!-- End Create update -->
+
+<!-- Transfer modal -->
+<div class="modal fade" id="transferModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <form action="#" method="post" class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Transfer to Hub</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row g-3">
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">SKU</label>
+                    <input type="text" class="form-control" name="sku" required readonly>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">Description</label>
+                    <input type="text" class="form-control" name="description" required readonly>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label for="validationCustom04" class="form-label">Hub</label>
+                    <select class="form-control" name="status" required>
+                        <option selected disabled value="">Choose...</option>
+                        @foreach ($hubs as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" class="form-control" name="qty" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-primary" type="submit">Transfer</button>
+            </div>
+        </form>
+    </div>
+</div><!-- End transfer modal -->
