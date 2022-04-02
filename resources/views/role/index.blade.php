@@ -11,8 +11,8 @@
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">User</a></li>
-                            <li class="breadcrumb-item active">User List</li>
+                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Role</a></li>
+                            <li class="breadcrumb-item active">Role List</li>
                         </ol>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="header-title">User List</h4>
+                            <h4 class="header-title">Role List</h4>
                             <div class="mt-3 mb-3">
 
                                 @include('layouts.alerts')
