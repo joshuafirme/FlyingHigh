@@ -24,7 +24,7 @@
             removePasswordHtml();
 
             if (modal_type == 'create') {
-
+                $('[name=status]').val(1);
                 modal.find('.modal-title').text('Create User');
                 modal.find('#change-password').remove();
 

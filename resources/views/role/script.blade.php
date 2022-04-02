@@ -21,7 +21,7 @@
             clearInputs();
 
             if (modal_type == 'create') {
-
+                $('[name=status]').val(1);
                 modal.find('.modal-title').text('Create Role');
                 modal.find('form').attr('action', "{{ route('role.store') }}");
 

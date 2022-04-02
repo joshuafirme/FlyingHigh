@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\HubController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ClientController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -35,6 +36,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/hub/update/{id}', [HubController::class, 'update']);
     Route::get('/hub/search', [HubController::class, 'search'])->name('searchHub');
     Route::resource('/hub', HubController::class);
+
+    Route::post('/client/update/{id}', [ClientController::class, 'update']);
+    Route::get('/client/search', [ClientController::class, 'search'])->name('searchClient');
+    Route::resource('/client', ClientController::class);
     
     Route::post('/product/update/{id}', [ProductController::class, 'update']);
     Route::get('/product/search', [ProductController::class, 'search'])->name('searchProduct');
