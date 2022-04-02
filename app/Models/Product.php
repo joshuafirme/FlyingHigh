@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Product extends Model
 {
@@ -21,4 +22,21 @@ class Product extends Model
         'expiration',
         'status',
     ];
+
+    public function hasStock($sku, $qty) 
+    {
+        $current_qty = self::where('sku', $sku)->value('qty');
+        if ($current_qty > $qty) {
+            return true;
+        }
+        return false;
+    }
+
+    public function incrementStock($sku, $qty) {
+        self::where('sku', $sku)->update(['qty' => DB::raw('qty + ' . $qty)]);
+    }
+
+    public function decrementStock($sku, $qty) {
+        self::where('sku', $sku)->update(['qty' => DB::raw('qty - ' . $qty)]);
+    }
 }

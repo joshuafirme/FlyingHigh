@@ -24,26 +24,21 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function transfer()
+    public function transfer(Product $product, HubInventory $hub)
     {
         $sku = request()->sku;
         $qty = request()->stock;
         $hub_id = request()->hub_id;
         $except_values = ['description'];
         
-        if ($this->hasStock($sku, $qty)) {
-            if ($this->isSkuExistsInHub($sku, $hub_id)) {
-                HubInventory::where('sku', $sku)
-                            ->where('hub_id', $hub_id)->update([
-                    'stock' => DB::raw('stock + ' . $qty)
-                ]);
+        if ($product->hasStock($sku, $qty)) {
+            if ($hub->isSkuExistsInHub($sku, $hub_id)) {
+                $hub->incrementStock($sku, $qty, $hub_id);
             }
             else {
                 HubInventory::create(request()->except($except_values));
             }
-            Product::where('sku', $sku)->update([
-                'qty' => DB::raw('qty - ' . $qty)
-            ]);
+            $product->decrementStock($sku, $qty);
             return response()->json([
                 'success' =>  true,
                 'message' => 'transfer_success'
@@ -53,22 +48,6 @@ class ProductController extends Controller
             'success' =>  true,
             'message' => 'not_enough_stock'
         ], 200);
-    }
-
-    public function hasStock($sku, $qty) 
-    {
-        $current_qty = Product::where('sku', $sku)->value('qty');
-        if ($current_qty > $qty) {
-            return true;
-        }
-        return false;
-    }
-
-    public function isSkuExistsInHub($sku, $hub_id) 
-    {
-        $res = HubInventory::where('sku', $sku)
-                ->where('hub_id', $hub_id)->get();
-        return count($res) > 0 ? true : false;
     }
 
     public function search()

@@ -1,3 +1,4 @@
+@section('title', 'Role')
 @include('layouts.header')
 
 @include('layouts.top-nav')

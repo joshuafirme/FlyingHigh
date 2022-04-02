@@ -20,11 +20,8 @@
 
                 <div class="col-md-12 row">
                     <div class="col-md-4 my-2">
-                        <input type="checkbox" name="permission[]" id="chkbx-Dashboard" value="Dashboard"> Dashboard
-                    </div>
-                    <div class="col-md-4 my-2">
-                        <input type="checkbox" name="permission[]" id="chkbx-SystemUsers" value="System Users"> System
-                        Users
+                        <input type="checkbox" name="permission[]" id="chkbx-Administration" value="Administration">
+                        Administration
                     </div>
                     <div class="col-md-4 my-2">
                         <input type="checkbox" name="permission[]" id="chkbx-ManageSite" value="Manage Site"> Manage

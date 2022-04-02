@@ -43,37 +43,57 @@
         });
 
         $('#transfer-form').submit(function(event) {
-            $('#btn-transfer').html("Please wait...");
-
-            $.ajax({
-                    type: 'POST',
-                    url: "{{ url('/product/transfer') }}",
-                    data: $(this).serialize()
-                })
-                .done(function(data) {
-                    console.log(data)
-                    if (data.success && data.message == 'transfer_success') {
-                        Swal.fire(
-                            'Transfer success!',
-                            '',
-                            'success'
-                        );
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Not enough stock!',
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#btn-transfer').html("Please wait...");
+                    $.ajax({
+                            type: 'POST',
+                            url: "{{ url('/product/transfer') }}",
+                            data: $(this).serialize()
                         })
-                    }
 
-                    $('#btn-transfer').html("Transfer");
-                })
-                .fail(function() {
-                    alert("Posting failed. Please try again.");
-                });
+                        .done(function(data) {
+
+                            if (data.success && data.message == 'transfer_success') {
+                                swalSuccess();
+                            } else {
+                                swalError();
+                            }
+                            $('#btn-transfer').html("Transfer");
+                        })
+                        .fail(function() {
+                            alert("Posting failed. Please try again.");
+                            $('#btn-transfer').html("Transfer");
+                        });
+                }
+            })
 
             return false;
         });
+
+        function swalSuccess() {
+            Swal.fire(
+                'Transfer success!',
+                '',
+                'success'
+            );
+        }
+
+        function swalError() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Not enough stock!',
+            })
+        }
 
     });
 </script>

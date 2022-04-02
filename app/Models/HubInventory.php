@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class HubInventory extends Model
 {
@@ -17,7 +18,17 @@ class HubInventory extends Model
         'stock',
     ];
 
-    public function isSkuExistsInHub($sku, $hub_id) {
-        
+    public function isSkuExistsInHub($sku, $hub_id) 
+    {
+        $res = self::where('sku', $sku)
+                ->where('hub_id', $hub_id)->get();
+        return count($res) > 0 ? true : false;
+    }
+
+    public function incrementStock($sku, $qty, $hub_id) {
+        HubInventory::where('sku', $sku)
+        ->where('hub_id', $hub_id)->update([
+            'stock' => DB::raw('stock + ' . $qty)
+        ]);
     }
 }
