@@ -1,0 +1,57 @@
+{
+    "transactionType": "3P",
+    "transactionReferenceNumber": "0002546356",
+    "messageCount": 1,
+    "sender": 4803,
+    "receiver": 1001,
+    "purchaseOrderReceiptHeaders": [
+        {
+            "orderNumber": "13391",
+            "orderType": "OT",
+            "purchaseOrderReceiptDetails": [
+                {
+                    "lineNumber": "1",
+                    "itemNumber": "520337",
+                    "qtyRcdGood": 102,
+                    "qtyRcdBad": 0,
+                    "billOfLading": "VIA LALAMOVE",
+                    "rcvComments": "",
+                    "palletId": "NULL",
+                    "unitOfMeasure": "EA",
+                    "location": "AV",
+                    "lotNumber": "15102",
+                    "receiptDate": "2021-09-01T00:00:00",
+                    "lotExpiration": "2023-02-16T00:00:00"
+                },
+                {
+                    "lineNumber": "2",
+                    "itemNumber": "38918",
+                    "qtyRcdGood": 160,
+                    "qtyRcdBad": 0,
+                    "billOfLading": "VIA LALAMOVE",
+                    "rcvComments": "",
+                    "palletId": "NULL",
+                    "unitOfMeasure": "EA",
+                    "location": "AV",
+                    "lotNumber": "",
+                    "receiptDate": "2021-09-01T00:00:00",
+                    "lotExpiration": ""
+                },
+                {
+                    "lineNumber": "3",
+                    "itemNumber": "38922",
+                    "qtyRcdGood": 160,
+                    "qtyRcdBad": 0,
+                    "billOfLading": "VIA LALAMOVE",
+                    "rcvComments": "",
+                    "palletId": "NULL",
+                    "unitOfMeasure": "EA",
+                    "location": "AV",
+                    "lotNumber": "",
+                    "receiptDate": "2021-09-01T00:00:00",
+                    "lotExpiration": ""
+                }
+            ]
+        }
+    ]
+}

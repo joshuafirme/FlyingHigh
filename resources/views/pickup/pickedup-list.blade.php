@@ -1,4 +1,4 @@
-@section('title', 'For Pick-up')
+@section('title', 'Picked-up List')
 @include('layouts.header')
 
 @include('layouts.top-nav')
@@ -12,8 +12,8 @@
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Pick-up</a></li>
-                            <li class="breadcrumb-item active">For Pick-up List</li>
+                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Picked-up</a></li>
+                            <li class="breadcrumb-item active">Picked-up List</li>
                         </ol>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 <!-- Create update -->
 <div class="modal fade" id="postModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <form action="#" method="post" class="modal-content">
+        <form action="#" method="post" class="modal-content" autocomplete="off">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title">Create User</h5>
@@ -20,11 +20,11 @@
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Stock</label>
-                    <input type="text" class="form-control" name="qty" required>
+                    <input type="number" class="form-control" name="qty" required>
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Buffer Stock</label>
-                    <input type="text" class="form-control" name="buffer_stock" required>
+                    <input type="number" class="form-control" name="buffer_stock" required>
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">JTE lot code</label>
@@ -58,7 +58,7 @@
 <!-- Transfer modal -->
 <div class="modal fade" id="transferModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <form id="transfer-form" action="#" method="post" class="modal-content">
+        <form id="transfer-form" action="#" method="post" class="modal-content" autocomplete="off">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title">Transfer to Hub</h5>

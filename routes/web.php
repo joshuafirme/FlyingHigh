@@ -41,7 +41,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('/hub', HubController::class);
 
     Route::get('/pickup', [PickupController::class, 'index']);
+    Route::get('/fetch-pickup', [PickupController::class, 'fetchPickupData']);
+    Route::get('/get-line-items/{orderId}', [PickupController::class, 'getLineItems']);
 
+    Route::get('/pickedup-list', [PickupController::class, 'pickedUpList']);
+    
     Route::post('/client/update/{id}', [ClientController::class, 'update']);
     Route::get('/client/search', [ClientController::class, 'search'])->name('searchClient');
     Route::resource('/client', ClientController::class);

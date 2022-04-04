@@ -44,16 +44,16 @@
                         <img src="https://clanvent-alpha.laravel-script.com/storage/users/16368736053887.png" alt="user"
                             class="rounded-circle">
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+                    <div class="dropdown-menu dropdown-menu-right profile-dropdown " style="width: 200px">
 
                         <a href="/admin/profile" class="dropdown-item">
-                            John Doe<br>
-                            <small>admin@app.com</small>
+                            {{ Auth::user()->name }}<br>
+                            <small>{{ Auth::user()->email }}</small>
                         </a>
 
                         <a class="dropdown-item logout-btn" href="#">
                             <i class="mdi mdi-power text-danger"></i>
-                            logout</a>
+                            Logout</a>
 
                         <form id="logout-form" action="https://clanvent-alpha.laravel-script.com/logout" method="POST">
                             <input type="hidden" name="_token" value="jtuZZgSJMUGRsEosBxyoHUrmkjJOR1E6CgJIGzpG">

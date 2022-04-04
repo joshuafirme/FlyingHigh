@@ -12,66 +12,43 @@
             });
         }
 
-        $('.btn-pickup').click(function() {
+        $('.btn-pickup-details').click(function() {
             let v = $(this);
-            let sku = v.attr('data-sku');
-            $('#tbl-pickup').html('');
-            fetch("{{ url('/pickup.json') }}")
+            let orderId = v.attr('data-orderId');
+            let order_details = v.attr('data-order-details');
+            order_details = JSON.parse(order_details);
+
+            $('#orderId').text(order_details.orderId);
+            $('#contractDate').text(order_details.contractDate);
+            $('#dateTimeSubmittedIso').text(order_details.dateTimeSubmittedIso);
+            $('#customerEmail').text(order_details.customerEmail);
+            $('#customerEmail').attr('href', 'mailto:' + order_details.customerEmail);
+            $('#custName').text(order_details.custName);
+            $('#shipPhone').text(order_details.shipPhone);
+            $('#shipCity').text(order_details.shipCity);
+            $('#shipState').text(order_details.shipState);
+            $('#shipZip').text(order_details.shipZip);
+            $('#shippingChargeAmount').text(order_details.shippingChargeAmount);
+            $('#salesTaxAmount').text(order_details.salesTaxAmount);
+            $('#shippingTaxTotalAmount').text(order_details.shippingTaxTotalAmount);
+            $('#packageTotal').text(order_details.packageTotal);
+
+            $('#tbl-pickup-details').html('');
+            fetch("/get-line-items/" + orderId)
                 .then(data => data.json())
                 .then(data => {
-                    console.log(data)
-                    for (item of data.lineItems) {
-
+                    let html = "";
+                    for (let item of data) {
+                        let html = '<tr>';
+                        html += '<td>' + item.sku + '</td>';
+                        html += '<td>' + item.description + '</td>';
+                        html += '<td>' + item.quantity + '</td>';
+                        html += '<td></td>';
+                        html += '</tr>';
+                        $('#tbl-pickup-details').append(html)
                     }
-                    let html = '<tr>';
-                    html += '<td>' + data.custName +
-                        ' <br> <a href="mailto:' + data.customerEmail + '">' + data.customerEmail +
-                        '</a></td>';
-                    html += '<td>' + data.orderId + '</td>';
-                    html += '<td>' + data.packageTotal + '</td>';
-                    html += '<td>' + data.dateTimeSubmittedIso + '</td>';
-                    html +=
-                        '<td><a href="#"> Order List </a></td>';
-                    html += '</tr>';
-                    $('#tbl-pickup').append(html)
+
                 })
-        });
-
-        $('#transfer-form').submit(function(event) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#btn-pickup').html("Please wait...");
-                    $.ajax({
-                            type: 'POST',
-                            url: "{{ url('/product/transfer') }}",
-                            data: $(this).serialize()
-                        })
-
-                        .done(function(data) {
-
-                            if (data.success && data.message == 'transfer_success') {
-                                swalSuccess();
-                            } else {
-                                swalError();
-                            }
-                            $('#btn-pickup').html("Transfer");
-                        })
-                        .fail(function() {
-                            alert("Posting failed. Please try again.");
-                            $('#btn-pickup').html("Transfer");
-                        });
-                }
-            })
-
-            return false;
         });
 
         function swalSuccess() {
