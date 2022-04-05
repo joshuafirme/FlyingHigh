@@ -49,7 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/client/update/{id}', [ClientController::class, 'update']);
     Route::get('/client/search', [ClientController::class, 'search'])->name('searchClient');
     Route::resource('/client', ClientController::class);
-    
+
+    Route::post('/product-import', [ProductController::class, 'importProduct'])->name('importProduct');
     Route::post('/product/transfer', [ProductController::class, 'transfer']);
     Route::post('/product/update/{id}', [ProductController::class, 'update']);
     Route::get('/product/search', [ProductController::class, 'search'])->name('searchProduct');

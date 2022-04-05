@@ -23,6 +23,11 @@ class Product extends Model
         'status',
     ];
 
+    public function isSkuExists($sku) {
+        $res = self::where('sku', $sku)->get();
+        return count($res) > 0 ? true : false;
+    }
+
     public function hasStock($sku, $qty) 
     {
         $current_qty = self::where('sku', $sku)->value('qty');

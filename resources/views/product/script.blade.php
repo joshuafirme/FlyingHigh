@@ -28,6 +28,10 @@
                 modal.find('form').attr('action', "/product/update/" + data.id);
 
                 for (var key of Object.keys(data)) {
+                    if (key == 'expiration') {
+                        data[key] = data[key].substring(0, 10);
+                        console.log(data[key])
+                    }
                     modal.find('[name=' + key + ']').val(data[key]);
                 }
             }

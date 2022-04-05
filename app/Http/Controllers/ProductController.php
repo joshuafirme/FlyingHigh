@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProductImport;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Hub;
@@ -18,7 +20,12 @@ class ProductController extends Controller
         $products = Product::paginate();
         return view('product.index', compact('page_title', 'products', 'hubs'));
     }
-
+    
+    public function importProduct(Request $request) 
+    {
+        Excel::import(new ProductImport, $request->file('file')->store('temp'));
+        return back();
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -56,8 +63,9 @@ class ProductController extends Controller
         $products = Product::where('sku', 'LIKE', '%' . $key . '%')
                     ->orWhere('description', 'LIKE', '%' . $key . '%')
                     ->paginate(10);
+        $hubs = Hub::where('status', 1)->get();
         $page_title = "products";
-        return view('product.index', compact('page_title', 'products'));
+        return view('product.index', compact('page_title', 'products', 'hubs'));
     }
 
     /**

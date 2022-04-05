@@ -17,8 +17,8 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('sku');
             $table->string('description');
-            $table->integer('qty');
-            $table->integer('buffer_stock');
+            $table->integer('qty')->default(0);
+            $table->integer('buffer_stock')->default(0);
             $table->string('jde_lot_code')->nullable();
             $table->string('supplier_lot_code')->nullable();
             $table->string('expiration')->nullable();

@@ -33,8 +33,12 @@
                                         <i class="fa fa-plus"></i> Create
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary w-autos m-1" data-toggle="modal"
-                                        data-target="#transferModal">
-                                        Import
+                                        data-target="#importModal">
+                                        Import via API
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary w-autos m-1" data-toggle="modal"
+                                        data-target="#importModal">
+                                        Import Excel
                                     </button>
                                 </div>
 
