@@ -8,17 +8,77 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Hub;
 use App\Models\HubInventory;
+use App\Models\Transaction;
+use App\Models\TransactionLineItems;
 use Utils;
 use DB;
 
 class ProductController extends Controller
 {
     public function index() {
-        $products = Product::paginate(10);
+        $products = Product::paginate(20);
+        $product_count = Product::count('id');
         $hubs = Hub::where('status', 1)->get();
         $page_title = "products";
-        $products = Product::paginate();
-        return view('product.index', compact('page_title', 'products', 'hubs'));
+        return view('product.index', compact('page_title', 'products', 'hubs', 'product_count'));
+    }
+
+    public function importAPI(Request $request, Transaction $trans, Product $product) 
+    {
+        $path = public_path() . '/purchase_order.json';
+        $data = json_decode(file_get_contents($path));
+
+        if ($trans->isTransactionExists($data->transactionReferenceNumber)) {
+            return response()->json([
+                'success' =>  true,
+                'transactionReferenceNumber' => $data->transactionReferenceNumber,
+                'transactionRType' => $data->transactionType,
+                'message' => 'transferred',
+                'status' => 1
+            ], 200);
+        }
+        else {
+            $trans->transactionReferenceNumber = $data->transactionReferenceNumber;
+            $trans->transactionType = $data->transactionType;
+            $trans->save();
+
+            foreach ($data->purchaseOrderReceiptHeaders as $po) {
+
+                foreach ($po->purchaseOrderReceiptDetails as $item) {
+                    $trans_item = new TransactionLineItems;
+                    $trans_item->orderNumber = $po->orderNumber;
+                    $trans_item->orderType = $po->orderType;
+
+                    $product->incrementStock($item->itemNumber, $item->qtyRcdGood);
+
+                    $trans_item->lineNumber = $item->lineNumber;
+                    $trans_item->itemNumber = $item->itemNumber;
+                    $trans_item->qtyRcdGood = $item->qtyRcdGood;
+                    $trans_item->qtyRcdBad = $item->qtyRcdBad;
+                    $trans_item->billOfLading = $item->billOfLading;
+                    $trans_item->rcvComments = $item->rcvComments;
+                    $trans_item->palletId = $item->palletId;
+                    $trans_item->location = $item->location;
+                    $trans_item->unitOfMeasure = $item->unitOfMeasure;
+                    $trans_item->lotNumber = $item->lotNumber;
+                    $trans_item->receiptDate = $item->receiptDate;
+                    $trans_item->lotExpiration = $item->lotExpiration;
+
+                    $trans_item->save();
+                }
+            }
+            
+
+            return response()->json([
+                'success' =>  true,
+                'transactionReferenceNumber' => $data->transactionReferenceNumber,
+                'transactionRType' => $data->transactionType,
+                'message' => 'transaction_success',
+                'status' => 1
+            ], 200);
+        }
+
+        
     }
     
     public function importProduct(Request $request) 
@@ -64,8 +124,9 @@ class ProductController extends Controller
                     ->orWhere('description', 'LIKE', '%' . $key . '%')
                     ->paginate(10);
         $hubs = Hub::where('status', 1)->get();
+        $product_count = Product::count('id');
         $page_title = "products";
-        return view('product.index', compact('page_title', 'products', 'hubs'));
+        return view('product.index', compact('page_title', 'products', 'hubs', 'product_count'));
     }
 
     /**

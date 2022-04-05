@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/client/search', [ClientController::class, 'search'])->name('searchClient');
     Route::resource('/client', ClientController::class);
 
+    Route::get('/product/api/import', [ProductController::class, 'importAPI'])->name('importAPI');
     Route::post('/product-import', [ProductController::class, 'importProduct'])->name('importProduct');
     Route::post('/product/transfer', [ProductController::class, 'transfer']);
     Route::post('/product/update/{id}', [ProductController::class, 'update']);

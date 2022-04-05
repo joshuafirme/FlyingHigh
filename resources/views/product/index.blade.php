@@ -13,7 +13,8 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Products</a></li>
-                            <li class="breadcrumb-item active">Products List</li>
+                            <li class="breadcrumb-item active">Products List <span
+                                    class="badge badge-pill badge-primary">{{ $product_count }}</span></li>
                         </ol>
                     </div>
                 </div>
@@ -33,7 +34,7 @@
                                         <i class="fa fa-plus"></i> Create
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary w-autos m-1" data-toggle="modal"
-                                        data-target="#importModal">
+                                        data-target="#apiModal">
                                         Import via API
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary w-autos m-1" data-toggle="modal"
@@ -61,7 +62,7 @@
                                         <th scope="col">Stock</th>
                                         <th scope="col">Buffer Stock</th>
                                         <th scope="col">JTE lot code</th>
-                                        <th scope="col">Supplier lot code</th>
+                                        <th scope="col">Supplier Lot code</th>
                                         <th scope="col">Expiration</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Created at</th>

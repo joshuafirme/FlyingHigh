@@ -97,10 +97,10 @@
     </div>
 </div><!-- End transfer modal -->
 
-<!-- Transfer modal -->
+<!-- Import modal -->
 <div class="modal fade" id="importModal" tabindex="-1">
     <div class="modal-dialog modal-sm">
-        <form id="transfer-form" action="{{ route('importProduct') }}" method="POST" enctype="multipart/form-data"
+        <form action="{{ route('importProduct') }}" method="POST" enctype="multipart/form-data"
             class="modal-content">
             @csrf
             <div class="modal-header">
@@ -110,10 +110,10 @@
                 </button>
             </div>
             <div class="modal-body row g-3">
-                <div class="col-12">
+                <div class="col-12 mt-3">
                     <div class="form-group mb-4" style="max-width: 500px; margin: 0 auto;">
                         <div class="custom-file text-left">
-                            <input type="file" name="file" class="custom-file-input" id="customFile">
+                            <input type="file" name="file" class="custom-file-input" id="customFile" required>
                             <label class="custom-file-label" for="customFile">Choose file</label>
                         </div>
                     </div>
@@ -124,4 +124,36 @@
             </div>
         </form>
     </div>
-</div><!-- End transfer modal -->
+</div><!-- End Import modal -->
+
+<div class="modal fade" id="apiModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <form id="import-via-api-form" method="POST" class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Import Via API</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row g-3">
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">API Endpoint</label>
+                    <input type="text" class="form-control" name="api_endpoint" required
+                        value="http://127.0.0.1:8000/purchase_order.json">
+                </div>
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-sm btn-primary" type="button" id="btn-fetch">Fetch</button>
+                </div>
+
+                <div class="col-12 mt-4">
+                    <h5><span id="transactionReferenceNumber"></span></h5>
+                    <div id="orders-container"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-primary" id="btn-api-import" type="submit">Import</button>
+            </div>
+        </form>
+    </div>
+</div>
