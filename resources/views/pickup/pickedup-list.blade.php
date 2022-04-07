@@ -29,11 +29,8 @@
                                         <th scope="col">OrderID</th>
                                         <th scope="col">BatchID</th>
                                         <th scope="col">Customer</th>
-                                        <th scope="col">Shipping Charge</th>
-                                        <th scope="col">Sales Tax</th>
-                                        <th scope="col">Shipping Tax Total Amount</th>
-                                        <th scope="col">Package Total</th>
-                                        <th scope="col">Date time submitted</th>
+                                        <th scope="col">Hub</th>
+                                        <th scope="col">Date Time Picked Up</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -41,15 +38,12 @@
                                     @if (count($pickups))
                                         @foreach ($pickups as $item)
                                             <tr>
+                                                <td>{{ $item->shipmentId }}</td>
                                                 <td>{{ $item->orderId }}</td>
                                                 <td>{{ $item->batchId }}</td>
                                                 <td>
                                                     {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
                                                 </td>
-                                                <td>{{ $item->shippingChargeAmount }}</td>
-                                                <td>{{ $item->salesTaxAmount }}</td>
-                                                <td>{{ $item->shippingTaxTotalAmount }}</td>
-                                                <td>{{ $item->packageTotal }}</td>
                                                 <td>{{ $item->dateTimeSubmittedIso }}</td>
                                                 <td>
                                                     <div class="btn-group">

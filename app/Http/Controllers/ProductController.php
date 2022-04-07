@@ -58,7 +58,7 @@ class ProductController extends Controller
                     $trans_item->billOfLading = $item->billOfLading;
                     $trans_item->rcvComments = $item->rcvComments;
                     $trans_item->palletId = $item->palletId;
-                    $trans_item->location = $item->location;
+                    $trans_item->location = $item->location ;
                     $trans_item->unitOfMeasure = $item->unitOfMeasure;
                     $trans_item->lotNumber = $item->lotNumber;
                     $trans_item->receiptDate = $item->receiptDate;

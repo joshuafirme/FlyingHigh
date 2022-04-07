@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
 use App\Models\Pickup;
 use App\Models\LineItem;
+use App\Models\HubInventory;
 use App\Models\Hub;
 use Utils;
 
@@ -12,14 +14,19 @@ class PickupController extends Controller
 {
     public function index() 
     {
-        $pickups = Pickup::where('status', 1)->paginate(10);
+        $pickups = Pickup::where('status', 0)->paginate(10);
         $hubs = Hub::where('status', 1)->get();
         return view('pickup.index', compact('pickups', 'hubs'));
     }
 
     public function pickedUpList() 
     {
-        $pickups = Pickup::where('status', 2)->paginate(10);
+        $pickups = Pickup::where('pickups.status', 1)
+            ->select('shipmentId','shipmentId','customerEmail','custName','pickups.status',
+            'batchId','orderId','pickups.updated_at','hubs.name as hub')
+            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
+            ->paginate(10);
+            
         $hubs = Hub::where('status', 1)->get();
 
         return view('pickup.pickedup-list', compact('pickups', 'hubs'));
@@ -95,5 +102,24 @@ class PickupController extends Controller
                 'message' => 'Data was saved.'
             ], 200);
         }
+    }
+
+    public function tagAsPickedUp($shipmentId, Pickup $pickup, LineItem $line_item, HubInventory $hub_inv)
+    {
+        $hub_id = request()->hub_id;
+
+        $pickup->tagAsPickedUp($shipmentId, $hub_id);
+
+        $orderId = $pickup->getOrderIdByShipmentId($shipmentId);
+
+        $line_items = $line_item->getLineItems($orderId);
+
+        foreach ($line_items as $item) {
+            $hub_inv->decrementStock($item->partNumber, $item->quantity, $hub_id);
+        }
+
+        return response()->json([
+            'message' => 'success'
+        ], 200);
     }
 }

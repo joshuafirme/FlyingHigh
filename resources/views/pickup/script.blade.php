@@ -17,7 +17,7 @@
             let orderId = v.attr('data-orderId');
             let order_details = v.attr('data-order-details');
             order_details = JSON.parse(order_details);
-
+            $('#pickupModal').attr('shipmentId', order_details.shipmentId);
             $('#orderId').text(order_details.orderId);
             $('#contractDate').text(order_details.contractDate);
             $('#dateTimeSubmittedIso').text(order_details.dateTimeSubmittedIso);
@@ -51,21 +51,64 @@
                 })
         });
 
-        function swalSuccess() {
+        $('#pickup-form').submit(function(event) {
+            let btn = $('#btn-pickedup');
+            let shipmentId = $('#pickupModal').attr('shipmentId');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    btn.html("Please wait...");
+                    $.ajax({
+                            type: 'POST',
+                            _token: '{{ csrf_token() }}',
+                            url: '/pickup/tag-as-picked-up/' + shipmentId,
+                            data: $(this).serialize()
+                        })
+
+                        .done(function(data) {
+
+                            if (data.message == 'success') {
+                                swalSuccess('Product was successfully Tags as Picked Up');
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1500);
+                            } else {
+                                swalError('Error occured, please contact support!');
+                            }
+                            btn.html("Tag as Picked Up");
+                        })
+                        .fail(function() {
+                            swalError('Error occured, please contact support!');
+                            btn.html("Tag as Picked Up");
+                        });
+                }
+            })
+
+            return false;
+        });
+
+
+        function swalSuccess(message) {
             Swal.fire(
-                'Transfer success!',
+                message,
                 '',
                 'success'
             );
         }
 
-        function swalError() {
+        function swalError(text) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'Not enough stock!',
+                text: text,
             })
         }
-
     });
 </script>

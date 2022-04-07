@@ -12,11 +12,11 @@
             <div class="modal-body row g-3">
                 <div class="col-12">
                     <a href="#" data-div-name="print-invoice"
-                        class="btn btn-info waves-effect waves-light section-print-btn float-right m-1"><i
+                        class="btn btn-sm btn-info waves-effect waves-light section-print-btn float-right m-1"><i
                             class="fa fa-print"></i>
                         <span>Print</span></a>
-                    <a href="https://clanvent-alpha.laravel-script.com/admin/invoices/download/70"
-                        class="btn btn-success waves-effect waves-light float-right m-1"><i class="fa fa-download"></i>
+                    <a href="#" class="btn btn-sm btn-success waves-effect waves-light float-right m-1"><i
+                            class="fa fa-download"></i>
                         <span>Download</span></a>
                 </div>
                 <div class="col-sm-6">
@@ -94,13 +94,14 @@
                 </div>
             </div>
             <form id="pickup-form" class="modal-footer" method="POST">
+                @csrf
                 <select class="form-control float-right" style="width:200px" name="hub_id" required>
                     <option value="" disabled selected>Choose hub</option>
                     @foreach ($hubs as $item)
                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                     @endforeach
                 </select>
-                <button class="btn btn-sm btn-primary" type="submit">Tag as
+                <button class="btn btn-sm btn-primary" id="btn-pickedup" type="submit">Tag as
                     Picked Up</button>
             </form>
         </div>

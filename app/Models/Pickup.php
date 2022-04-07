@@ -38,11 +38,25 @@ class Pickup extends Model
         "salesTaxAmount",
         "shippingTaxTotalAmount",
         "packageTotal",
-        "orderSource"
+        "orderSource",
+        "hub_id"
     ];
 
     public function isOrderExists($orderId) {
         $res = self::where('orderId', $orderId)->get();
         return count($res) > 0 ? true : false;
     }
+
+    public function getOrderIdByShipmentId($shipmentId) {
+        return self::where('shipmentId', $shipmentId)->value('orderId');
+    }
+
+    public function tagAsPickedUp($shipmentId, $hub_id) {
+        self::where('shipmentId', $shipmentId)
+        ->update([
+            'hub_id' => $hub_id,
+            'status' => 1
+        ]);
+    }
+
 }

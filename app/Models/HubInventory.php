@@ -26,9 +26,16 @@ class HubInventory extends Model
     }
 
     public function incrementStock($sku, $qty, $hub_id) {
-        HubInventory::where('sku', $sku)
+        self::where('sku', $sku)
         ->where('hub_id', $hub_id)->update([
             'stock' => DB::raw('stock + ' . $qty)
+        ]);
+    }
+
+    public function decrementStock($sku, $qty, $hub_id) {
+        self::where('sku', $sku)
+        ->where('hub_id', $hub_id)->update([
+            'stock' => DB::raw('stock - ' . $qty)
         ]);
     }
 }

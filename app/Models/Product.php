@@ -31,7 +31,7 @@ class Product extends Model
     public function hasStock($sku, $qty) 
     {
         $current_qty = self::where('sku', $sku)->value('qty');
-        if ($current_qty > $qty) {
+        if ($current_qty >= $qty) {
             return true;
         }
         return false;
