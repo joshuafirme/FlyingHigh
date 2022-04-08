@@ -23,6 +23,22 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
+                            <div class="mt-3 mb-3">
+                                <div class="float-right">
+                                    <form action="{{ route('searchPickup') }}" method="get">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="key" style="width: 280px;"
+                                                placeholder="Search by Shipment ID or Order ID"
+                                                value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                             <table class="table table-borderless table-hover">
                                 <thead>
                                     <tr>
@@ -31,6 +47,7 @@
                                         <th scope="col">BatchID</th>
                                         <th scope="col">Customer</th>
                                         <th scope="col">Date time submitted</th>
+                                        <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -45,6 +62,7 @@
                                                     {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
                                                 </td>
                                                 <td>{{ $item->dateTimeSubmittedIso }}</td>
+                                                <td><span class="badge badge-pill badge-primary">Unclaimed</span></td>
                                                 <td>
                                                     <div class="btn-group">
                                                         <a href="#" class="btn btn-dark btn-sm" data-toggle="dropdown"
@@ -56,9 +74,13 @@
                                                                 data-orderId="{{ $item->orderId }}"
                                                                 data-order-details="{{ json_encode($item) }}"><i
                                                                     class="fa fa-exchange-alt"></i> Pickup Details</a>
-                                                            <a class="btn dropdown-item"
+                                                            <a class="btn dropdown-item btn-tag-as-overdue"
+                                                                data-shipmentId="{{ $item->shipmentId }}"><i
+                                                                    class=" fa fa-clock"></i> Tag as Overdue</a>
+                                                            <a class="
+                                                                    btn dropdown-item"
                                                                 data-orderId="{{ $item->orderId }}"><i
-                                                                    class="fa fa-print"></i> Generate Invoice</a>
+                                                                    class="fa fa-print"></i> Generate Receipt</a>
                                                         </div>
                                                     </div>
                                                 </td>

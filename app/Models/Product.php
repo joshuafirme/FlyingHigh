@@ -20,8 +20,14 @@ class Product extends Model
         'jde_lot_code',
         'supplier_lot_code',
         'expiration',
+        'has_bundle',
+        'bundles',
         'status',
     ];
+
+    public function getAllSKU() {
+        return self::select('sku','description')->where('status', 1)->get();
+    }
 
     public function isSkuExists($sku) {
         $res = self::where('sku', $sku)->get();
@@ -35,6 +41,12 @@ class Product extends Model
             return true;
         }
         return false;
+    }
+
+    public function incrementBundleSKU($bundles, $qty) {
+        foreach ($bundles as $sku) {
+            $this->incrementStock($sku, $qty);
+        }
     }
 
     public function incrementStock($sku, $qty) {

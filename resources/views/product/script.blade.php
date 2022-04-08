@@ -1,20 +1,59 @@
 <script>
     $(function() {
         "use strict";
+        const bundles_choices = new Choices('#choices-multiple-remove-button', {
+            removeItemButton: true,
+            placeholderValue: 'Choose SKU',
+        });
+        async function initChoices(type, bundles = []) {
+            if ($('#choices-multiple-remove-button').length > 0) {
+                bundles_choices.setChoices(function() {
+                    return fetch(
+                            '/api/get-all-sku'
+                        )
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(data) {
+                            return data.map(function(v) {
+                                let is_selected = false;
+                                if (bundles != null && bundles.indexOf(v
+                                        .sku) != -1) {
+                                    is_selected = true;
+                                }
+                                return {
+                                    label: v.sku + ' | ' + v.description,
+                                    value: v.sku,
+                                    selected: is_selected
+                                };
+                            });
+                        });
+                })
+            }
+        }
 
         function clearInputs() {
             let modal = $('#postModal');
-            let inputs = modal.find('input');
+            let inputs = modal.find('input,select');
+            $('.bundle-choices').addClass('d-none');
             $.each(inputs, function(i, v) {
                 if (i > 1) {
+                    if ($(v).attr('type') == 'checkbox') {
+                        return;
+                    }
                     $(v).val('');
                 }
             });
+
         }
 
         $('.open-modal').click(function(event) {
 
             let modal = $('#postModal');
+            modal.modal({
+                backdrop: 'static',
+                keyboard: false
+            })
             modal.modal('show');
             let modal_type = $(this).attr('modal-type');
             clearInputs();
@@ -22,15 +61,30 @@
                 $('[name=status]').val(1);
                 modal.find('.modal-title').text('Create Product');
                 modal.find('form').attr('action', "{{ route('product.store') }}");
+                initChoices(modal_type);
             } else {
+                bundles_choices.clearStore();
                 modal.find('.modal-title').text('Update Product');
                 let data = JSON.parse($(this).attr('data-info'));
                 modal.find('form').attr('action', "/product/update/" + data.id);
-
+                initChoices(modal_type, data.bundles);
+                console.log(data)
                 for (var key of Object.keys(data)) {
                     if (key == 'expiration') {
-                        data[key] = data[key].substring(0, 10);
-                        console.log(data[key])
+                        data[key] = data[key] ? data[key].substring(0, 10) : '';
+                    }
+                    if (key == 'has_bundle') {
+                        if (data[key] == 1) {
+                            modal.find('[name=' + key + ']').prop('checked', true);
+                        } else {
+                            modal.find('[name=' + key + ']').prop('checked', false);
+                        }
+                        if ($('[name=' + key + ']').is(':checked')) {
+                            $('.bundle-choices').removeClass('d-none');
+                        } else {
+                            $('.bundle-choices').addClass('d-none');
+                        }
+                        continue;
                     }
                     modal.find('[name=' + key + ']').val(data[key]);
                 }
@@ -155,6 +209,15 @@
                 });
 
             return false;
+        });
+
+
+        $('#has_bundle').click(function(e) {
+            if ($(this).is(':checked')) {
+                $('.bundle-choices').removeClass('d-none');
+            } else {
+                $('.bundle-choices').addClass('d-none');
+            }
         });
 
         $('#import-via-api-form').submit(function(e) {

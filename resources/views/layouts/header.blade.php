@@ -21,7 +21,7 @@
     <link rel="icon"
         href="https://i0.wp.com/flyinghighexpress.com/wp-content/uploads/2019/02/cropped-flyinghighenergyexpress-logoicon.png?fit=32%2C32&ssl=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" />
-
+    <link rel="stylesheet" href="{{ asset('css/choices.min.css') }}" />
     <!--  DOUBLE BORDER SPINNER  -->
     <div class="ic-preloader">
         <div class="ic-inner-preloader">

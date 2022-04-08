@@ -18,27 +18,27 @@
                     <label class="form-label">Description</label>
                     <input type="text" class="form-control" name="description" required>
                 </div>
-                <div class="col-md-12 mt-3">
+                <div class="col-md-6 mt-3">
                     <label class="form-label">Stock</label>
                     <input type="number" class="form-control" name="qty" required>
                 </div>
-                <div class="col-md-12 mt-3">
+                <div class="col-md-6 mt-3">
                     <label class="form-label">Buffer Stock</label>
                     <input type="number" class="form-control" name="buffer_stock" required>
                 </div>
-                <div class="col-md-12 mt-3">
+                <div class="col-md-6 mt-3">
                     <label class="form-label">JTE lot code</label>
                     <input type="text" class="form-control" name="jde_lot_code">
                 </div>
-                <div class="col-md-12 mt-3">
+                <div class="col-md-6 mt-3">
                     <label class="form-label">Supplier lot code</label>
                     <input type="text" class="form-control" name="supplier_lot_code">
                 </div>
-                <div class="col-md-12 mt-3">
+                <div class="col-md-6 mt-3">
                     <label class="form-label">Expiration</label>
-                    <input type="date" class="form-control" name="expiration" required>
+                    <input type="date" class="form-control" name="expiration">
                 </div>
-                <div class="col-md-12 mt-3">
+                <div class="col-md-6 mt-3">
                     <label for="validationCustom04" class="form-label">Status</label>
                     <select class="form-control" name="status" required>
                         <option selected disabled value="">Choose...</option>
@@ -46,9 +46,21 @@
                         <option value="0">Inactive</option>
                     </select>
                 </div>
+                <div class="col-sm-6 mt-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="has_bundle" id="has_bundle">
+                        <label class="form-check-label">Bundled</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 mt-2 d-none bundle-choices">
+                    <label class="col-form-label" for="choices-multiple-remove-button">SKU Bundles</label>
+                    <select class="form-control" name="bundles[]" id="choices-multiple-remove-button"
+                        placeholder="Select SKU bundle" required multiple>
+                    </select>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
                 <button class="btn btn-sm btn-primary" type="submit">Save</button>
             </div>
         </form>
@@ -61,7 +73,7 @@
         <form id="transfer-form" action="#" method="post" class="modal-content" autocomplete="off">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title">Transfer to Hub</h5>
+                <h5 class="modal-title">Hub Transfer</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

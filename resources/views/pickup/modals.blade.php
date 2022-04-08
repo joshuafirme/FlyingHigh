@@ -32,7 +32,8 @@
                 <div class="col-sm-6">
                     <div class="mb-4 ">
                         <div class="text-sm-right">
-                            <h4 class="invoice-color mb-2 mt-md-2">OrderID <span id="orderId"></span></h4>
+                            <h4 class="invoice-color mb-2 mt-md-2">Shipment ID: <span id="shipmentId"></span></h4>
+                            <h5 class="invoice-color mb-2 mt-md-2">Order ID: <span id="orderId"></span></h5>
                             <ul class="list list-unstyled mb-0">
                                 <li>Date: <span class="font-weight-semibold" id="dateTimeSubmittedIso"></span></li>
                                 <li>Due date: <span class="font-weight-semibold" id="contractDate"></span>

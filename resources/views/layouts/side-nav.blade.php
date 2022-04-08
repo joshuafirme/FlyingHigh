@@ -182,7 +182,7 @@
                     </span></a>
                 <ul class="submenu">
                     <li>
-                        <a href="https://clanvent-alpha.laravel-script.com/admin/reports/expenses">Expenses
+                        <a href="{{ url('/reports/hub-transfer') }}">Hub Transfer
                             Report</a>
                     </li>
                     <li>

@@ -14,16 +14,26 @@ class PickupController extends Controller
 {
     public function index() 
     {
-        $pickups = Pickup::where('status', 0)->paginate(10);
+        $pickups = Pickup::whereIn('status', [0,2])->paginate(10);
         $hubs = Hub::where('status', 1)->get();
+        return view('pickup.index', compact('pickups', 'hubs'));
+    }
+
+    public function search()
+    {
+        $key = isset(request()->key) ? request()->key : "";
+        $pickups = Pickup::where('shipmentId', 'LIKE', '%' . $key . '%')
+                    ->orWhere('orderId', 'LIKE', '%' . $key . '%')
+                    ->paginate(10);
+        $hubs = Hub::where('status', 1)->get();
+        $product_count = Pickup::count('id');
         return view('pickup.index', compact('pickups', 'hubs'));
     }
 
     public function pickedUpList() 
     {
         $pickups = Pickup::where('pickups.status', 1)
-            ->select('shipmentId','shipmentId','customerEmail','custName','pickups.status',
-            'batchId','orderId','pickups.updated_at','hubs.name as hub')
+            ->select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub')
             ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
             ->paginate(10);
             
@@ -41,7 +51,6 @@ class PickupController extends Controller
     {
         $path = public_path() . '/pickup.json';
         $data = json_decode(file_get_contents($path));
-      //  dd($data->lineItems);
         if ($pickup->isOrderExists($data->orderId)) {
             return response()->json([
                 'status' =>  'success',
@@ -116,6 +125,7 @@ class PickupController extends Controller
 
         foreach ($line_items as $item) {
             $hub_inv->decrementStock($item->partNumber, $item->quantity, $hub_id);
+            
         }
 
         return response()->json([

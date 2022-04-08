@@ -46,10 +46,14 @@
                                 <div class="float-right">
                                     <form action="{{ route('searchProduct') }}" method="get">
                                         <div class="input-group mb-3">
-                                            <input type="text" name="key" class="form-control" placeholder="Search"
-                                                aria-label="Search" required>
-                                            <button class="btn btn-outline-secondary" type="submit"><i
-                                                    class="fa fa-search"></i></button>
+                                            <input type="text" class="form-control" name="key" style="width: 280px;"
+                                                placeholder="Search by SKU or Description"
+                                                value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -92,15 +96,18 @@
                                                 <td>
                                                     <div class="btn-group">
                                                         <a href="#" class="btn btn-dark btn-sm" data-toggle="dropdown"
-                                                            role="button" aria-haspopup="true" aria-expanded="false"><i
+                                                            data-backdrop="static" data-keyboard="false" role="button"
+                                                            aria-haspopup="true" aria-expanded="false"><i
                                                                 class="fas fa-ellipsis-v"></i></a>
                                                         <div class="dropdown-menu">
                                                             <a class="btn dropdown-item btn-transfer"
+                                                                data-backdrop="static" data-keyboard="false"
                                                                 data-target="#transferModal" data-toggle="modal"
                                                                 data-sku="{{ $item->sku }}"
                                                                 data-desc="{{ $item->description }}"><i
-                                                                    class="fa fa-exchange-alt"></i> Transfer to Hub</a>
+                                                                    class="fa fa-exchange-alt"></i> Hub Transfer</a>
                                                             <a class="btn btn-edit open-modal dropdown-item"
+                                                                data-backdrop="static" data-keyboard="false"
                                                                 modal-type="update"
                                                                 data-info="{{ json_encode($item) }} "><i
                                                                     class="fa fa-edit"></i> Edit</a>

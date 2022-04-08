@@ -23,6 +23,22 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
+                            <div class="mt-3 mb-3">
+                                <div class="float-right">
+                                    <form action="{{ route('searchPickup') }}" method="get">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="key" style="width: 280px;"
+                                                placeholder="Search by Shipment ID or Order ID"
+                                                value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                             <table class="table table-borderless table-hover">
                                 <thead>
                                     <tr>
@@ -38,13 +54,13 @@
                                     @if (count($pickups))
                                         @foreach ($pickups as $item)
                                             <tr>
-                                                <td>{{ $item->shipmentId }}</td>
                                                 <td>{{ $item->orderId }}</td>
                                                 <td>{{ $item->batchId }}</td>
                                                 <td>
                                                     {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
                                                 </td>
-                                                <td>{{ $item->dateTimeSubmittedIso }}</td>
+                                                <td>{{ $item->hub }}</td>
+                                                <td>{{ Utils::formatDate($item->updated_at) }}</td>
                                                 <td>
                                                     <div class="btn-group">
                                                         <a href="#" class="btn btn-dark btn-sm" data-toggle="dropdown"
@@ -58,7 +74,10 @@
                                                                     class="fa fa-exchange-alt"></i> Pickup Details</a>
                                                             <a class="btn dropdown-item"
                                                                 data-orderId="{{ $item->orderId }}"><i
-                                                                    class="fa fa-print"></i> Generate Invoice</a>
+                                                                    class="fa fa-undo"></i> Return</a>
+                                                            <a class="btn dropdown-item"
+                                                                data-orderId="{{ $item->orderId }}"><i
+                                                                    class="fa fa-print"></i> Generate Receipt</a>
                                                         </div>
                                                     </div>
                                                 </td>

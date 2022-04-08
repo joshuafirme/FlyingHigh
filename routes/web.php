@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/hub/search', [HubController::class, 'search'])->name('searchHub');
     Route::resource('/hub', HubController::class);
 
+    Route::get('/pickup/search', [PickupController::class, 'search'])->name('searchPickup');
     Route::post('/pickup/tag-as-picked-up/{shipmentId}', [PickupController::class, 'tagAsPickedUp']);
     Route::get('/pickup', [PickupController::class, 'index']);
     Route::get('/fetch-pickup', [PickupController::class, 'fetchPickupData']);

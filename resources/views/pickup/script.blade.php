@@ -17,7 +17,9 @@
             let orderId = v.attr('data-orderId');
             let order_details = v.attr('data-order-details');
             order_details = JSON.parse(order_details);
+            console.log(order_details)
             $('#pickupModal').attr('shipmentId', order_details.shipmentId);
+            $('#shipmentId').text(order_details.shipmentId);
             $('#orderId').text(order_details.orderId);
             $('#contractDate').text(order_details.contractDate);
             $('#dateTimeSubmittedIso').text(order_details.dateTimeSubmittedIso);
@@ -39,6 +41,9 @@
                 .then(data => {
                     let html = "";
                     for (let item of data) {
+                        if (item.sku == null) {
+                            continue;
+                        }
                         let html = '<tr>';
                         html += '<td>' + item.sku + '</td>';
                         html += '<td>' + item.description + '</td>';
@@ -87,6 +92,45 @@
                         .fail(function() {
                             swalError('Error occured, please contact support!');
                             btn.html("Tag as Picked Up");
+                        });
+                }
+            })
+
+            return false;
+        });
+
+        $('.btn-tag-as-overdue').click(function(event) {
+            let shipmentId = $(this).attr('shipmentId');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to tag this Pick Up as Overdue?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                            type: 'POST',
+                            _token: '{{ csrf_token() }}',
+                            url: '/pickup/tag-as-overdue/' + shipmentId,
+                            data: $(this).serialize()
+                        })
+
+                        .done(function(data) {
+
+                            if (data.message == 'success') {
+                                swalSuccess('Product was successfully Tags as Overdue');
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1500);
+                            } else {
+                                swalError('Error occured, please contact support!');
+                            }
+                        })
+                        .fail(function() {
+                            swalError('Error occured, please contact support!');
                         });
                 }
             })

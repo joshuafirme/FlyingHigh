@@ -12,6 +12,7 @@ use App\Models\Transaction;
 use App\Models\TransactionLineItems;
 use Utils;
 use DB;
+use Cache;
 
 class ProductController extends Controller
 {
@@ -135,9 +136,19 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Product $product)
     {
-        Product::create($request->all());
+        if ($product->isSkuExists($request->sku)) {
+            return redirect()->back()->with('danger', 'SKU is already exists.');
+        }
+        Cache::forget('all_sku_cache');
+        $inputs = $request->all();
+        $inputs['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
+        $inputs['bundles'] = implode(',', $request->bundles);
+
+        $product->incrementBundleSKU($request->bundles, $request->qty);
+
+        Product::create($inputs);
         return redirect()->back()->with('success', 'Product was successfully added.');
     }
 
@@ -172,8 +183,11 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {   
-        $except_values = ['_token'];
-
+      //  return $request;
+        Cache::forget('all_sku_cache');
+        $except_values = ['_token','search_terms'];
+        $request['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
+        $request['bundles'] = implode(',', $request->bundles);
         Product::where('id',$id)->update($request->except($except_values));
         return redirect()->back()->with('success', 'Product was updated successfully.');
     }
@@ -186,6 +200,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        Cache::forget('all_sku_cache');
         if ($product->delete()) {
             return response()->json([
                 'status' =>  'success',

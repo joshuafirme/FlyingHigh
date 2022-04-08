@@ -19,6 +19,7 @@
 <!-- slick  -->
 <script src="{{ asset('js/slick.min.js') }}"></script>
 
+<script src="{{ asset('js/choices.min.js') }}"></script>
 
 </div>
 </body>

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TransactionController;
+use App\Http\Controllers\Api\ProductApi;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('transaction/{transNum}', [TransactionController::class, 'transaction']);
+Route::get('get-all-sku', [ProductApi::class, 'getAllSKU']);
