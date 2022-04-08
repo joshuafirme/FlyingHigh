@@ -5,31 +5,83 @@
             removeItemButton: true,
             placeholderValue: 'Choose SKU',
         });
-        async function initChoices(type, bundles = []) {
-            if ($('#choices-multiple-remove-button').length > 0) {
-                bundles_choices.setChoices(function() {
-                    return fetch(
-                            '/api/get-all-sku'
-                        )
-                        .then(function(response) {
-                            return response.json();
-                        })
-                        .then(function(data) {
-                            return data.map(function(v) {
-                                let is_selected = false;
-                                if (bundles != null && bundles.indexOf(v
-                                        .sku) != -1) {
-                                    is_selected = true;
-                                }
-                                return {
-                                    label: v.sku + ' | ' + v.description,
-                                    value: v.sku,
-                                    selected: is_selected
-                                };
-                            });
-                        });
-                })
+
+        const el_choices_multi_sku = document.getElementById('choices-multiple-sku');
+        const multi_sku = new Choices(el_choices_multi_sku, {
+            removeItemButton: true,
+            placeholderValue: 'Choose SKU',
+            delimiter: ',',
+            editItems: true,
+        });
+
+        el_choices_multi_sku.addEventListener(
+            'addItem',
+            function(event) {
+                let sku = event.detail.value
+                fetch("/api/get-qty/" + sku)
+                    .then(data => data.json())
+                    .then(maxQty => {
+                        console.log(maxQty)
+                        var html = '<div class="col-12 mt-3 input-' + event.detail
+                            .value + '">';
+                        html += '<p class="col-form-label label-' + sku +
+                            '">' + event.detail.label + '</p> <small>Current stock: ' +
+                            maxQty +
+                            '</small>';
+                        html +=
+                            '<input type="number" min="1" max="' + maxQty +
+                            '" class="form-control choices-text-remove-button" name="qty[]" type="text" required placeholder="Enter quantity">';
+                        html += '<input type="hidden" name="sku[]" value="' + sku + '"></div>';
+                        $('#multi-sku-input').append(html);
+                    })
+
+            },
+            false,
+        );
+
+        el_choices_multi_sku.addEventListener(
+            'removeItem',
+            function(event) {
+                $('.input-' + event.detail.value).remove();
+            },
+            false,
+        );
+
+        async function initChoices(element, bundles = []) {
+
+            if ($('#' + element).length > 0) {
+                if (element == 'choices-multiple-sku') {
+                    setChoices(multi_sku, bundles);
+                } else {
+                    setChoices(bundles_choices, bundles);
+                }
             }
+        }
+
+        function setChoices(object, bundles) {
+
+            object.setChoices(function() {
+                return fetch(
+                        '/api/get-all-sku'
+                    )
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        return data.map(function(v) {
+                            let is_selected = false;
+                            if (bundles != null && bundles.indexOf(v
+                                    .sku) != -1) {
+                                is_selected = true;
+                            }
+                            return {
+                                label: v.sku + ' | ' + v.description,
+                                value: v.sku,
+                                selected: is_selected
+                            };
+                        });
+                    });
+            })
         }
 
         function clearInputs() {
@@ -61,13 +113,13 @@
                 $('[name=status]').val(1);
                 modal.find('.modal-title').text('Create Product');
                 modal.find('form').attr('action', "{{ route('product.store') }}");
-                initChoices(modal_type);
+                initChoices('choices-multiple-remove-button');
             } else {
                 bundles_choices.clearStore();
                 modal.find('.modal-title').text('Update Product');
                 let data = JSON.parse($(this).attr('data-info'));
                 modal.find('form').attr('action', "/product/update/" + data.id);
-                initChoices(modal_type, data.bundles);
+                initChoices('choices-multiple-remove-button', data.bundles);
                 console.log(data)
                 for (var key of Object.keys(data)) {
                     if (key == 'expiration') {
@@ -86,6 +138,9 @@
                         }
                         continue;
                     }
+                    if (key == 'qty') {
+                        modal.find('[name=' + key + ']').prop('readonly', true);
+                    }
                     modal.find('[name=' + key + ']').val(data[key]);
                 }
             }
@@ -98,6 +153,102 @@
             let tm = $('#transferModal');
             tm.find('[name=sku]').val(sku);
             tm.find('[name=description]').val(description);
+        });
+
+        $('.btn-stock-adjustment').click(function() {
+            let v = $(this);
+            let sku = v.attr('data-sku');
+            let description = v.attr('data-desc');
+            let mdl = $('#stockAdjustmentModal');
+            mdl.find('[name=sku]').val(sku);
+            mdl.find('[name=description]').val(description);
+            mdl.find('[name=qty]').attr('max', qty);
+        });
+
+        $('.btn-bulk-transfer').click(function() {
+            multi_sku.clearStore();
+            initChoices('choices-multiple-sku');
+        });
+
+        $('#bulk-transfer-form').submit(function(event) {
+            let btn = $('#btn-bulk-transfer');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    btn.html("Please wait...");
+                    $.ajax({
+                            type: 'POST',
+                            url: "{{ url('/product/bulk-transfer') }}",
+                            data: $(this).serialize()
+                        })
+
+                        .done(function(data) {
+
+                            if (data.success && data.message == 'transfer_success') {
+                                swalSuccess('Products was transferred!');
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 2800);
+                            } else if (data.message == 'not_enough_stock') {
+                                swalError('Some of stocks are changed, please try again.');
+                            }
+                            btn.html("Transfer");
+                        })
+                        .fail(function() {
+                            swalError('Error occured, please contact dev team.');
+                            btn.html("Transfer");
+                        });
+                }
+            })
+
+            return false;
+        });
+
+        $('#stock-adjustment-form').submit(function(event) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#btn-adjust').html("Please wait...");
+                    $.ajax({
+                            type: 'POST',
+                            url: "{{ url('/product/adjust') }}",
+                            data: $(this).serialize()
+                        })
+
+                        .done(function(data) {
+
+                            if (data.message == 'success') {
+                                swalSuccess('Product stock was adjusted!');
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 2500);
+                            } else {
+                                swalError('Error occured, please contact dev team.');
+                            }
+                            $('#btn-adjust').html("Adjust");
+                        })
+                        .fail(function() {
+                            swalError('Error occured, please contact dev team.');
+                            $('#btn-adjust').html("Adjust");
+                        });
+                }
+            })
+
+            return false;
         });
 
         $('#transfer-form').submit(function(event) {

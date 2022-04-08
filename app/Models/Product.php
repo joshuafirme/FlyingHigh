@@ -26,7 +26,11 @@ class Product extends Model
     ];
 
     public function getAllSKU() {
-        return self::select('sku','description')->where('status', 1)->get();
+        return self::select('sku','description','qty')->where('status', 1)->get();
+    }
+
+    public function getQtyBySKU($sku) {
+        return self::where('sku', $sku)->value('qty');
     }
 
     public function isSkuExists($sku) {
@@ -44,8 +48,18 @@ class Product extends Model
     }
 
     public function incrementBundleSKU($bundles, $qty) {
-        foreach ($bundles as $sku) {
-            $this->incrementStock($sku, $qty);
+        if (count($bundles) > 0) {
+            foreach ($bundles as $sku) {
+                $this->incrementStock($sku, $qty);
+            }
+        }
+    }
+
+    public function decrementBundleSKU($bundles, $qty) {
+        if (count($bundles) > 0) {
+            foreach ($bundles as $sku) {
+                $this->decrementStock($sku, $qty);
+            }
         }
     }
 

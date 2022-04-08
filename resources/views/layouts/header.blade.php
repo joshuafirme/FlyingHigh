@@ -9,6 +9,7 @@
     <meta name="csrf-token" content="jtuZZgSJMUGRsEosBxyoHUrmkjJOR1E6CgJIGzpG" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="shortcut icon" href="">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/metismenu.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/slick.css') }}" rel="stylesheet" type="text/css">

@@ -118,6 +118,58 @@ class ProductController extends Controller
         ], 200);
     }
 
+    public function bulkTransfer(Request $request, Product $product, HubInventory $hub)
+    {
+        $all_sku = $request->sku;
+        $qty = $request->qty;
+        $hub_id = $request->hub_id;
+        $except_values = ['bundles', 'search_terms'];
+
+        if ($this->isAllStockEnough($all_sku, $qty, $product)) {
+
+            foreach ($all_sku as $key => $sku) {  
+                if ($product->hasStock($sku, $qty[$key])) {
+                    if ($hub->isSkuExistsInHub($sku, $hub_id)) {
+                        $hub->incrementStock($sku, $qty[$key], $hub_id);
+                    }
+                    else {
+                        HubInventory::create([
+                            'sku' => $sku,
+                            'stock' => $qty[$key],
+                            'hub_id' => $hub_id
+                        ]);
+                    }
+                    $product->decrementStock($sku, $qty[$key]);
+                   
+                }
+            }
+            return response()->json([
+                'success' =>  true,
+                'message' => 'transfer_success'
+            ], 200);
+        }
+        else {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'not_enough_stock'
+            ], 200);
+        }
+     
+    }
+
+    public function isAllStockEnough($all_sku, $qty, $product) {
+        $has_enough_stock = true;
+        foreach ($all_sku as $key => $sku) {  
+            if ($product->hasStock($sku, $qty[$key])) {
+                // enough stock, do nothing...
+            }
+            else {
+                $has_enough_stock = false;
+            }
+        }
+        return $has_enough_stock;
+    }
+
     public function search()
     {
         $key = isset(request()->key) ? request()->key : "";
@@ -145,33 +197,26 @@ class ProductController extends Controller
         $inputs = $request->all();
         $inputs['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
         $inputs['bundles'] = implode(',', $request->bundles);
-
+        
         $product->incrementBundleSKU($request->bundles, $request->qty);
 
         Product::create($inputs);
         return redirect()->back()->with('success', 'Product was successfully added.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+    public function adjustStock(Request $request, Product $product) {
+        $sku = $request->sku;
+        $qty = $request->qty;
+        if ($request->action == 'add') {
+            $product->incrementStock($sku, $qty);
+        }
+        else {
+            $product->decrementStock($sku, $qty);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json([
+            'message' => 'success'
+        ], 200);
     }
 
     /**
@@ -188,6 +233,7 @@ class ProductController extends Controller
         $except_values = ['_token','search_terms'];
         $request['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
         $request['bundles'] = implode(',', $request->bundles);
+        
         Product::where('id',$id)->update($request->except($except_values));
         return redirect()->back()->with('success', 'Product was updated successfully.');
     }

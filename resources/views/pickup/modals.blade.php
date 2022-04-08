@@ -11,12 +11,10 @@
             </div>
             <div class="modal-body row g-3">
                 <div class="col-12">
-                    <a href="#" data-div-name="print-invoice"
-                        class="btn btn-sm btn-info waves-effect waves-light section-print-btn float-right m-1"><i
+                    <a href="#" class="btn btn-sm btn-primary section-print-btn float-right m-1"><i
                             class="fa fa-print"></i>
                         <span>Print</span></a>
-                    <a href="#" class="btn btn-sm btn-success waves-effect waves-light float-right m-1"><i
-                            class="fa fa-download"></i>
+                    <a href="#" class="btn btn-sm btn-success float-right m-1"><i class="fa fa-download"></i>
                         <span>Download</span></a>
                 </div>
                 <div class="col-sm-6">

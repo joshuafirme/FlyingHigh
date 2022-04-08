@@ -100,7 +100,7 @@
         });
 
         $('.btn-tag-as-overdue').click(function(event) {
-            let shipmentId = $(this).attr('shipmentId');
+            let shipmentId = $(this).attr('data-shipmentId');
             Swal.fire({
                 title: 'Are you sure?',
                 text: "Do you want to tag this Pick Up as Overdue?",
@@ -113,9 +113,10 @@
                 if (result.isConfirmed) {
                     $.ajax({
                             type: 'POST',
-                            _token: '{{ csrf_token() }}',
                             url: '/pickup/tag-as-overdue/' + shipmentId,
-                            data: $(this).serialize()
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
                         })
 
                         .done(function(data) {

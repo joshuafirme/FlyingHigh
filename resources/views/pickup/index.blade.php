@@ -62,7 +62,13 @@
                                                     {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
                                                 </td>
                                                 <td>{{ $item->dateTimeSubmittedIso }}</td>
-                                                <td><span class="badge badge-pill badge-primary">Unclaimed</span></td>
+                                                <td>
+                                                    @if ($item->status == 1)
+                                                        <span class="badge badge-pill badge-primary">Unclaimed</span>
+                                                    @elseif ($item->status == 2)
+                                                        <span class="badge badge-pill badge-warning">Overdue</span>
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     <div class="btn-group">
                                                         <a href="#" class="btn btn-dark btn-sm" data-toggle="dropdown"
@@ -74,9 +80,11 @@
                                                                 data-orderId="{{ $item->orderId }}"
                                                                 data-order-details="{{ json_encode($item) }}"><i
                                                                     class="fa fa-exchange-alt"></i> Pickup Details</a>
-                                                            <a class="btn dropdown-item btn-tag-as-overdue"
-                                                                data-shipmentId="{{ $item->shipmentId }}"><i
-                                                                    class=" fa fa-clock"></i> Tag as Overdue</a>
+                                                            @if ($item->status == 1)
+                                                                <a class="btn dropdown-item btn-tag-as-overdue"
+                                                                    data-shipmentId="{{ $item->shipmentId }}"><i
+                                                                        class=" fa fa-clock"></i> Tag as Overdue</a>
+                                                            @endif
                                                             <a class="
                                                                     btn dropdown-item"
                                                                 data-orderId="{{ $item->orderId }}"><i

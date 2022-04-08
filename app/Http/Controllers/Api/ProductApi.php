@@ -24,4 +24,8 @@ class ProductApi extends Controller
             return $fresh_data;
         }
     }
+
+    public function getQtyBySKU($sku, Product $product) {
+        return $product->getQtyBySKU($sku);
+    }
 }

@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/hub', HubController::class);
 
     Route::get('/pickup/search', [PickupController::class, 'search'])->name('searchPickup');
+    Route::post('/pickup/tag-as-overdue/{shipmentId}', [PickupController::class, 'tagAsOverdue']);
     Route::post('/pickup/tag-as-picked-up/{shipmentId}', [PickupController::class, 'tagAsPickedUp']);
     Route::get('/pickup', [PickupController::class, 'index']);
     Route::get('/fetch-pickup', [PickupController::class, 'fetchPickupData']);
@@ -54,7 +55,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/product/api/import', [ProductController::class, 'importAPI'])->name('importAPI');
     Route::post('/product-import', [ProductController::class, 'importProduct'])->name('importProduct');
+    Route::post('/product/adjust', [ProductController::class, 'adjustStock']);
     Route::post('/product/transfer', [ProductController::class, 'transfer']);
+    Route::post('/product/bulk-transfer', [ProductController::class, 'bulkTransfer']);
     Route::post('/product/update/{id}', [ProductController::class, 'update']);
     Route::get('/product/search', [ProductController::class, 'search'])->name('searchProduct');
     Route::resource('/product', ProductController::class);

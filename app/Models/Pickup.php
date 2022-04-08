@@ -59,4 +59,11 @@ class Pickup extends Model
         ]);
     }
 
+    public function tagAsOverdue($shipmentId) {
+        self::where('shipmentId', $shipmentId)
+        ->update([
+            'status' => 2
+        ]);
+    }
+
 }

@@ -35,12 +35,17 @@
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary w-autos m-1" data-toggle="modal"
                                         data-target="#apiModal">
-                                        Import via API
+                                        Import Stock via API
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary w-autos m-1" data-toggle="modal"
                                         data-target="#importModal">
                                         Import Excel
                                     </button>
+                                    <button type="button" class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1"
+                                        data-toggle="modal" data-target="#bulkTransferModal">
+                                        Hub Transfer
+                                    </button>
+
                                 </div>
 
                                 <div class="float-right">
@@ -106,6 +111,13 @@
                                                                 data-sku="{{ $item->sku }}"
                                                                 data-desc="{{ $item->description }}"><i
                                                                     class="fa fa-exchange-alt"></i> Hub Transfer</a>
+                                                            <a class="btn btn-stock-adjustment dropdown-item"
+                                                                data-target="#stockAdjustmentModal" data-toggle="modal"
+                                                                data-sku="{{ $item->sku }}"
+                                                                data-desc="{{ $item->description }}"
+                                                                data-backdrop="static" data-keyboard="false"><i
+                                                                    class="fas fa-sort-amount-up"></i></i> Stock
+                                                                Adjustment</a>
                                                             <a class="btn btn-edit open-modal dropdown-item"
                                                                 data-backdrop="static" data-keyboard="false"
                                                                 modal-type="update"

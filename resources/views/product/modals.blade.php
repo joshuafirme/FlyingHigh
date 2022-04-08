@@ -143,7 +143,7 @@
         <form id="import-via-api-form" method="POST" class="modal-content">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title">Import Via API</h5>
+                <h5 class="modal-title">Import Stock Via API</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -165,6 +165,107 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-sm btn-primary" id="btn-api-import" type="submit">Import</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Stock Adjustment modal -->
+<div class="modal fade" id="stockAdjustmentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <form id="stock-adjustment-form" action="#" method="post" class="modal-content" autocomplete="off">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Stock Adjustment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row g-3">
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">SKU</label>
+                    <input type="text" class="form-control" name="sku" readonly>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">Description</label>
+                    <input type="text" class="form-control" name="description" readonly>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" class="form-control" name="qty" required>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-4 mt-2">
+                    <label class="col-form-label">Action</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="action" id="add" value="add" checked
+                            required>
+                        <label class="form-check-label" for="add">
+                            Add
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="action" id="less" value="less" required>
+                        <label class="form-check-label" for="less">
+                            Less
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">Remarks</label>
+                    <select class="form-control" name="remarks" required>
+                        <option selected disabled value="">Choose a remarks...</option>
+                        <option value="Physical count descrepancy">Physical count descrepancy</option>
+                        <option value="Damaged">Damaged</option>
+                        <option value="Owner used">Owner used</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-primary" id="btn-adjust" type="submit">Adjust</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Bulk Transfer modal -->
+<div class="modal fade" id="bulkTransferModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <form id="bulk-transfer-form" action="#" method="post" class="modal-content" autocomplete="off">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Bulk Hub Transfer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row g-3">
+                <div class="col-md-12 mt-2">
+                    <label class="col-form-label" for="choices-multiple-remove-button">SKU</label>
+                    <select class="form-control" name="bundles[]" id="choices-multiple-sku"
+                        placeholder="Select SKU bundle" required multiple>
+                    </select>
+                </div>
+                <div class="col-12 mt-3">
+                    <div id="multi-sku-input" class="pb-3 border rounded bg-light">
+
+                    </div>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label for="validationCustom04" class="form-label">Hub</label>
+                    <select class="form-control" name="hub_id" required>
+                        <option selected disabled value="">Choose...</option>
+                        @foreach ($hubs as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-primary" id="btn-bulk-transfer" type="submit">Transfer</button>
             </div>
         </form>
     </div>

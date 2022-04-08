@@ -132,4 +132,13 @@ class PickupController extends Controller
             'message' => 'success'
         ], 200);
     }
+
+    public function tagAsOverDue($shipmentId, Pickup $pickup)
+    {
+        $pickup->tagAsOverDue($shipmentId);
+
+        return response()->json([
+            'message' => 'success'
+        ], 200);
+    }
 }

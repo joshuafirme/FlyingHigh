@@ -92,7 +92,10 @@
                                 Pick-up</a>
                         </li>
                         <li>
-                            <a href="{{ url('pickedup-list') }}">Picked-up List</a>
+                            <a href="{{ url('pickedup-list') }}">Picked-up</a>
+                        </li>
+                        <li>
+                            <a href="#">Returned</a>
                         </li>
                     </ul>
                 </li>
@@ -144,32 +147,10 @@
                 </a>
             </li>
 
-            <li>
-                <a href="#" class=""><i class="flaticon-expenses"></i><span>
-                        Sale Return
-                        <span class="float-right menu-arrow">
-                            <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="10 15 15 20 20 15"></polyline>
-                                <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                            </svg>
-                        </span>
-                    </span></a>
-                <ul class="submenu">
-                    <li class="">
-                        <a href="https://clanvent-alpha.laravel-script.com/admin/sales-return-create">Sale
-                            Return</a>
-                    </li>
-                    <li>
-                        <a href="https://clanvent-alpha.laravel-script.com/admin/sales-return">Sale Return List</a>
-                    </li>
-                </ul>
-            </li>
-
 
             <li>
-                <a href="#" class=""><i class="flaticon-report"></i><span>
+                <a href="#" class=""><img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAAv0lEQVRIie2VQQrCQAxFnyLSrXSlV9ETWG+jB2hBBPVaehXP0HZTF0UYh7TppBRdzIcwMMnPnyQwgT/BASiBRrASyEITXoBKSJZ3xOdCbAWc3aC5RzoCa2DmWKE8rPDiN8Cpj9A4p7USN48q8kFG/0z2Cn+QSAhEvj+TSbBQ/DtgK9xfPf8TeFhFEmA1wJ8oeb4wyUxiu4L4sV1B/NiuIP7PP0hrNapIDaS0a9SKlHbPd4rcgRewHCFSA7cRfBvevSlTJctzIg0AAAAASUVORK5CYII=" /><span>
                         Reports
                         <span class="float-right menu-arrow">
                             <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
@@ -202,7 +183,9 @@
 
             <li>
                 <a href="https://clanvent-alpha.laravel-script.com/admin/system-settings" class="">
-                    <i class="ti-settings"></i><span> Settings </span>
+                    <img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAACJUlEQVRIic3WS0tVURQH8F/ZxEzT6DGIsmkgRgTRMKg0sIeGkGlfohqIRJNGBRLpIHsRhWWTIHFQYdZ3CKMHFaQOokGPSc9Bt8HeN4/be+61gugPh7PPWv+11t57rb324T9DDwrx+YH2hRou/o0gW3EMi3AC2/4mSDUuoyORb8STOJ5EU6Jvx6VoXxbVGMdtvMQFNKAL77Eu8jbgHTpRhyG8wmi0LxvoPMZQhVpcwzeMoDXhtuFW1A/HYFXRfqhckFZMoT4jayhngJUJdwotFWwM4kYlUg5u4uxCiPX4av4KlqIbvTiEmkS/JtotSx1WlQjSie9CHopoxgM04gt24SQe4m3kfMKW+H5aavY9wjZN4CN2JCt4HmefRTeemVtJ+4QqvI+ByPmFAo4KCVtbwtm9UjMTyrUrka3HbuHgFtIgeehDf46uP+rzUIAlmY8+PMYjTGeIr7E9x0kzriSyxihvkky+HadxV9jTnRldDWYk+yvkcVrIWRH7hU5wJ/rLbaKHcT2RbRKSPI4z8T2NzQlvFAfyHGfRILSK+kReLSS5FweTFcBq4ZzULSTIRVxdCLEEhnGuEqkDL4TmWMSKCjarMuM6oXvPyUV6n7QJFfZZ2K4RvBF6Ul4Xnon6euG0T2JPuVkV75MxoZsOYLlw2j+YPaiNZu+T2sibinYV75NioCHz2/VEZjV7hTLNoiXaVQxQDoM4EsfHcepvnOXhj/9W/gl+AsJEdt3m8MrEAAAAAElFTkSuQmCC" /><span>
+                        Settings </span>
                 </a>
             </li>
 
