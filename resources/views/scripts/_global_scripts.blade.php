@@ -24,6 +24,18 @@
 <script>
     $(function() {
         'use strict'
+        enlarge();
+        $(window).on("resize", function(event) {
+            enlarge();
+        });
+
+        function enlarge() {
+            if ($(document).width() < 1220) {
+                $('body').addClass('enlarged');
+            } else {
+                $('body').removeClass('enlarged');
+            }
+        }
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

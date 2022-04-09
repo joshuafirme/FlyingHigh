@@ -23,65 +23,65 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-borderless table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">SKU</th>
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Stock</th>
-                                        <th scope="col">Buffer Stock</th>
-                                        <th scope="col">JTE lot code</th>
-                                        <th scope="col">Supplier lot code</th>
-                                        <th scope="col">Expiration</th>
-                                        <th scope="col">Created at</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (count($products))
-                                        @foreach ($products as $item)
-                                            <tr id="record-id-{{ $item->id }}">
-                                                <td>{{ $item->sku }}</td>
-                                                <td>{{ $item->description }}</td>
-                                                <td>{{ $item->stock }}</td>
-                                                <td>{{ $item->buffer_stock }}</td>
-                                                <td>{{ $item->jde_lot_code ? $item->jde_lot_code : 'N/A' }}</td>
-                                                <td>{{ $item->supplier_lot_code ? $item->supplier_lot_code : 'N/A' }}
-                                                <td>{{ $item->expiration }}</td>
-                                                <td>{{ Utils::formatDate($item->created_at) }}</td>
-                                                <td>
-                                                    <div class="btn-group">
-                                                        <a href="#" class="btn btn-dark btn-sm" data-toggle="dropdown"
-                                                            role="button" aria-haspopup="true" aria-expanded="false"><i
-                                                                class="fas fa-ellipsis-v"></i></a>
-                                                        <div class="dropdown-menu">
-                                                            <a class="btn dropdown-item btn-pickup"
-                                                                data-target="#pickupModal" data-toggle="modal"
-                                                                data-sku="{{ $item->sku }}"
-                                                                data-desc="{{ $item->description }}"><i
-                                                                    class="fa fa-exchange-alt"></i> Pick-ups</a>
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">SKU</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Stock</th>
+                                            <th scope="col">Buffer Stock</th>
+                                            <th scope="col">Expiration</th>
+                                            <th scope="col">Created at</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (count($products))
+                                            @foreach ($products as $item)
+                                                <tr id="record-id-{{ $item->id }}">
+                                                    <td>{{ $item->sku }}</td>
+                                                    <td>{{ $item->description }}</td>
+                                                    <td>{{ $item->stock }}</td>
+                                                    <td>{{ $item->buffer_stock }}</td>
+                                                    <td>{{ $item->expiration ? $item->expiration : 'N/A' }}</td>
+                                                    <td>{{ Utils::formatDate($item->created_at) }}</td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <a href="#" class="btn btn-dark btn-sm"
+                                                                data-toggle="dropdown" role="button"
+                                                                aria-haspopup="true" aria-expanded="false"><i
+                                                                    class="fas fa-ellipsis-v"></i></a>
+                                                            <div class="dropdown-menu">
+                                                                <a class="btn dropdown-item btn-pickup"
+                                                                    data-target="#pickupModal" data-toggle="modal"
+                                                                    data-sku="{{ $item->sku }}"
+                                                                    data-desc="{{ $item->description }}"><i
+                                                                        class="fa fa-exchange-alt"></i> Pick-ups</a>
+                                                            </div>
                                                         </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="10">
+                                                    <div class="alert alert-danger alert-dismissible fade show"
+                                                        role="alert">
+                                                        No data found.
+                                                        <button type="button" class="close"
+                                                            data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="10">
-                                                <div class="alert alert-danger alert-dismissible fade show"
-                                                    role="alert">
-                                                    No data found.
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endif
+                                        @endif
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
+
                             @php
                                 echo $products->links('pagination::bootstrap-4');
                             @endphp

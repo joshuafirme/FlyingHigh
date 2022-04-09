@@ -28,27 +28,29 @@
 
                                 @include('layouts.alerts')
 
-                                <div class="d-flex">
+                                <div class="row d-flex mb-3 mb-sm-3">
                                     <button type="button" id="btn-create"
-                                        class="btn btn-sm btn-primary w-auto open-modal m-1" modal-type="create">
+                                        class="btn btn-sm btn-primary w-auto open-modal m-1 col-12 col-sm-auto"
+                                        modal-type="create">
                                         <i class="fa fa-plus"></i> Create
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-primary w-autos m-1" data-toggle="modal"
-                                        data-target="#apiModal">
+                                    <button type="button" class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
+                                        data-toggle="modal" data-target="#apiModal">
                                         Import Stock via API
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-primary w-autos m-1" data-toggle="modal"
-                                        data-target="#importModal">
+                                    <button type="button" class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
+                                        data-toggle="modal" data-target="#importModal">
                                         Import Excel
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1"
+                                    <button type="button"
+                                        class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto"
                                         data-toggle="modal" data-target="#bulkTransferModal">
                                         Hub Transfer
                                     </button>
 
                                 </div>
 
-                                <div class="float-right">
+                                <div class="float-sm-right float-none">
                                     <form action="{{ route('searchProduct') }}" method="get">
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control" name="key" style="width: 280px;"
@@ -71,8 +73,6 @@
                                             <th scope="col">Description</th>
                                             <th scope="col">Stock</th>
                                             <th scope="col">Buffer Stock</th>
-                                            <th scope="col">JTE lot code</th>
-                                            <th scope="col">Supplier Lot code</th>
                                             <th scope="col">Expiration</th>
                                             <th scope="col">Status</th>
                                             <th scope="col">Created at</th>
@@ -87,10 +87,8 @@
                                                     <td>{{ $item->description }}</td>
                                                     <td>{{ $item->qty }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
-                                                    <td>{{ $item->jde_lot_code ? $item->jde_lot_code : 'N/A' }}</td>
-                                                    <td>{{ $item->supplier_lot_code ? $item->supplier_lot_code : 'N/A' }}
                                                     </td>
-                                                    <td>{{ $item->expiration }}</td>
+                                                    <td>{{ $item->expiration ? $item->expiration : 'N/A' }}</td>
                                                     <td>@php
                                                         if ($item->status == 1) {
                                                             echo '<span class="badge rounded-pill bg-success">Active</span>';
