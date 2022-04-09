@@ -55,7 +55,7 @@
                 <div class="col-sm-12 col-md-12 mt-2 d-none bundle-choices">
                     <label class="col-form-label" for="choices-multiple-remove-button">SKU Bundles</label>
                     <select class="form-control" name="bundles[]" id="choices-multiple-remove-button"
-                        placeholder="Select SKU bundle" required multiple>
+                        placeholder="Select SKU bundle" multiple>
                     </select>
                 </div>
             </div>

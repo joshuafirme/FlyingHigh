@@ -196,7 +196,9 @@ class ProductController extends Controller
         Cache::forget('all_sku_cache');
         $inputs = $request->all();
         $inputs['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
-        $inputs['bundles'] = implode(',', $request->bundles);
+       
+        $bundles = isset($request->bundles) ? implode(',', $request->bundles) : [];
+        $request['bundles'] = $bundles;
         
         $product->incrementBundleSKU($request->bundles, $request->qty);
 
@@ -232,7 +234,8 @@ class ProductController extends Controller
         Cache::forget('all_sku_cache');
         $except_values = ['_token','search_terms'];
         $request['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
-        $request['bundles'] = implode(',', $request->bundles);
+        $bundles = isset($request->bundles) ? implode(',', $request->bundles) : [];
+        $request['bundles'] = $bundles;
         
         Product::where('id',$id)->update($request->except($except_values));
         return redirect()->back()->with('success', 'Product was updated successfully.');

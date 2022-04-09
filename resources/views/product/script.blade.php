@@ -128,8 +128,10 @@
                     if (key == 'has_bundle') {
                         if (data[key] == 1) {
                             modal.find('[name=' + key + ']').prop('checked', true);
+                            $('#choices-multiple-remove-button').prop('required', true);
                         } else {
                             modal.find('[name=' + key + ']').prop('checked', false);
+                            $('#choices-multiple-remove-button').prop('required', false);
                         }
                         if ($('[name=' + key + ']').is(':checked')) {
                             $('.bundle-choices').removeClass('d-none');
@@ -367,8 +369,10 @@
         $('#has_bundle').click(function(e) {
             if ($(this).is(':checked')) {
                 $('.bundle-choices').removeClass('d-none');
+                $('#choices-multiple-remove-button').prop('required', true);
             } else {
                 $('.bundle-choices').addClass('d-none');
+                $('#choices-multiple-remove-button').prop('required', false);
             }
         });
 
