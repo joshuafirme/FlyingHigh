@@ -43,7 +43,7 @@ class HubController extends Controller
         $key = isset(request()->key) ? request()->key : "";
         $hubs = Hub::where('name', 'LIKE', '%' . $key . '%')
                     ->orWhere('email', 'LIKE', '%' . $key . '%')
-                    ->paginate(5);
+                    ->paginate(10);
         $page_title = "Hubs";
         return view('hub.index', compact('page_title', 'hubs'));
     }

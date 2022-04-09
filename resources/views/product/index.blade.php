@@ -63,98 +63,102 @@
                                     </form>
                                 </div>
                             </div>
-                            <table class="table table-borderless table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">SKU</th>
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Stock</th>
-                                        <th scope="col">Buffer Stock</th>
-                                        <th scope="col">JTE lot code</th>
-                                        <th scope="col">Supplier Lot code</th>
-                                        <th scope="col">Expiration</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Created at</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (count($products))
-                                        @foreach ($products as $item)
-                                            <tr id="record-id-{{ $item->id }}">
-                                                <td>{{ $item->sku }}</td>
-                                                <td>{{ $item->description }}</td>
-                                                <td>{{ $item->qty }}</td>
-                                                <td>{{ $item->buffer_stock }}</td>
-                                                <td>{{ $item->jde_lot_code ? $item->jde_lot_code : 'N/A' }}</td>
-                                                <td>{{ $item->supplier_lot_code ? $item->supplier_lot_code : 'N/A' }}
-                                                </td>
-                                                <td>{{ $item->expiration }}</td>
-                                                <td>@php
-                                                    if ($item->status == 1) {
-                                                        echo '<span class="badge rounded-pill bg-success">Active</span>';
-                                                    } elseif ($item->status == 0) {
-                                                        echo '<span class="badge rounded-pill bg-danger">Inactive</span>';
-                                                    }
-                                                @endphp</td>
-                                                <td>{{ Utils::formatDate($item->created_at) }}</td>
-                                                <td>
-                                                    <div class="btn-group">
-                                                        <a href="#" class="btn btn-dark btn-sm" data-toggle="dropdown"
-                                                            data-backdrop="static" data-keyboard="false" role="button"
-                                                            aria-haspopup="true" aria-expanded="false"><i
-                                                                class="fas fa-ellipsis-v"></i></a>
-                                                        <div class="dropdown-menu">
-                                                            <a class="btn dropdown-item btn-transfer"
-                                                                data-backdrop="static" data-keyboard="false"
-                                                                data-target="#transferModal" data-toggle="modal"
-                                                                data-sku="{{ $item->sku }}"
-                                                                data-desc="{{ $item->description }}"><i
-                                                                    class="fa fa-exchange-alt"></i> Hub Transfer</a>
-                                                            <a class="btn btn-stock-adjustment dropdown-item"
-                                                                data-target="#stockAdjustmentModal" data-toggle="modal"
-                                                                data-sku="{{ $item->sku }}"
-                                                                data-desc="{{ $item->description }}"
-                                                                data-backdrop="static" data-keyboard="false"><i
-                                                                    class="fas fa-sort-amount-up"></i></i> Stock
-                                                                Adjustment</a>
-                                                            <a class="btn btn-edit open-modal dropdown-item"
-                                                                data-backdrop="static" data-keyboard="false"
-                                                                modal-type="update"
-                                                                data-info="{{ json_encode($item) }} "><i
-                                                                    class="fa fa-edit"></i> Edit</a>
-                                                            @if ($item->role != 'Admin')
-                                                                <a class="btn delete-record dropdown-item"
-                                                                    data-id="{{ $item->id }}" object="product"
-                                                                    data-toggle="modal"
-                                                                    data-target="#delete-record-modal">
-                                                                    <i class="fa fa-trash" style="color: red;">
-                                                                        Delete</i>
-                                                                </a>
-                                                            @endif
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">SKU</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Stock</th>
+                                            <th scope="col">Buffer Stock</th>
+                                            <th scope="col">JTE lot code</th>
+                                            <th scope="col">Supplier Lot code</th>
+                                            <th scope="col">Expiration</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Created at</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (count($products))
+                                            @foreach ($products as $item)
+                                                <tr id="record-id-{{ $item->id }}">
+                                                    <td>{{ $item->sku }}</td>
+                                                    <td>{{ $item->description }}</td>
+                                                    <td>{{ $item->qty }}</td>
+                                                    <td>{{ $item->buffer_stock }}</td>
+                                                    <td>{{ $item->jde_lot_code ? $item->jde_lot_code : 'N/A' }}</td>
+                                                    <td>{{ $item->supplier_lot_code ? $item->supplier_lot_code : 'N/A' }}
+                                                    </td>
+                                                    <td>{{ $item->expiration }}</td>
+                                                    <td>@php
+                                                        if ($item->status == 1) {
+                                                            echo '<span class="badge rounded-pill bg-success">Active</span>';
+                                                        } elseif ($item->status == 0) {
+                                                            echo '<span class="badge rounded-pill bg-danger">Inactive</span>';
+                                                        }
+                                                    @endphp</td>
+                                                    <td>{{ Utils::formatDate($item->created_at) }}</td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <a href="#" class="btn btn-dark btn-sm"
+                                                                data-toggle="dropdown" data-backdrop="static"
+                                                                data-keyboard="false" role="button" aria-haspopup="true"
+                                                                aria-expanded="false"><i
+                                                                    class="fas fa-ellipsis-v"></i></a>
+                                                            <div class="dropdown-menu">
+                                                                <a class="btn dropdown-item btn-transfer"
+                                                                    data-backdrop="static" data-keyboard="false"
+                                                                    data-target="#transferModal" data-toggle="modal"
+                                                                    data-sku="{{ $item->sku }}"
+                                                                    data-desc="{{ $item->description }}"><i
+                                                                        class="fa fa-exchange-alt"></i> Hub Transfer</a>
+                                                                <a class="btn btn-stock-adjustment dropdown-item"
+                                                                    data-target="#stockAdjustmentModal"
+                                                                    data-toggle="modal" data-sku="{{ $item->sku }}"
+                                                                    data-desc="{{ $item->description }}"
+                                                                    data-backdrop="static" data-keyboard="false"><i
+                                                                        class="fas fa-sort-amount-up"></i></i> Stock
+                                                                    Adjustment</a>
+                                                                <a class="btn btn-edit open-modal dropdown-item"
+                                                                    data-backdrop="static" data-keyboard="false"
+                                                                    modal-type="update"
+                                                                    data-info="{{ json_encode($item) }} "><i
+                                                                        class="fa fa-edit"></i> Edit</a>
+                                                                @if ($item->role != 'Admin')
+                                                                    <a class="btn delete-record dropdown-item"
+                                                                        data-id="{{ $item->id }}" object="product"
+                                                                        data-toggle="modal"
+                                                                        data-target="#delete-record-modal">
+                                                                        <i class="fa fa-trash" style="color: red;">
+                                                                            Delete</i>
+                                                                    </a>
+                                                                @endif
 
+                                                            </div>
                                                         </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="10">
+                                                    <div class="alert alert-danger alert-dismissible fade show"
+                                                        role="alert">
+                                                        No data found.
+                                                        <button type="button" class="close"
+                                                            data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="10">
-                                                <div class="alert alert-danger alert-dismissible fade show"
-                                                    role="alert">
-                                                    No data found.
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endif
+                                        @endif
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
+
                             @php
                                 echo $products->links('pagination::bootstrap-4');
                             @endphp

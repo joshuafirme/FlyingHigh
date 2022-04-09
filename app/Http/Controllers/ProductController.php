@@ -17,7 +17,7 @@ use Cache;
 class ProductController extends Controller
 {
     public function index() {
-        $products = Product::paginate(20);
+        $products = Product::paginate(10);
         $product_count = Product::count('id');
         $hubs = Hub::where('status', 1)->get();
         $page_title = "products";

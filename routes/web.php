@@ -44,7 +44,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/pickup/tag-as-overdue/{shipmentId}', [PickupController::class, 'tagAsOverdue']);
     Route::post('/pickup/tag-as-picked-up/{shipmentId}', [PickupController::class, 'tagAsPickedUp']);
     Route::get('/pickup', [PickupController::class, 'index']);
-    Route::get('/fetch-pickup', [PickupController::class, 'fetchPickupData']);
     Route::get('/get-line-items/{orderId}', [PickupController::class, 'getLineItems']);
 
     Route::get('/pickedup-list', [PickupController::class, 'pickedUpList']);
@@ -65,6 +64,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
+Route::get('/fetch-pickup', [PickupController::class, 'fetchPickupData']);
 
 
 Auth::routes(['register' => false]);
