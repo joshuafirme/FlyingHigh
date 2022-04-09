@@ -152,7 +152,7 @@
                 <div class="col-md-12 mt-3">
                     <label class="form-label">API Endpoint</label>
                     <input type="text" class="form-control" name="api_endpoint" required
-                        value="http://127.0.0.1:8000/purchase_order.json">
+                        value="{{ env('APP_URL') }}/purchase_order.json">
                 </div>
                 <div class="col-md-12 mt-3">
                     <button class="btn btn-sm btn-primary" type="button" id="btn-fetch">Fetch</button>
