@@ -63,7 +63,7 @@
                                                 </td>
                                                 <td>{{ $item->dateTimeSubmittedIso }}</td>
                                                 <td>
-                                                    @if ($item->status == 1)
+                                                    @if ($item->status == 0)
                                                         <span class="badge badge-pill badge-primary">Unclaimed</span>
                                                     @elseif ($item->status == 2)
                                                         <span class="badge badge-pill badge-warning">Overdue</span>
