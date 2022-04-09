@@ -30,8 +30,17 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 | into the script here so we don't need to manually load our classes.
 |
 */
+$whitelist = array(
+    '127.0.0.1',
+    '::1'
+);
 
-require __DIR__.'/../vendor/autoload.php';
+if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+    require __DIR__.'/../public_html/vendor/autoload.php';
+}
+else {
+    require __DIR__.'/../vendor/autoload.php';
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +53,12 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/../bootstrap/app.php';
+if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+    $app = require_once __DIR__.'/../public_html/bootstrap/app.php';
+}
+else {
+    $app = require_once __DIR__.'/../bootstrap/app.php';
+}
 
 $kernel = $app->make(Kernel::class);
 
