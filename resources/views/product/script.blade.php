@@ -167,6 +167,7 @@
 
         $('.btn-bulk-transfer').click(function() {
             multi_sku.clearStore();
+            $('#multi-sku-input').html('');
             initChoices('choices-multiple-sku');
         });
 
