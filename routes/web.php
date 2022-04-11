@@ -8,6 +8,7 @@ use App\Http\Controllers\HubController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PickupController;
+use App\Http\Controllers\AdjustmentRemarksController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,6 +40,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/hub/update/{id}', [HubController::class, 'update']);
     Route::get('/hub/search', [HubController::class, 'search'])->name('searchHub');
     Route::resource('/hub', HubController::class);
+
+    Route::post('/adjustment-remarks/delete/{id}', [AdjustmentRemarksController::class, 'delete']);
+    Route::post('/adjustment-remarks/update/{id}', [AdjustmentRemarksController::class, 'update']);
+    Route::get('/adjustment-remarks/search', [AdjustmentRemarksController::class, 'search'])->name('searchRemarks');
+    Route::resource('adjustment-remarks', AdjustmentRemarksController::class);
 
     Route::get('/pickup/search', [PickupController::class, 'search'])->name('searchPickup');
     Route::post('/pickup/tag-as-overdue/{shipmentId}', [PickupController::class, 'tagAsOverdue']);

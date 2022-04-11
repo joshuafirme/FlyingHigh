@@ -213,11 +213,11 @@
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Remarks</label>
-                    <select class="form-control" name="remarks" required>
+                    <select class="form-control" name="remarks_id" required>
                         <option selected disabled value="">Choose a remarks...</option>
-                        <option value="Physical count descrepancy">Physical count descrepancy</option>
-                        <option value="Damaged">Damaged</option>
-                        <option value="Owner used">Owner used</option>
+                        @foreach ($remarks as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
@@ -230,13 +230,13 @@
 </div>
 
 
-<!-- Bulk Transfer modal -->
+<!-- Transfer modal -->
 <div class="modal fade" id="bulkTransferModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <form id="bulk-transfer-form" action="#" method="post" class="modal-content" autocomplete="off">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title">Bulk Hub Transfer</h5>
+                <h5 class="modal-title">Hub Transfer</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -249,18 +249,17 @@
                     </select>
                 </div>
                 <div class="col-12 mt-3">
-                    <div id="multi-sku-input" class="pb-3 border rounded bg-light">
+                    <table class="table pb-3">
+                        <thead>
+                            <th scope="col">SKU</th>
+                            <th scope="col">Stock</th>
+                            <th scope="col">Qty to transfer</th>
+                            <th scope="col">Hub</th>
+                        </thead>
+                        <tbody id="inputs-container">
 
-                    </div>
-                </div>
-                <div class="col-md-12 mt-3">
-                    <label for="validationCustom04" class="form-label">Hub</label>
-                    <select class="form-control" name="hub_id" required>
-                        <option selected disabled value="">Choose...</option>
-                        @foreach ($hubs as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                        @endforeach
-                    </select>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="modal-footer">

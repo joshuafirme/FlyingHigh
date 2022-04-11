@@ -34,6 +34,8 @@
                         </li>
                         <li class=""><a href="{{ url('role') }}">Roles</a></li>
                         <li class=""><a href="{{ url('/hub') }}">Hub</a></li>
+                        <li class=""><a href="{{ url('/adjustment-remarks') }}">Adjustment Remarks</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -163,19 +165,10 @@
                     </span></a>
                 <ul class="submenu">
                     <li>
-                        <a href="{{ url('/reports/hub-transfer') }}">Hub Transfer
-                            Report</a>
+                        <a href="{{ url('/reports/hub-transfer') }}">Hub Transfer</a>
                     </li>
                     <li>
-                        <a href="https://clanvent-alpha.laravel-script.com/admin/reports/sales">Sales Report</a>
-                    </li>
-                    <li>
-                        <a href="https://clanvent-alpha.laravel-script.com/admin/reports/purchases">Purchases
-                            Report</a>
-                    </li>
-                    <li>
-                        <a href="https://clanvent-alpha.laravel-script.com/admin/reports/payments">Payments
-                            Report</a>
+                        <a href="{{ url('/reports/hub-transfer') }}">Stock Adjustment</a>
                     </li>
 
                 </ul>

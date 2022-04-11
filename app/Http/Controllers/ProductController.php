@@ -10,6 +10,8 @@ use App\Models\Hub;
 use App\Models\HubInventory;
 use App\Models\Transaction;
 use App\Models\TransactionLineItems;
+use App\Models\AdjustmentRemarks;
+use App\Models\StockAdjustment;
 use Utils;
 use DB;
 use Cache;
@@ -18,10 +20,10 @@ class ProductController extends Controller
 {
     public function index() {
         $products = Product::paginate(10);
+        $remarks = AdjustmentRemarks::where('status', 1)->get();
         $product_count = Product::count('id');
         $hubs = Hub::where('status', 1)->get();
-        $page_title = "products";
-        return view('product.index', compact('page_title', 'products', 'hubs', 'product_count'));
+        return view('product.index', compact('remarks', 'products', 'hubs', 'product_count'));
     }
 
     public function importAPI(Request $request, Transaction $trans, Product $product) 
@@ -129,14 +131,14 @@ class ProductController extends Controller
 
             foreach ($all_sku as $key => $sku) {  
                 if ($product->hasStock($sku, $qty[$key])) {
-                    if ($hub->isSkuExistsInHub($sku, $hub_id)) {
-                        $hub->incrementStock($sku, $qty[$key], $hub_id);
+                    if ($hub->isSkuExistsInHub($sku, $hub_id[$key])) {
+                        $hub->incrementStock($sku, $qty[$key], $hub_id[$key]);
                     }
                     else {
                         HubInventory::create([
                             'sku' => $sku,
                             'stock' => $qty[$key],
-                            'hub_id' => $hub_id
+                            'hub_id' => $hub_id[$key]
                         ]);
                     }
                     $product->decrementStock($sku, $qty[$key]);
@@ -206,15 +208,19 @@ class ProductController extends Controller
         return redirect()->back()->with('success', 'Product was successfully added.');
     }
 
-    public function adjustStock(Request $request, Product $product) {
+    public function adjustStock(Request $request, Product $product, StockAdjustment $stock_adjustment) {
         $sku = $request->sku;
         $qty = $request->qty;
-        if ($request->action == 'add') {
+        $action = $request->action;
+ 
+        if ($action == 'add') {
             $product->incrementStock($sku, $qty);
         }
         else {
             $product->decrementStock($sku, $qty);
         }
+
+        $stock_adjustment->record($sku, $qty, $action, $request->remarks_id);
 
         return response()->json([
             'message' => 'success'

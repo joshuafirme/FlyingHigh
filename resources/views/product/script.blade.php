@@ -13,26 +13,39 @@
             delimiter: ',',
             editItems: true,
         });
-
+        var counter = 1;
         el_choices_multi_sku.addEventListener(
             'addItem',
-            function(event) {
+            function(event) { 
                 let sku = event.detail.value
                 fetch("/api/get-qty/" + sku)
                     .then(data => data.json())
-                    .then(maxQty => {
+                    .then(maxQty => { 
                         console.log(maxQty)
-                        var html = '<div class="col-12 mt-3 input-' + event.detail
-                            .value + '">';
-                        html += '<p class="col-form-label label-' + sku +
-                            '">' + event.detail.label + '</p> <small>Current stock: ' +
-                            maxQty +
-                            '</small>';
+                        var html = '';
+                        html += '<tr id="'+event.detail.value+'">';
+                        html += '<td>';
+                        html += event.detail.label;
+                        html += '<input type="hidden" class="form-control" name="sku[]" value="' + sku +
+                            '">';
+                        html += '</td>';
+                        html += '<td>' + maxQty + '</td>';
+                        html += '<td>';
                         html +=
-                            '<input type="number" min="1" max="' + maxQty +
-                            '" class="form-control choices-text-remove-button" name="qty[]" type="text" required placeholder="Enter quantity">';
-                        html += '<input type="hidden" name="sku[]" value="' + sku + '"></div>';
-                        $('#multi-sku-input').append(html);
+                            '<input type="number" class="form-control" name="qty[]" required max="' +
+                            maxQty + '" min="1">';
+                        html += '</td>';
+
+                        html += '<td>';
+                        html += '<select class="form-control" name="hub_id[]" required>';
+                        html += '<option selected disabled value="">Choose Hub...</option>';
+                        html += '@foreach ($hubs as $item)';
+                        html += ' <option value="{{ $item->id }}">{{ $item->name }}</option>';
+                        html += ' @endforeach ';
+                        html += '</select>';
+                        html += '</td>';
+                        html += '</tr>';
+                        $('#inputs-container').append(html);
                     })
 
             },
@@ -42,7 +55,7 @@
         el_choices_multi_sku.addEventListener(
             'removeItem',
             function(event) {
-                $('.input-' + event.detail.value).remove();
+                $('#' + event.detail.value).remove();
             },
             false,
         );
@@ -164,12 +177,11 @@
             let mdl = $('#stockAdjustmentModal');
             mdl.find('[name=sku]').val(sku);
             mdl.find('[name=description]').val(description);
-            mdl.find('[name=qty]').attr('max', qty);
         });
 
         $('.btn-bulk-transfer').click(function() {
             multi_sku.clearStore();
-            $('#multi-sku-input').html('');
+            $('#inputs-container').html('');
             initChoices('choices-multiple-sku');
         });
 

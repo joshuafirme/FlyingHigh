@@ -20,7 +20,6 @@
     </div>
 </div>
 
-<!-- Delete script -->
 <script>
     $(function() {
         'use strict'
