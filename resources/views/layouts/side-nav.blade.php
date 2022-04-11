@@ -168,7 +168,7 @@
                         <a href="{{ url('/reports/hub-transfer') }}">Hub Transfer</a>
                     </li>
                     <li>
-                        <a href="{{ url('/reports/hub-transfer') }}">Stock Adjustment</a>
+                        <a href="{{ url('/reports/stock-adjustment') }}">Stock Adjustment</a>
                     </li>
 
                 </ul>

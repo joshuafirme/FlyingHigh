@@ -63,11 +63,24 @@ class Product extends Model
         }
     }
 
+    public function getBundlesBySKU($sku) {
+        $bundles = self::where('sku', $sku)->value('bundles');
+        return $bundles ? explode(',', $bundles) : [];
+    }
+
     public function incrementStock($sku, $qty) {
+
+        $bundles = $this->getBundlesBySKU($sku);
+        $this->incrementBundleSKU($bundles, $qty);
+
         self::where('sku', $sku)->update(['qty' => DB::raw('qty + ' . $qty)]);
     }
 
     public function decrementStock($sku, $qty) {
+
+        $bundles = $this->getBundlesBySKU($sku);
+        $this->decrementBundleSKU($bundles, $qty);
+
         self::where('sku', $sku)->update(['qty' => DB::raw('qty - ' . $qty)]);
     }
 }

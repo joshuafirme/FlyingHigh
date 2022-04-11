@@ -178,10 +178,11 @@ class ProductController extends Controller
         $products = Product::where('sku', 'LIKE', '%' . $key . '%')
                     ->orWhere('description', 'LIKE', '%' . $key . '%')
                     ->paginate(10);
+        $remarks = AdjustmentRemarks::where('status', 1)->get();
         $hubs = Hub::where('status', 1)->get();
         $product_count = Product::count('id');
         $page_title = "products";
-        return view('product.index', compact('page_title', 'products', 'hubs', 'product_count'));
+        return view('product.index', compact('page_title', 'products', 'hubs', 'product_count', 'remarks'));
     }
 
     /**
@@ -202,7 +203,7 @@ class ProductController extends Controller
         $bundles = isset($request->bundles) ? implode(',', $request->bundles) : [];
         $request['bundles'] = $bundles;
         
-        $product->incrementBundleSKU($request->bundles, $request->qty);
+        $product->incrementStock($request->sku, $request->qty);
 
         Product::create($inputs);
         return redirect()->back()->with('success', 'Product was successfully added.');

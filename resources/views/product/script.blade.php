@@ -17,40 +17,54 @@
         el_choices_multi_sku.addEventListener(
             'addItem',
             function(event) { 
-                let sku = event.detail.value
+                let sku = event.detail.value;
                 fetch("/api/get-qty/" + sku)
                     .then(data => data.json())
                     .then(maxQty => { 
                         console.log(maxQty)
-                        var html = '';
-                        html += '<tr id="'+event.detail.value+'">';
-                        html += '<td>';
-                        html += event.detail.label;
-                        html += '<input type="hidden" class="form-control" name="sku[]" value="' + sku +
-                            '">';
-                        html += '</td>';
-                        html += '<td>' + maxQty + '</td>';
-                        html += '<td>';
-                        html +=
-                            '<input type="number" class="form-control" name="qty[]" required max="' +
-                            maxQty + '" min="1">';
-                        html += '</td>';
-
-                        html += '<td>';
-                        html += '<select class="form-control" name="hub_id[]" required>';
-                        html += '<option selected disabled value="">Choose Hub...</option>';
-                        html += '@foreach ($hubs as $item)';
-                        html += ' <option value="{{ $item->id }}">{{ $item->name }}</option>';
-                        html += ' @endforeach ';
-                        html += '</select>';
-                        html += '</td>';
-                        html += '</tr>';
-                        $('#inputs-container').append(html);
+                        appendInputs(event.detail.value, maxQty);
                     })
 
             },
             false,
         );
+
+
+        el_choices_multi_sku.addEventListener(
+            'keyup',
+            function(event) { 
+                alert('testt')
+            },
+            false,
+        );
+
+        function appendInputs(value, maxQty) {
+            let sku = value
+            var html = '';
+            html += '<tr id="'+value+'">';
+            html += '<td>';
+            html += sku;
+            html += '<input type="hidden" class="form-control" name="sku[]" value="' + sku +
+                '">';
+            html += '</td>';
+            html += '<td>' + maxQty + '</td>';
+            html += '<td>';
+            html +=
+                '<input type="number" class="form-control" name="qty[]" required max="' +
+                maxQty + '" min="1">';
+            html += '</td>';
+
+            html += '<td>';
+            html += '<select class="form-control" name="hub_id[]" required>';
+            html += '<option selected disabled value="">Choose Hub...</option>';
+            html += '@foreach ($hubs as $item)';
+            html += ' <option value="{{ $item->id }}">{{ $item->name }}</option>';
+            html += ' @endforeach ';
+            html += '</select>';
+            html += '</td>';
+            html += '</tr>';
+            $('#inputs-container').append(html);              
+        }
 
         el_choices_multi_sku.addEventListener(
             'removeItem',
@@ -59,6 +73,9 @@
             },
             false,
         );
+
+        
+       
 
         async function initChoices(element, bundles = []) {
 
@@ -387,6 +404,8 @@
                 $('#choices-multiple-remove-button').prop('required', false);
             }
         });
+
+        
 
         $('#import-via-api-form').submit(function(e) {
             $('#btn-api-import').html('Importing...');

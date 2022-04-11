@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PickupController;
 use App\Http\Controllers\AdjustmentRemarksController;
+use App\Http\Controllers\Reports\StockAdjustmentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -66,6 +67,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/product/update/{id}', [ProductController::class, 'update']);
     Route::get('/product/search', [ProductController::class, 'search'])->name('searchProduct');
     Route::resource('/product', ProductController::class);
+
+    // Reports
+    Route::get('/reports/stock-adjustment', [StockAdjustmentController::class, 'index']);
+    Route::get('/reports/stock-adjustment/filter', [StockAdjustmentController::class, 'filterStockAdjustment'])->name('filterStockAdjustment');
 
 });
 

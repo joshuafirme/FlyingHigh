@@ -35,7 +35,8 @@
                                         <i class="fa fa-plus"></i> Create
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
-                                        data-toggle="modal" data-target="#apiModal">
+                                        data-toggle="modal" data-target="#apiModal" data-backdrop="static"
+                                        data-keyboard="false">
                                         Import Stock via API
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
@@ -44,7 +45,8 @@
                                     </button>
                                     <button type="button"
                                         class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto"
-                                        data-toggle="modal" data-target="#bulkTransferModal">
+                                        data-toggle="modal" data-target="#bulkTransferModal" data-backdrop="static"
+                                        data-keyboard="false">
                                         Hub Transfer
                                     </button>
 
@@ -85,7 +87,10 @@
                                                 <tr id="record-id-{{ $item->id }}">
                                                     <td>{{ $item->sku }}</td>
                                                     <td>{{ $item->description }}</td>
-                                                    <td>{{ $item->qty }}</td>
+                                                    @php
+                                                        $text_class = $item->qty <= $item->buffer_stock ? 'text-danger' : '';
+                                                    @endphp
+                                                    <td class="{{ $text_class }}">{{ $item->qty }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
                                                     </td>
                                                     <td>{{ $item->expiration ? $item->expiration : 'N/A' }}</td>
@@ -111,6 +116,13 @@
                                                                     data-sku="{{ $item->sku }}"
                                                                     data-desc="{{ $item->description }}"><i
                                                                         class="fa fa-exchange-alt"></i> Hub Transfer</a>
+                                                                <a class="btn dropdown-item btn-transfer"
+                                                                    data-backdrop="static" data-keyboard="false"
+                                                                    data-target="#transferModal" data-toggle="modal"
+                                                                    data-sku="{{ $item->sku }}"
+                                                                    data-desc="{{ $item->description }}"><i
+                                                                        class="fa fa-warehouse"></i> Hubs
+                                                                    Stock</a>
                                                                 <a class="btn btn-stock-adjustment dropdown-item"
                                                                     data-target="#stockAdjustmentModal"
                                                                     data-toggle="modal" data-sku="{{ $item->sku }}"
@@ -123,15 +135,13 @@
                                                                     modal-type="update"
                                                                     data-info="{{ json_encode($item) }} "><i
                                                                         class="fa fa-edit"></i> Edit</a>
-                                                                @if ($item->role != 'Admin')
-                                                                    <a class="btn delete-record dropdown-item"
-                                                                        data-id="{{ $item->id }}" object="product"
-                                                                        data-toggle="modal"
-                                                                        data-target="#delete-record-modal">
-                                                                        <i class="fa fa-trash" style="color: red;">
-                                                                            Delete</i>
-                                                                    </a>
-                                                                @endif
+                                                                <a class="btn delete-record dropdown-item"
+                                                                    data-id="{{ $item->id }}" object="product"
+                                                                    data-toggle="modal"
+                                                                    data-target="#delete-record-modal">
+                                                                    <i class="fa fa-trash">
+                                                                        Delete</i>
+                                                                </a>
 
                                                             </div>
                                                         </div>

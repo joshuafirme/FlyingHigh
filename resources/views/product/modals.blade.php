@@ -244,7 +244,7 @@
             <div class="modal-body row g-3">
                 <div class="col-md-12 mt-2">
                     <label class="col-form-label" for="choices-multiple-remove-button">SKU</label>
-                    <select class="form-control" name="bundles[]" id="choices-multiple-sku"
+                    <select class="form-control" name="scan-inpput" id="choices-multiple-sku"
                         placeholder="Select SKU bundle" required multiple>
                     </select>
                 </div>
