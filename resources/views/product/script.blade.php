@@ -16,66 +16,54 @@
         var counter = 1;
         el_choices_multi_sku.addEventListener(
             'addItem',
-            function(event) { 
+            function(event) {
                 let sku = event.detail.value;
-                fetch("/api/get-qty/" + sku)
+                fetch("/api/product/sku/" + sku)
                     .then(data => data.json())
-                    .then(maxQty => { 
-                        console.log(maxQty)
-                        appendInputs(event.detail.value, maxQty);
+                    .then(data => {
+                        console.log(data)
+                        appendInputs(data);
                     })
 
             },
             false,
         );
 
-
-        el_choices_multi_sku.addEventListener(
-            'keyup',
-            function(event) { 
-                alert('testt')
-            },
-            false,
-        );
-
-        function appendInputs(value, maxQty) {
-            let sku = value
+        function appendInputs(data) {
             var html = '';
-            html += '<tr id="'+value+'">';
+            html += '<tr id="' + data.id + '_' + data.sku + '">';
             html += '<td>';
-            html += sku;
-            html += '<input type="hidden" class="form-control" name="sku[]" value="' + sku +
+            html += data.description;
+            html += '<input type="hidden" class="form-control" name="sku[]" value="' + data.sku +
                 '">';
             html += '</td>';
-            html += '<td>' + maxQty + '</td>';
+            html += '<td>' + data.qty + '</td>';
             html += '<td>';
             html +=
                 '<input type="number" class="form-control" name="qty[]" required max="' +
-                maxQty + '" min="1">';
+                data.qty + '" min="1">';
             html += '</td>';
 
             html += '<td>';
             html += '<select class="form-control" name="hub_id[]" required>';
             html += '<option selected disabled value="">Choose Hub...</option>';
             html += '@foreach ($hubs as $item)';
-            html += ' <option value="{{ $item->id }}">{{ $item->name }}</option>';
-            html += ' @endforeach ';
+                html += ' <option value="{{ $item->id }}">{{ $item->name }}</option>';
+            html += '@endforeach ';
             html += '</select>';
             html += '</td>';
+            html += '<td><a class="btn btn-remove-sku" data-id="' + data.id + '_' + data.sku + '"><i class="fa fa-trash"></i></a></td>';
             html += '</tr>';
-            $('#inputs-container').append(html);              
+            $('#inputs-container').append(html);
         }
 
         el_choices_multi_sku.addEventListener(
             'removeItem',
             function(event) {
-                $('#' + event.detail.value).remove();
+                // $('#' + event.detail.id +'_' + event.detail.value).remove();
             },
             false,
         );
-
-        
-       
 
         async function initChoices(element, bundles = []) {
 
@@ -178,6 +166,56 @@
             }
         });
 
+        $(document).on('click', '.btn-hubs-stock', function() {
+            let sku = $(this).attr('data-sku');
+            let desc = $(this).attr('data-desc');
+            $('#tbl-hubs-stock').html('');
+            $('#sku-text').html(sku); 
+            $('#description-text').html(desc); 
+            
+            fetch("/product/hubs/" + sku)
+                .then(data => data.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        for (let item of data) {
+                            let html = '<tr>';
+                            html += '<td>'+item.hub+'</td>';
+                            html += '<td>'+item.stock+'</td>';
+                            html += '</tr>';
+                            $('#tbl-hubs-stock').append(html);
+                        }
+                    }
+                    else {
+                        let html = '<tr>';
+                        html += '<td colspan="2"><div class="alert alert-primary">No data found.</div></td>';
+                        html += '</tr>';
+                        $('#tbl-hubs-stock').append(html);
+                    }
+                });
+        });
+
+        $(document).on('click', '.btn-remove-sku', function() {
+            let v = $(this);
+            let id = v.attr('data-id');
+            $('#' + id).remove();
+        });
+
+        $(document).on('keyup', '#barcode-scan', function(e) { 
+            let barcode = $(this).val();
+            console.log(e.keyCode)
+            if (e.keyCode == 86 || e.keyCode == 8) {
+                fetch("/api/product/barcode/" + barcode)
+                    .then(data => data.json())
+                    .then(data => {
+                        console.log(data)
+                        if (data.sku) {
+                            $(this).val('')
+                            appendInputs(data);
+                        }
+                    });
+            }
+        });
+
         $('.btn-transfer').click(function() {
             let v = $(this);
             let sku = v.attr('data-sku');
@@ -201,6 +239,7 @@
             $('#inputs-container').html('');
             initChoices('choices-multiple-sku');
         });
+        
 
         $('#bulk-transfer-form').submit(function(event) {
             let btn = $('#btn-bulk-transfer');
@@ -229,7 +268,15 @@
                                     location.reload();
                                 }, 2800);
                             } else if (data.message == 'not_enough_stock') {
-                                swalError('Some of stocks are changed, please try again.');
+                                let html = 'Some of stocks are not enough, please check below the list of SKU.<br>';
+                                console.log(data.sku_list)
+                                for (let sku of data.sku_list) {
+                                    html += '<b>'+sku+'</b>'
+                                }
+                                swalError(html);
+                            }
+                            else if (data.message == 'not_enough_bundle'){
+
                             }
                             btn.html("Transfer");
                         })
@@ -405,7 +452,7 @@
             }
         });
 
-        
+
 
         $('#import-via-api-form').submit(function(e) {
             $('#btn-api-import').html('Importing...');
@@ -442,11 +489,11 @@
             );
         }
 
-        function swalError(text) {
+        function swalError(html) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: text,
+                html: html,
             })
         }
 

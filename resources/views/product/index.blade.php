@@ -75,6 +75,7 @@
                                             <th scope="col">Description</th>
                                             <th scope="col">Stock</th>
                                             <th scope="col">Buffer Stock</th>
+                                            <th scope="col">Stock Level</th>
                                             <th scope="col">Expiration</th>
                                             <th scope="col">Status</th>
                                             <th scope="col">Created at</th>
@@ -84,19 +85,24 @@
                                     <tbody>
                                         @if (count($products))
                                             @foreach ($products as $item)
+                                                @php
+                                                    $text_class = '';
+                                                    $stock_level = 'Normal';
+                                                    if ($item->qty <= $item->buffer_stock) {
+                                                        $text_class = 'text-danger';
+                                                        $stock_level = 'Critical';
+                                                    }
+                                                @endphp
                                                 <tr id="record-id-{{ $item->id }}">
                                                     <td>{{ $item->sku }}</td>
                                                     <td>{{ $item->description }}</td>
-                                                    @php
-                                                        $text_class = $item->qty <= $item->buffer_stock ? 'text-danger' : '';
-                                                    @endphp
                                                     <td class="{{ $text_class }}">{{ $item->qty }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
-                                                    </td>
+                                                    <td class="{{ $text_class }}">{{ $stock_level }}</td>
                                                     <td>{{ $item->expiration ? $item->expiration : 'N/A' }}</td>
                                                     <td>@php
                                                         if ($item->status == 1) {
-                                                            echo '<span class="badge rounded-pill bg-success">Active</span>';
+                                                            echo '<span class="badge rounded-pill bg-primary">Active</span>';
                                                         } elseif ($item->status == 0) {
                                                             echo '<span class="badge rounded-pill bg-danger">Inactive</span>';
                                                         }
@@ -116,9 +122,8 @@
                                                                     data-sku="{{ $item->sku }}"
                                                                     data-desc="{{ $item->description }}"><i
                                                                         class="fa fa-exchange-alt"></i> Hub Transfer</a>
-                                                                <a class="btn dropdown-item btn-transfer"
-                                                                    data-backdrop="static" data-keyboard="false"
-                                                                    data-target="#transferModal" data-toggle="modal"
+                                                                <a class="btn dropdown-item btn-hubs-stock"
+                                                                    data-target="#hubsStockModal" data-toggle="modal"
                                                                     data-sku="{{ $item->sku }}"
                                                                     data-desc="{{ $item->description }}"><i
                                                                         class="fa fa-warehouse"></i> Hubs

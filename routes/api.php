@@ -22,4 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('transaction/{transNum}', [TransactionController::class, 'transaction']);
 Route::get('get-all-sku', [ProductApi::class, 'getAllSKU']);
-Route::get('get-qty/{sku}', [ProductApi::class, 'getQtyBySKU']);
+Route::get('product/sku/{sku}', [ProductApi::class, 'getBySKU']);
+Route::get('product/barcode/{barcode}', [ProductApi::class, 'getByBarcode']);

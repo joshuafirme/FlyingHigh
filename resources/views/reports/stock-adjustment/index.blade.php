@@ -16,26 +16,36 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="mb-4 mt-2">
+                            <div class="mb-4 mt-2 d-md-flex flex-md-wrap">
+                                @php
+                                    $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d');
+                                    $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
+                                @endphp
                                 <form class="form-inline" action="{{ route('filterStockAdjustment') }}"
                                     method="get">
                                     <div class="form-group mr-4">
                                         <label>Date from</label>
                                         <input type="date" class="form-control ml-2" name="date_from"
-                                            value="{{ isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d') }}"
-                                            required>
+                                            value="{{ $date_from }}" required>
                                     </div>
                                     <div class="form-group mr-4">
                                         <label>Date to</label>
                                         <input type="date" class="form-control ml-2" name="date_to"
-                                            value="{{ isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d') }}"
-                                            required>
+                                            value="{{ $date_to }}" required>
                                     </div>
                                     <div class="form-group">
                                         <button class="btn btn-sm btn-primary" type="submit">Filter</button>
                                     </div>
                                 </form>
 
+                                <div class="form-group ml-auto mt-2">
+                                    <a class="btn btn-sm btn-primary"
+                                        href="{{ url('/reports/stock-adjustment/download/' . $date_from . '/' . $date_to) }}"
+                                        target="_blank"><i class="fa fa-download"></i> Download PDF</a>
+                                    <a class="btn btn-sm btn-primary"
+                                        href="{{ url('/reports/stock-adjustment/preview/' . $date_from . '/' . $date_to) }}"
+                                        target="_blank"><i class="fa fa-print"></i> Print</a>
+                                </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-hover">

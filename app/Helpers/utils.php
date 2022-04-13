@@ -10,7 +10,61 @@ use App\Models\Subscription;
 use File;
 class Utils
 {
-    public function fileUpdoad($request, $folder_to_save = "img", $root = "assets/", $file_name = "") {
+    public static function objectToArray($data) 
+    {
+        return json_decode(json_encode($data), true);
+    }
+
+    public static function renderReport($items, $title, $headers, $columns, $date_from, $date_to)
+    {  
+        $output = '
+        <div style="width:100%">
+        <h1 style="text-align:center;">Flying High Energy Express</h1>
+        <h2 style="text-align:center;">'. $title .'</h2>
+
+        <p style="text-align:left;">Date: '. date("F j, Y", strtotime($date_from)) .' - '. date("F j, Y", strtotime($date_to)) .'</p>
+        <table width="100%" style="border-collapse:collapse; border: 1px solid;">
+            <thead>';
+
+            foreach ($headers as $header) {
+                $output .= '<th style="border: 1px solid;">' . $header . '</th>';
+            }
+
+            $output .=
+            '</thead>
+            <tbody>
+                ';
+            
+            if($items){
+                foreach ($items as $data) {
+                
+                $output .='
+                <tr>';
+                    foreach ($columns as $column) {
+                        if ($column == 'created_at') {
+                            $data[$column] = Utils::formatDate($data[$column]);
+                        }
+                        $output .= '<td style="border: 1px solid; padding:10px;">'. $data[$column] .'</td>';
+                    }                 
+                $output .='</tr>';
+                
+                } 
+            }
+            else{
+                echo "No data found";
+            }
+        
+          
+            $output .='
+            </tbody>
+        </table>
+            </div>';
+    
+        return $output;
+    }
+
+    public function fileUpdoad($request, $folder_to_save = "img", $root = "assets/", $file_name = "") 
+    {
         $img_path = "";
         if($request->hasFile('image')){ 
             if ($file_name=="") {
@@ -32,7 +86,8 @@ class Utils
         return 'file_not_exists.';
     }
 
-    public function formatDate($created_at) {
+    public function formatDate($created_at) 
+    {
         return date('M d, Y h:i a', strtotime($created_at));
     }
 

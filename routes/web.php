@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/client/search', [ClientController::class, 'search'])->name('searchClient');
     Route::resource('/client', ClientController::class);
 
+    Route::get('/product/hubs/{sku}', [ProductController::class, 'getHubsStockBySku']);
     Route::get('/product/api/import', [ProductController::class, 'importAPI'])->name('importAPI');
     Route::post('/product-import', [ProductController::class, 'importProduct'])->name('importProduct');
     Route::post('/product/adjust', [ProductController::class, 'adjustStock']);
@@ -71,6 +72,8 @@ Route::middleware('auth')->group(function () {
     // Reports
     Route::get('/reports/stock-adjustment', [StockAdjustmentController::class, 'index']);
     Route::get('/reports/stock-adjustment/filter', [StockAdjustmentController::class, 'filterStockAdjustment'])->name('filterStockAdjustment');
+    Route::get('/reports/stock-adjustment/preview/{date_from}/{date_to}', [StockAdjustmentController::class, 'previewReport']);
+       Route::get('/reports/stock-adjustment/download/{date_from}/{date_to}', [StockAdjustmentController::class, 'downloadReport']);
 
 });
 

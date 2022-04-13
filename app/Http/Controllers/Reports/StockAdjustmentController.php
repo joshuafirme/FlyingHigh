@@ -5,28 +5,52 @@ namespace App\Http\Controllers\Reports;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\StockAdjustment;
-use DB;
+use Utils;
 
 class StockAdjustmentController extends Controller
 {
-    public function index() {
-        $stock_adjustments = StockAdjustment::select('stock_adjustment.*', 'P.description', 'AR.name as remarks')
-            ->leftJoin('products as P', 'P.sku', '=', 'stock_adjustment.sku')
-            ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
-            ->orderBy('stock_adjustment.created_at', 'desc')
-            ->whereDate('stock_adjustment.created_at', date('Y-m-d'))
-            ->paginate(10);
+    public function index(StockAdjustment $sa) {
+        $stock_adjustments = $sa->getAllPaginate(10);
         return view('reports.stock-adjustment.index', compact('stock_adjustments'));
     }
 
-    public function filterStockAdjustment() {
+    public function filterStockAdjustment(StockAdjustment $sa) {
 
-        $stock_adjustments = StockAdjustment::select('stock_adjustment.*', 'P.description', 'AR.name as remarks')
-            ->leftJoin('products as P', 'P.sku', '=', 'stock_adjustment.sku')
-            ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
-            ->orderBy('stock_adjustment.created_at', 'desc')
-            ->whereBetween(DB::raw('DATE(stock_adjustment.created_at)'), [request()->date_from, request()->date_to])
-            ->paginate(10);
+        $stock_adjustments = $sa->filterPaginate(10);
         return view('reports.stock-adjustment.index', compact('stock_adjustments'));
     }
+
+    public function previewReport($date_from, $date_to, StockAdjustment $sa){
+        
+        $items = Utils::objectToArray($sa->filter($date_from, $date_to));
+        $title = "Stock Adjustment Report";
+        $headers = $sa->getHeaders();
+        $columns = $sa->getColumns();
+        
+        $output = Utils::renderReport($items, $title, $headers, $columns, $date_from, $date_to);
+       
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($output);
+        $pdf->setPaper('A4', 'landscape');
+    
+        return $pdf->stream($date_from.'-to-'.$date_to.'.pdf');
+    }
+    
+    public function downloadReport($date_from, $date_to, StockAdjustment $sa){
+        
+        $items = Utils::objectToArray($sa->filter($date_from, $date_to));
+        $title = "Stock Adjustment Report";
+        $headers = $sa->getHeaders();
+        $columns = $sa->getColumns();
+        
+        $output = Utils::renderReport($items, $title, $headers, $columns, $date_from, $date_to);
+       
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($output);
+        $pdf->setPaper('A4', 'landscape');
+    
+        return $pdf->download('stock-adjustment-report-'.$date_from.'-to-'.$date_to.'.pdf');
+    }
+
+    
 }

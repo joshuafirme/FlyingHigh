@@ -10,9 +10,13 @@
                 </button>
             </div>
             <div class="modal-body row g-3">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <label class="form-label">SKU</label>
                     <input type="text" class="form-control" name="sku" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Barcode</label>
+                    <input type="text" class="form-control" name="barcode" required>
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Description</label>
@@ -243,9 +247,13 @@
             </div>
             <div class="modal-body row g-3">
                 <div class="col-md-12 mt-2">
-                    <label class="col-form-label" for="choices-multiple-remove-button">SKU</label>
-                    <select class="form-control" name="scan-inpput" id="choices-multiple-sku"
-                        placeholder="Select SKU bundle" required multiple>
+                    <label class="col-form-label">Barcode Scan</label>
+                    <input type="text" class="form-control" id="barcode-scan">
+                </div>
+                <div class="col-md-12 mt-2">
+                    <label class="col-form-label">Search SKU</label>
+                    <select class="form-control" id="choices-multiple-sku"
+                        placeholder="Select SKU bundle" required>
                     </select>
                 </div>
                 <div class="col-12 mt-3">
@@ -255,6 +263,7 @@
                             <th scope="col">Stock</th>
                             <th scope="col">Qty to transfer</th>
                             <th scope="col">Hub</th>
+                            <th scope="col">Action</th>
                         </thead>
                         <tbody id="inputs-container">
 
@@ -269,3 +278,37 @@
         </form>
     </div>
 </div>
+
+<!-- Transfer modal -->
+<div class="modal fade" id="hubsStockModal" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <div action="#" method="post" class="modal-content" autocomplete="off">
+            <div class="modal-header">
+                <h5 class="modal-title">Hubs Stock</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row g-3">
+                <div class="col-12">
+                    <div class="mt-2 mb-4">
+                        <h5 id="sku-text"></h5>
+                        <h5 id="description-text"></h5>
+                    </div>
+                    <table class="table table-striped pb-3">
+                        <thead>
+                            <th>Hub</th>
+                            <th>Stock</th>
+                        </thead>
+                        <tbody id="tbl-hubs-stock">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+

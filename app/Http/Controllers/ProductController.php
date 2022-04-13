@@ -26,6 +26,12 @@ class ProductController extends Controller
         return view('product.index', compact('remarks', 'products', 'hubs', 'product_count'));
     }
 
+    public function getHubsStockBySku($sku, Product $product)
+    {
+        return $product->getHubsStockBySku($sku);
+    }
+
+
     public function importAPI(Request $request, Transaction $trans, Product $product) 
     {
         $path = public_path() . '/purchase_order.json';
@@ -126,8 +132,9 @@ class ProductController extends Controller
         $qty = $request->qty;
         $hub_id = $request->hub_id;
         $except_values = ['bundles', 'search_terms'];
-
-        if ($this->isAllStockEnough($all_sku, $qty, $product)) {
+        $isAllStockEnough = json_decode($product->isAllStockEnough($all_sku, $qty));
+      
+        if ($isAllStockEnough->result) {
 
             foreach ($all_sku as $key => $sku) {  
                 if ($product->hasStock($sku, $qty[$key])) {
@@ -142,7 +149,6 @@ class ProductController extends Controller
                         ]);
                     }
                     $product->decrementStock($sku, $qty[$key]);
-                   
                 }
             }
             return response()->json([
@@ -153,23 +159,10 @@ class ProductController extends Controller
         else {
             return response()->json([
                 'success' =>  false,
-                'message' => 'not_enough_stock'
+                'message' => 'not_enough_stock',
+                'sku_list' => $isAllStockEnough->sku
             ], 200);
         }
-     
-    }
-
-    public function isAllStockEnough($all_sku, $qty, $product) {
-        $has_enough_stock = true;
-        foreach ($all_sku as $key => $sku) {  
-            if ($product->hasStock($sku, $qty[$key])) {
-                // enough stock, do nothing...
-            }
-            else {
-                $has_enough_stock = false;
-            }
-        }
-        return $has_enough_stock;
     }
 
     public function search()
@@ -195,6 +188,9 @@ class ProductController extends Controller
     {
         if ($product->isSkuExists($request->sku)) {
             return redirect()->back()->with('danger', 'SKU is already exists.');
+        }
+        else if ($product->isBarcodeExists($barcode)) {
+            return redirect()->back()->with('danger', 'Barcode is already exists.');
         }
         Cache::forget('all_sku_cache');
         $inputs = $request->all();
@@ -237,7 +233,6 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {   
-      //  return $request;
         Cache::forget('all_sku_cache');
         $except_values = ['_token','search_terms'];
         $request['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
