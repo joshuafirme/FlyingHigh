@@ -7,6 +7,7 @@ use App\Imports\ProductImport;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Hub;
+use App\Models\HubTransfer;
 use App\Models\HubInventory;
 use App\Models\Transaction;
 use App\Models\TransactionLineItems;
@@ -95,12 +96,8 @@ class ProductController extends Controller
         Excel::import(new ProductImport, $request->file('file')->store('temp'));
         return back();
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function transfer(Product $product, HubInventory $hub)
+
+    public function transfer(Product $product, HubInventory $hub, HubTransfer $hub_transfer)
     {
         $sku = request()->sku;
         $qty = request()->stock;
@@ -110,9 +107,11 @@ class ProductController extends Controller
         if ($product->hasStock($sku, $qty)) {
             if ($hub->isSkuExistsInHub($sku, $hub_id)) {
                 $hub->incrementStock($sku, $qty, $hub_id);
+                $hub_transfer->record($sku, $qty, $hub_id);
             }
             else {
                 HubInventory::create(request()->except($except_values));
+                $hub_transfer->record($sku, $qty, $hub_id);
             }
             $product->decrementStock($sku, $qty);
             return response()->json([
@@ -126,7 +125,7 @@ class ProductController extends Controller
         ], 200);
     }
 
-    public function bulkTransfer(Request $request, Product $product, HubInventory $hub)
+    public function bulkTransfer(Request $request, Product $product, HubInventory $hub, HubTransfer $hub_transfer)
     {
         $all_sku = $request->sku;
         $qty = $request->qty;
@@ -140,6 +139,7 @@ class ProductController extends Controller
                 if ($product->hasStock($sku, $qty[$key])) {
                     if ($hub->isSkuExistsInHub($sku, $hub_id[$key])) {
                         $hub->incrementStock($sku, $qty[$key], $hub_id[$key]);
+                        $hub_transfer->record($sku, $qty[$key], $hub_id[$key]);
                     }
                     else {
                         HubInventory::create([
@@ -147,6 +147,7 @@ class ProductController extends Controller
                             'stock' => $qty[$key],
                             'hub_id' => $hub_id[$key]
                         ]);
+                        $hub_transfer->record($sku, $qty[$key], $hub_id[$key]);
                     }
                     $product->decrementStock($sku, $qty[$key]);
                 }
@@ -178,12 +179,6 @@ class ProductController extends Controller
         return view('product.index', compact('page_title', 'products', 'hubs', 'product_count', 'remarks'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request, Product $product)
     {
         if ($product->isSkuExists($request->sku)) {

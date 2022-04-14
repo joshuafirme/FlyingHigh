@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Reports;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\StockAdjustment;
+use App\Exports\StockAdjustmentExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Utils;
 
 class StockAdjustmentController extends Controller
@@ -50,6 +52,11 @@ class StockAdjustmentController extends Controller
         $pdf->setPaper('A4', 'landscape');
     
         return $pdf->download('stock-adjustment-report-'.$date_from.'-to-'.$date_to.'.pdf');
+    }
+
+    public function exportReport()
+    {
+         return Excel::download(new StockAdjustmentExport, 'stock-adjustment-report.xlsx');
     }
 
     

@@ -27,46 +27,50 @@
                             <div class="mt-3 mb-3">
 
                                 @include('layouts.alerts')
+                                <div class="d-md-flex flex-md-wrap">
+                                    <div class="row d-flex mb-3 mb-sm-3">
+                                        <button type="button" id="btn-create"
+                                            class="btn btn-sm btn-primary w-auto open-modal m-1 col-12 col-sm-auto"
+                                            modal-type="create">
+                                            <i class="fa fa-plus"></i> Create
+                                        </button>
+                                        <button type="button"
+                                            class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
+                                            data-toggle="modal" data-target="#apiModal" data-backdrop="static"
+                                            data-keyboard="false">
+                                            Import Stock via API
+                                        </button>
+                                        <button type="button"
+                                            class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
+                                            data-toggle="modal" data-target="#importModal">
+                                            Import Excel
+                                        </button>
+                                        <button type="button"
+                                            class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto"
+                                            data-toggle="modal" data-target="#bulkTransferModal" data-backdrop="static"
+                                            data-keyboard="false">
+                                            Hub Transfer
+                                        </button>
 
-                                <div class="row d-flex mb-3 mb-sm-3">
-                                    <button type="button" id="btn-create"
-                                        class="btn btn-sm btn-primary w-auto open-modal m-1 col-12 col-sm-auto"
-                                        modal-type="create">
-                                        <i class="fa fa-plus"></i> Create
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
-                                        data-toggle="modal" data-target="#apiModal" data-backdrop="static"
-                                        data-keyboard="false">
-                                        Import Stock via API
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
-                                        data-toggle="modal" data-target="#importModal">
-                                        Import Excel
-                                    </button>
-                                    <button type="button"
-                                        class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto"
-                                        data-toggle="modal" data-target="#bulkTransferModal" data-backdrop="static"
-                                        data-keyboard="false">
-                                        Hub Transfer
-                                    </button>
+                                    </div>
 
-                                </div>
-
-                                <div class="float-sm-right float-none">
-                                    <form action="{{ route('searchProduct') }}" method="get">
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control" name="key" style="width: 280px;"
-                                                placeholder="Search by SKU or Description"
-                                                value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-primary" type="submit">
-                                                    <i class="fa fa-search"></i>
-                                                </button>
+                                    <div class="ml-auto">
+                                        <form action="{{ route('searchProduct') }}" method="get">
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" name="key"
+                                                    style="width: 280px;" placeholder="Search by SKU or Description"
+                                                    value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary" type="submit">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
+
                             <div class="table-responsive">
                                 <table class="table table-borderless table-hover">
                                     <thead>
@@ -86,11 +90,18 @@
                                         @if (count($products))
                                             @foreach ($products as $item)
                                                 @php
-                                                    $text_class = '';
+                                                    $text_class = 'text-success';
                                                     $stock_level = 'Normal';
-                                                    if ($item->qty <= $item->buffer_stock) {
+                                                    $icon = '<i class="fas fa-check-circle"></i>';
+                                                    if ($item->qty == 0) {
                                                         $text_class = 'text-danger';
+                                                        $stock_level = 'Out of stock';
+                                                        $icon = '<i class="fas fa-exclamation-circle"></i>';
+                                                    }
+                                                    else if ($item->qty <= $item->buffer_stock) {
+                                                        $text_class = 'text-warning';
                                                         $stock_level = 'Critical';
+                                                        $icon = '<i class="fas fa-exclamation-circle"></i>';
                                                     }
                                                 @endphp
                                                 <tr id="record-id-{{ $item->id }}">
@@ -98,7 +109,7 @@
                                                     <td>{{ $item->description }}</td>
                                                     <td class="{{ $text_class }}">{{ $item->qty }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
-                                                    <td class="{{ $text_class }}">{{ $stock_level }}</td>
+                                                    <td class="{{ $text_class }}">{!! $icon !!} {{ $stock_level }}</td>
                                                     <td>{{ $item->expiration ? $item->expiration : 'N/A' }}</td>
                                                     <td>@php
                                                         if ($item->status == 1) {

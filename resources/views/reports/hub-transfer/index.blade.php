@@ -1,4 +1,4 @@
-@section('title', 'Stock Adjustment Report | Flying High')
+@section('title', 'Hub Transfer Report | Flying High')
 @include('layouts.header')
 
 @include('layouts.top-nav')
@@ -9,7 +9,7 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="text-dark">Stock Adjustment Report</h4>
+                <h4 class="text-dark">Hub Transfer Report</h4>
             </div>
 
             <div class="row">
@@ -40,13 +40,13 @@
 
                                 <div class="form-group ml-auto mt-4 mt-sm-2">
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/stock-adjustment/export/' . $date_from . '/' . $date_to) }}"
+                                        href="{{ url('/reports/hub-transfer/export/' . $date_from . '/' . $date_to) }}"
                                         target="_blank"><i class="fas fa-file-export"></i> Export Excel</a>
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/stock-adjustment/download/' . $date_from . '/' . $date_to) }}"
+                                        href="{{ url('/reports/hub-transfer/download/' . $date_from . '/' . $date_to) }}"
                                         target="_blank"><i class="fa fa-download"></i> Download PDF</a>
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/stock-adjustment/preview/' . $date_from . '/' . $date_to) }}"
+                                        href="{{ url('/reports/hub-transfer/preview/' . $date_from . '/' . $date_to) }}"
                                         target="_blank"><i class="fa fa-print"></i> Print</a>
                                 </div>
                             </div>
@@ -56,21 +56,19 @@
                                         <tr>
                                             <th scope="col">SKU</th>
                                             <th scope="col">Description</th>
-                                            <th scope="col">Action</th>
-                                            <th scope="col">Qty Adjusted</th>
-                                            <th scope="col">Ramarks</th>
-                                            <th scope="col">Date time adjusted</th>
+                                            <th scope="col">Hub</th>
+                                            <th scope="col">Qty Transferred</th>
+                                            <th scope="col">Date time</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($stock_adjustments))
-                                            @foreach ($stock_adjustments as $item)
+                                        @if (count($hub_transfer))
+                                            @foreach ($hub_transfer as $item)
                                                 <tr>
                                                     <td>{{ $item->sku }}</td>
                                                     <td>{{ $item->description }}</td>
-                                                    <td>{{ $item->action }}</td>
-                                                    <td>{{ $item->qty_adjusted }}</td>
-                                                    <td>{{ $item->remarks }}</td>
+                                                    <td>{{ $item->hub }}</td>
+                                                    <td>{{ $item->qty_transferred }}</td>
                                                     <td>{{ Utils::formatDate($item->created_at) }}</td>
                                                 </tr>
                                             @endforeach
@@ -94,7 +92,7 @@
                             </div>
 
                             @php
-                                echo $stock_adjustments->links('pagination::bootstrap-4');
+                                echo $hub_transfer->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>

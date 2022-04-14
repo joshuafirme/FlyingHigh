@@ -4,29 +4,58 @@ namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\HubInventory;
-use DB;
+use App\Models\HubTransfer;
+use App\Exports\HubTransferExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Utils;
 
 class HubTransferController extends Controller
 {
-  public function index() {
-        $stock_adjustments = HubInventory::select('stock_adjustment.*', 'P.description', 'AR.name as remarks')
-            ->leftJoin('products as P', 'P.sku', '=', 'stock_adjustment.sku')
-            ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
-            ->orderBy('stock_adjustment.created_at', 'desc')
-            ->whereDate('stock_adjustment.created_at', date('Y-m-d'))
-            ->paginate(10);
-        return view('reports.stock-adjustment.index', compact('stock_adjustments'));
+   public function index(HubTransfer $sa) {
+        $hub_transfer = $sa->getAllPaginate(10);
+        return view('reports.hub-transfer.index', compact('hub_transfer'));
     }
 
-    public function filter() {
+    public function filterHubTransfer(HubTransfer $sa) {
 
-        $stock_adjustments = HubInventory::select('stock_adjustment.*', 'P.description', 'AR.name as remarks')
-            ->leftJoin('products as P', 'P.sku', '=', 'stock_adjustment.sku')
-            ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
-            ->orderBy('stock_adjustment.created_at', 'desc')
-            ->whereBetween(DB::raw('DATE(stock_adjustment.created_at)'), [request()->date_from, request()->date_to])
-            ->paginate(10);
-        return view('reports.stock-adjustment.index', compact('stock_adjustments'));
+        $hub_transfer = $sa->filterPaginate(10);
+        return view('reports.hub-transfer.index', compact('hub_transfer'));
+    }
+
+    public function previewReport($date_from, $date_to, HubTransfer $sa){
+        
+        $items = Utils::objectToArray($sa->filter($date_from, $date_to));
+        $title = "Hub Transfer Report";
+        $headers = $sa->getHeaders();
+        $columns = $sa->getColumns();
+        
+        $output = Utils::renderReport($items, $title, $headers, $columns, $date_from, $date_to);
+       
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($output);
+        $pdf->setPaper('A4', 'landscape');
+    
+        return $pdf->stream($date_from.'-to-'.$date_to.'.pdf');
+    }
+    
+    public function downloadReport($date_from, $date_to, HubTransfer $sa){
+        
+        $items = Utils::objectToArray($sa->filter($date_from, $date_to));
+        $title = "Stock Adjustment Report";
+        $headers = $sa->getHeaders();
+        $columns = $sa->getColumns();
+        
+        $output = Utils::renderReport($items, $title, $headers, $columns, $date_from, $date_to);
+       
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($output);
+        $pdf->setPaper('A4', 'landscape');
+    
+        return $pdf->download('hub-transfer-report-'.$date_from.'-to-'.$date_to.'.pdf');
+    }
+
+    public function exportReport()
+    {
+         return Excel::download(new HubTransferExport, 'hub-transfer-report.xlsx');
     }
 }

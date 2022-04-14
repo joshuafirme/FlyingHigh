@@ -17,12 +17,17 @@ class Utils
 
     public static function renderReport($items, $title, $headers, $columns, $date_from, $date_to)
     {  
+        if($date_from == $date_to) {
+            $date = date("F j, Y", strtotime($date_from));
+        }else {
+            $date = date("F j, Y", strtotime($date_from)) .' - '. date("F j, Y", strtotime($date_to));
+        }
         $output = '
         <div style="width:100%">
         <h1 style="text-align:center;">Flying High Energy Express</h1>
         <h2 style="text-align:center;">'. $title .'</h2>
-
-        <p style="text-align:left;">Date: '. date("F j, Y", strtotime($date_from)) .' - '. date("F j, Y", strtotime($date_to)) .'</p>
+        
+        <p style="text-align:left;">Date: '. $date .'</p>
         <table width="100%" style="border-collapse:collapse; border: 1px solid;">
             <thead>';
 

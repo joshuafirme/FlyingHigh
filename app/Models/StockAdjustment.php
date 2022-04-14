@@ -55,7 +55,9 @@ class StockAdjustment extends Model
     }
 
     public function filter($date_from, $date_to) {
-        return self::select('stock_adjustment.*', 'P.description', 'AR.name as remarks')
+        $date_from = $date_from ? $date_from : date('Y-m-d');
+        $date_to = $date_to ? $date_to : date('Y-m-d');
+        return self::select('P.sku', 'P.description', 'action', 'qty_adjusted', 'AR.name as remarks', 'stock_adjustment.created_at')
             ->leftJoin('products as P', 'P.sku', '=', 'stock_adjustment.sku')
             ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
             ->orderBy('stock_adjustment.created_at', 'desc')
