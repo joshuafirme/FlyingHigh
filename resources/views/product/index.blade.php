@@ -71,7 +71,7 @@
                                 </div>
                             </div>
 
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="min-height: 500px;">
                                 <table class="table table-borderless table-hover">
                                     <thead>
                                         <tr>

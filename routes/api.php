@@ -24,3 +24,4 @@ Route::get('transaction/{transNum}', [TransactionController::class, 'transaction
 Route::get('get-all-sku', [ProductApi::class, 'getAllSKU']);
 Route::get('product/sku/{sku}', [ProductApi::class, 'getBySKU']);
 Route::get('product/barcode/{barcode}', [ProductApi::class, 'getByBarcode']);
+Route::get('product/bundle-qty-list/{sku}', [ProductApi::class, 'getBundleQtyList']);

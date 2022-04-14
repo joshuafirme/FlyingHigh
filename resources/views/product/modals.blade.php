@@ -57,10 +57,22 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12 mt-2 d-none bundle-choices">
-                    <label class="col-form-label" for="choices-multiple-remove-button">SKU Bundles</label>
+                    <label class="col-form-label" for="choices-multiple-remove-button">Choose SKU Bundles</label>
                     <select class="form-control" name="bundles[]" id="choices-multiple-remove-button"
                         placeholder="Select SKU bundle" multiple>
                     </select>
+                </div>
+                <div id="bundle-qty-container" class="col-sm-12 col-md-12 mt-4 d-none">
+                    <label for="">Bundle Stocks</label>
+                    <table class="table table-striped pb-3">
+                        <thead>
+                            <th>Sku</th>
+                            <th>Stock</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody id="tbl-bundle-qty">
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="modal-footer">
@@ -252,8 +264,7 @@
                 </div>
                 <div class="col-md-12 mt-2">
                     <label class="col-form-label">Search SKU</label>
-                    <select class="form-control" id="choices-multiple-sku"
-                        placeholder="Select SKU bundle" required>
+                    <select class="form-control" id="choices-multiple-sku" placeholder="Select SKU bundle" required>
                     </select>
                 </div>
                 <div class="col-12 mt-3">
@@ -311,4 +322,3 @@
         </div>
     </div>
 </div>
-

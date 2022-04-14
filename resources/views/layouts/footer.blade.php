@@ -1,6 +1,5 @@
 <footer class="footer">
-    © 2022 All Right Reserved | Design &amp; Developed by<a class="ic-main-color" data-toggle="tooltip"
-        data-placement="top" title="ITclan BD" href="https://itclanbd.com/"> ITclan BD</a>
+    © {{ date('Y') }} All Right Reserved | Flying High Energy Express
 </footer>
 <!-- Vue
 <script src="https://clanvent-alpha.laravel-script.com/js/app.js"></script>

@@ -32,4 +32,14 @@ class ProductApi extends Controller
     public function getBySKU($sku, Product $product) {
         return response()->json($product->getBySKU($sku));
     }
+
+    public function getBundleQtyList($sku, Product $product)
+    {
+        $data = $product->getBundleQtyList($sku);
+
+        return response()->json([
+            'message' => 'success',
+            'data' => $data
+        ], 200);
+    }
 }

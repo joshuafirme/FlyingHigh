@@ -84,7 +84,16 @@
                                 setTimeout(() => {
                                     location.reload();
                                 }, 1500);
-                            } else {
+                            }
+                            else if (data.message == 'not_enough_stock') {
+                                let html = 'Some of stocks are not enough, please click the SKU below to see the available stock in the specific hub.<br>';
+                                console.log(data.sku_list)
+                                for (let sku of data.sku_list) {
+                                    html += '<a target="_blank" href="#">'+sku+'</a><br>'
+                                }
+                                swalError(html);
+                            } 
+                            else {
                                 swalError('Error occured, please contact support!');
                             }
                             btn.html("Tag as Picked Up");
@@ -148,11 +157,11 @@
             );
         }
 
-        function swalError(text) {
+       function swalError(html) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: text,
+                html: html,
             })
         }
     });

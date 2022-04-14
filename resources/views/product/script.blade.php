@@ -117,6 +117,31 @@
 
         }
 
+        function getBundleQty(sku) {
+            fetch("/api/product/bundle-qty-list/" + sku)
+                .then(data => data.json())
+                .then(result => {
+                    $('#tbl-bundle-qty').html('');
+                    console.log(result)
+                    if (result.data.length > 0) {
+                        for (let item of result.data) {
+                            let html = '<tr>';
+                            html += '<td><a target="_blank" href="/product/search?key='+item.sku+'">'+item.sku+' | '+item.description+'</a></td>';
+                            html += '<td>'+item.qty+'</td>';
+                            html += '<td><a target="_blank" href="/product/search?key='+item.sku+'"><i class="fa fa-eye"></i></a></td>';
+                            html += '</tr>';
+                            $('#tbl-bundle-qty').append(html);
+                        }
+                    }
+                    else {
+                        let html = '<tr>';
+                        html += '<td colspan="2"><div class="alert alert-primary">No data found.</div></td>';
+                        html += '</tr>';
+                        $('#tbl-bundle-qty').append(html);
+                    }
+                })
+        }
+
         $('.open-modal').click(function(event) {
 
             let modal = $('#postModal');
@@ -131,6 +156,7 @@
                 $('[name=status]').val(1);
                 modal.find('.modal-title').text('Create Product');
                 modal.find('form').attr('action', "{{ route('product.store') }}");
+                $('#bundle-qty-container').addClass('d-none');
                 initChoices('choices-multiple-remove-button');
             } else {
                 bundles_choices.clearStore();
@@ -138,6 +164,7 @@
                 let data = JSON.parse($(this).attr('data-info'));
                 modal.find('form').attr('action', "/product/update/" + data.id);
                 initChoices('choices-multiple-remove-button', data.bundles);
+
                 console.log(data)
                 for (var key of Object.keys(data)) {
                     if (key == 'expiration') {
@@ -147,9 +174,12 @@
                         if (data[key] == 1) {
                             modal.find('[name=' + key + ']').prop('checked', true);
                             $('#choices-multiple-remove-button').prop('required', true);
+                            $('#bundle-qty-container').removeClass('d-none');
+                            getBundleQty(data.sku);
                         } else {
                             modal.find('[name=' + key + ']').prop('checked', false);
                             $('#choices-multiple-remove-button').prop('required', false);
+                            $('#bundle-qty-container').addClass('d-none');
                         }
                         if ($('[name=' + key + ']').is(':checked')) {
                             $('.bundle-choices').removeClass('d-none');
@@ -268,10 +298,10 @@
                                     location.reload();
                                 }, 2800);
                             } else if (data.message == 'not_enough_stock') {
-                                let html = 'Some of stocks are not enough, please check below the list of SKU.<br>';
+                                let html = 'Some of stocks are not enough, please click the SKU below to see the available stock.<br>';
                                 console.log(data.sku_list)
                                 for (let sku of data.sku_list) {
-                                    html += '<b>'+sku+'</b>'
+                                    html += '<a target="_blank" href="#">'+sku+'</a><br>';
                                 }
                                 swalError(html);
                             }

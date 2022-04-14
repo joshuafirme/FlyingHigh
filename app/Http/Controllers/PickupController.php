@@ -117,15 +117,24 @@ class PickupController extends Controller
     {
         $hub_id = request()->hub_id;
 
-        $pickup->tagAsPickedUp($shipmentId, $hub_id);
-
         $orderId = $pickup->getOrderIdByShipmentId($shipmentId);
 
         $line_items = $line_item->getLineItems($orderId);
 
-        foreach ($line_items as $item) {
-            $hub_inv->decrementStock($item->partNumber, $item->quantity, $hub_id);
-            
+        $isAllStockEnough = json_decode($hub_inv->isAllStockEnough($line_items, $hub_id));
+
+        if ($isAllStockEnough->result) {
+            foreach ($line_items as $item) {
+                $hub_inv->decrementStock($item->partNumber, $item->quantity, $hub_id);
+            }
+            $pickup->tagAsPickedUp($shipmentId, $hub_id);
+        }
+        else {
+              return response()->json([
+                'success' =>  false,
+                'message' => 'not_enough_stock',
+                'sku_list' => $isAllStockEnough->sku
+            ], 200);
         }
 
         return response()->json([

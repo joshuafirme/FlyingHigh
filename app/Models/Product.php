@@ -142,4 +142,21 @@ class Product extends Model
 
         self::where('sku', $sku)->update(['qty' => DB::raw('qty - ' . $qty)]);
     }
+
+    public function getBundleQtyList($sku) 
+    {
+        $sku_list = array();
+        $bundles = $this->getBundlesBySKU($sku);
+
+        foreach ($bundles as $sku){
+            $data = DB::table('products')->select('sku','description','qty')->where('sku', $sku)->first();
+            array_push($sku_list, [
+                "sku" => $data->sku,
+                "description" => $data->description,
+                "qty" => $data->qty,
+            ]);
+        }
+
+        return $sku_list;
+    }
 }
