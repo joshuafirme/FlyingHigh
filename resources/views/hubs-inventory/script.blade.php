@@ -24,11 +24,9 @@
                 }
                 if (key == 'has_bundle') {
                     if (data[key] == 1) {
-                        modal.find('[name=' + key + ']').prop('checked', true);
                         $('#bundle-qty-container').removeClass('d-none');
                         getBundleQty(data);
                     } else {
-                        modal.find('[name=' + key + ']').prop('checked', false);
                         $('#bundle-qty-container').addClass('d-none');
                     }
 

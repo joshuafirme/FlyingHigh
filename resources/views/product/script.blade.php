@@ -114,23 +114,27 @@
                     $(v).val('');
                 }
             });
-
         }
 
-        function getBundleQty(sku) {
+        function getBundleQty(sku, type = "edit") {
+  
             fetch("/api/product/bundle-qty-list/" + sku)
                 .then(data => data.json())
                 .then(result => {
-                    $('#tbl-bundle-qty').html('');
                     console.log(result)
                     if (result.data.length > 0) {
+                        let table = 'tbl-bundle-qty'
+                        if (type == 'details') {
+                            table = 'tbl-bundle-qty-details';
+                        }
+                        $('#'+table).html('');
                         for (let item of result.data) {
                             let html = '<tr>';
                             html += '<td><a target="_blank" href="/product/search?key='+item.sku+'">'+item.sku+' | '+item.description+'</a></td>';
                             html += '<td>'+item.qty+'</td>';
                             html += '<td><a target="_blank" href="/product/search?key='+item.sku+'"><i class="fa fa-eye"></i></a></td>';
                             html += '</tr>';
-                            $('#tbl-bundle-qty').append(html);
+                            $('#'+table).append(html);
                         }
                     }
                     else {
@@ -243,6 +247,30 @@
                             appendInputs(data);
                         }
                     });
+            }
+        });
+
+        $('.btn-view-detail').click(function() {
+            let data = JSON.parse($(this).attr('data-info'));
+            let modal = $('#detailModal');
+            for (var key of Object.keys(data)) {
+                if (key == 'expiration') {
+                    data[key] = data[key] ? data[key].substring(0, 10) : '';
+                }
+                if (key == 'status') {
+                    data[key] = data[key] == 1 ? 'Active' : 'Inactive';
+                }
+                if (key == 'has_bundle') {
+                    if (data[key] == 1) {
+                        $('#bundle-qty-container-details').removeClass('d-none');
+                        getBundleQty(data.sku, 'details');
+                    } else {
+                        $('#bundle-qty-container-details').addClass('d-none');
+                    }
+
+                    continue;
+                }
+                modal.find('[name=' + key + ']').val(data[key]);
             }
         });
 

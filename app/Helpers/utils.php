@@ -91,9 +91,9 @@ class Utils
         return 'file_not_exists.';
     }
 
-    public function formatDate($created_at) 
+    public function formatDate($date) 
     {
-        return date('M d, Y h:i a', strtotime($created_at));
+        return date('M d, Y h:i a', strtotime($date));
     }
 
     public static function CSVExporter($data, $type)

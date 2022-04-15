@@ -61,7 +61,7 @@
                                                     <td>{{ $item->description }}</td>
                                                     <td>{{ $item->stock }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
-                                                    <td>{{ $item->expiration ? $item->expiration : 'N/A' }}</td>
+                                                    <td>{{ $item->expiration && $item->expiration != '1970-01-01' ? $item->expiration : 'N/A' }}</td>
                                                     <td>{{ Utils::formatDate($item->updated_at) }}</td>
                                                     <td>
                                                         <div class="btn-group">

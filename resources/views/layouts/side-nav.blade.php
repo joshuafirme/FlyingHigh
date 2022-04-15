@@ -165,6 +165,9 @@
                     </span></a>
                 <ul class="submenu">
                     <li>
+                        <a href="{{ url('/reports/hub-transfer') }}">Warehouse Transfer</a>
+                    </li>
+                    <li>
                         <a href="{{ url('/reports/hub-transfer') }}">Hub Transfer</a>
                     </li>
                     <li>

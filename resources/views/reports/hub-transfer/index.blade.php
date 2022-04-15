@@ -36,6 +36,9 @@
                                     <div class="form-group m-auto">
                                         <button class="btn btn-sm btn-primary" type="submit">Filter</button>
                                     </div>
+                                      <div class="form-group ml-1">
+                                        <a class="btn btn-sm btn-primary" href="{{ url('/reports/hub-transfer') }}"><i class="fa fa-sync" aria-hidden="true"></i> Reload</a>
+                                    </div>
                                 </form>
 
                                 <div class="form-group ml-auto mt-4 mt-sm-2">

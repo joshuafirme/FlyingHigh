@@ -38,6 +38,12 @@
                                             class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
                                             data-toggle="modal" data-target="#apiModal" data-backdrop="static"
                                             data-keyboard="false">
+                                            Import Stock via Barcode
+                                        </button>
+                                        <button type="button"
+                                            class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
+                                            data-toggle="modal" data-target="#apiModal" data-backdrop="static"
+                                            data-keyboard="false">
                                             Import Stock via API
                                         </button>
                                         <button type="button"
@@ -97,8 +103,7 @@
                                                         $text_class = 'text-danger';
                                                         $stock_level = 'Out of stock';
                                                         $icon = '<i class="fas fa-exclamation-circle"></i>';
-                                                    }
-                                                    else if ($item->qty <= $item->buffer_stock) {
+                                                    } elseif ($item->qty <= $item->buffer_stock) {
                                                         $text_class = 'text-warning';
                                                         $stock_level = 'Critical';
                                                         $icon = '<i class="fas fa-exclamation-circle"></i>';
@@ -109,8 +114,9 @@
                                                     <td>{{ $item->description }}</td>
                                                     <td class="{{ $text_class }}">{{ $item->qty }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
-                                                    <td class="{{ $text_class }}">{!! $icon !!} {{ $stock_level }}</td>
-                                                    <td>{{ $item->expiration ? $item->expiration : 'N/A' }}</td>
+                                                    <td class="{{ $text_class }}">{!! $icon !!}
+                                                        {{ $stock_level }}</td>
+                                                    <td>{{ $item->expiration && $item->expiration != '1970-01-01' ? $item->expiration : 'N/A' }}</td>
                                                     <td>@php
                                                         if ($item->status == 1) {
                                                             echo '<span class="badge rounded-pill bg-primary">Active</span>';
@@ -127,6 +133,10 @@
                                                                 aria-expanded="false"><i
                                                                     class="fas fa-ellipsis-v"></i></a>
                                                             <div class="dropdown-menu">
+                                                                <a class="btn dropdown-item btn-view-detail"
+                                                                    data-target="#detailModal" data-toggle="modal"
+                                                                    data-info="{{ json_encode($item) }}"><i
+                                                                        class="fa fa-eye"></i> View Details</a>
                                                                 <a class="btn dropdown-item btn-transfer"
                                                                     data-backdrop="static" data-keyboard="false"
                                                                     data-target="#transferModal" data-toggle="modal"
