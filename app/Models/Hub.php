@@ -19,4 +19,8 @@ class Hub extends Model
         'address',
         'status',
     ];
+
+    public function getHubName($hub_id) {
+        return self::where('id', $hub_id)->value('name');
+    }
 }

@@ -21,19 +21,21 @@ class HubInventory extends Model
 
     public function getByHub($hub_id, $per_page) 
     {
-        return self::select('P.*', 'hub_inventory.stock')
-            ->leftJoin('products as P', 'P.sku', '=', 'hub_inventory.sku')
-            ->where('hub_inventory.hub_id', $hub_id)
+        return self::select('P.*', $this->table . '.stock')
+            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+            ->where($this->table . '.hub_id', $hub_id)
             ->paginate($per_page);
     }
 
-    public function searchByHub($key, $hub_id, $per_page) 
-    {
-        return self::select('P.*', 'hub_inventory.stock')
-            ->leftJoin('products as P', 'P.sku', '=', 'hub_inventory.sku')
-            ->where('hub_inventory.hub_id', $hub_id)
-            ->where('description', 'LIKE', '%' . $key . '%')
-            ->orWhere('hub_inventory.sku', 'LIKE', '%' . $key . '%')
+    public function searchByHub($hub_id, $per_page) 
+    { 
+        return self::select('P.*', $this->table . '.stock')
+            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+            ->where($this->table . '.hub_id', $hub_id)
+            ->where(function ($query) {
+               $query->where($this->table . '.sku', 'LIKE', '%' . request()->key . '%')
+                     ->orWhere('description', 'LIKE', '%' . request()->key . '%');
+            })
             ->paginate($per_page);
     }
 
@@ -84,24 +86,34 @@ class HubInventory extends Model
         return $has_enough_stock;
     }
 
-    public function incrementBundleSKU($bundles, $qty) {
+    public function incrementBundleSKU($bundles, $qty, $hub_id) {
         if (count($bundles) > 0) {
             foreach ($bundles as $sku) {
-                $this->incrementStock($sku, $qty);
+                if ($this->isSkuExistsInHub($sku, $hub_id)) {
+                    $this->incrementStock($sku, $qty, $hub_id);
+                }
+                else {
+                    self::create([
+                        'sku' => $sku,
+                        'stock' => $qty,
+                        'hub_id' => $hub_id
+                    ]);
+                }
             }
         }
     }
 
-    public function decrementBundleSKU($bundles, $qty) {
+    public function decrementBundleSKU($bundles, $qty, $hub_id) {
         if (count($bundles) > 0) {
             foreach ($bundles as $sku) {
-                $this->decrementStock($sku, $qty);
+                $this->decrementStock($sku, $qty, $hub_id);
             }
         }
     }
     public function incrementStock($sku, $qty, $hub_id) {
+        $product = new Product;
         $bundles = $product->getBundlesBySKU($sku, $hub_id);
-        $this->incrementBundleSKU($bundles, $qty);
+        $this->incrementBundleSKU($bundles, $qty, $hub_id);
         self::where('sku', $sku)
         ->where('hub_id', $hub_id)->update([
             'stock' => DB::raw('stock + ' . $qty)
@@ -111,7 +123,7 @@ class HubInventory extends Model
     public function decrementStock($sku, $qty, $hub_id) {
         $product = new Product;
         $bundles = $product->getBundlesBySKU($sku, $hub_id);
-        $this->decrementBundleSKU($bundles, $qty);
+        $this->decrementBundleSKU($bundles, $qty, $hub_id);
         self::where('sku', $sku)
         ->where('hub_id', $hub_id)->update([
             'stock' => DB::raw('stock - ' . $qty)
@@ -126,5 +138,26 @@ class HubInventory extends Model
             return true;
         }
         return false;
+    }
+
+    public function getBundleQtyList($sku) 
+    {
+        $sku_list = array();
+        $product = new Product;
+        $bundles = $product->getBundlesBySKU($sku, $hub_id);
+        $bundles = $this->getBundlesBySKU($sku);
+
+        foreach ($bundles as $sku){
+            $data = self::select('sku','description','qty')
+                ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+                ->where('sku', $sku)->first();
+            array_push($sku_list, [
+                "sku" => $data->sku,
+                "description" => $data->description,
+                "qty" => $data->qty,
+            ]);
+        }
+
+        return $sku_list;
     }
 }

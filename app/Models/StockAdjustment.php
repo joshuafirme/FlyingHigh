@@ -36,22 +36,22 @@ class StockAdjustment extends Model
         ]);
     }
 
-    public function getAllPaginate($paging) {
+    public function getAllPaginate($per_page) {
         return self::select('stock_adjustment.*', 'P.description', 'AR.name as remarks')
             ->leftJoin('products as P', 'P.sku', '=', 'stock_adjustment.sku')
             ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
             ->orderBy('stock_adjustment.created_at', 'desc')
             ->whereDate('stock_adjustment.created_at', date('Y-m-d'))
-            ->paginate($paging);
+            ->paginate($per_page);
     }
 
-   public function filterPaginate($paging) {
+   public function filterPaginate($per_page) {
         return self::select('stock_adjustment.*', 'P.description', 'AR.name as remarks')
             ->leftJoin('products as P', 'P.sku', '=', 'stock_adjustment.sku')
             ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
             ->orderBy('stock_adjustment.created_at', 'desc')
             ->whereBetween(DB::raw('DATE(stock_adjustment.created_at)'), [request()->date_from, request()->date_to])
-            ->paginate($paging);
+            ->paginate($per_page);
     }
 
     public function filter($date_from, $date_to) {

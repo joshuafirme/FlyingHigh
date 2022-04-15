@@ -19,26 +19,26 @@ class HubController extends Controller
         return view('hub.index', compact('page_title', 'hubs', 'hubs'));
     }
 
-    public function hubInventory($slug, $hub_id, HubInventory $hub_inv)
+    public function hubInventory($hub_id, HubInventory $hub_inv, Hub $hub)
     {
         $products = $hub_inv->getByHub($hub_id, 10);
 
-        $hub_name = ucwords(str_replace('-', ' ', $slug));
-        return view('hubs-inventory.index', compact('products', 'hub_name', 'slug', 'hub_id'));
+        $hub_name = $hub->getHubName($hub_id);
+        return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id'));
     }
 
-    public function searchProduct($slug, $hub_id, HubInventory $hub_inv)
+    public function searchProduct($hub_id, HubInventory $hub_inv, Hub $hub)
     {
         $key = isset(request()->key) ? request()->key : "";
         if ($key) {
-            $products = $hub_inv->searchByHub($key, $hub_id, 10);
+            $products = $hub_inv->searchByHub($hub_id, 10);
         }
         else {
              $products = $hub_inv->getByHub($hub_id, 10);
         }
 
-        $hub_name = ucwords(str_replace('-', ' ', $slug));
-        return view('hubs-inventory.index', compact('products', 'hub_name', 'slug', 'hub_id'));
+        $hub_name = $hub->getHubName($hub_id);
+        return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id'));
     }
 
     public function search()
@@ -80,6 +80,16 @@ class HubController extends Controller
         return response()->json([
             'status' =>  'error',
             'message' => 'Deleting hub failed.'
+        ], 200);
+    }
+
+    public function getBundleQtyList($sku, HubInventory $hub_inv)
+    {
+        $data = $hub_inv->getBundleQtyList($sku);
+
+        return response()->json([
+            'message' => 'success',
+            'data' => $data
         ], 200);
     }
 }

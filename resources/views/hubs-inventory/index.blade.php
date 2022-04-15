@@ -26,7 +26,7 @@
                             <div class="mb-4 mt-2 d-md-flex flex-md-wrap">
 
                                  <div class="ml-auto">
-                                        <form action="{{ url('/hubs/'.$slug.'/'.$hub_id.'/search') }}" method="get">
+                                        <form action="{{ url('/hubs/'.$hub_id.'/search') }}" method="get">
                                             <div class="input-group mb-3">
                                                 <input type="text" class="form-control" name="key"
                                                     style="width: 280px;" placeholder="Search by SKU or Description"
@@ -49,6 +49,7 @@
                                             <th scope="col">Stock</th>
                                             <th scope="col">Buffer Stock</th>
                                             <th scope="col">Expiration</th>
+                                            <th scope="col">Date time Last Transferred</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
@@ -61,6 +62,7 @@
                                                     <td>{{ $item->stock }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
                                                     <td>{{ $item->expiration ? $item->expiration : 'N/A' }}</td>
+                                                    <td>{{ Utils::formatDate($item->updated_at) }}</td>
                                                     <td>
                                                         <div class="btn-group">
                                                             <a href="#" class="btn btn-dark btn-sm"

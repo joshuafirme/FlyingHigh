@@ -27,7 +27,7 @@
                     if (data[key] == 1) {
                         modal.find('[name=' + key + ']').prop('checked', true);
                         $('#bundle-qty-container').removeClass('d-none');
-                        getBundleQty(data.sku);
+                        getBundleQty(data);
                     } else {
                         modal.find('[name=' + key + ']').prop('checked', false);
                         $('#bundle-qty-container').addClass('d-none');
@@ -39,9 +39,9 @@
             }
         });
 
-        function getBundleQty(sku) {
+        function getBundleQty(data) {
             // Replace this endpoint, qty must come from hub
-            fetch("/api/product/bundle-qty-list/" + sku)
+            fetch("/api/product/bundle-qty-list/" + data.sku)
                 .then(data => data.json())
                 .then(result => {
                     $('#tbl-bundle-qty').html('');

@@ -34,23 +34,23 @@ class HubTransfer extends Model
         ]);
     }
 
-    public function getAllPaginate($paging) {
+    public function getAllPaginate($per_page) {
         return self::select('hub_transfer.*', 'P.description', 'H.name as hub')
             ->leftJoin('products as P', 'P.sku', '=', 'hub_transfer.sku')
             ->leftJoin('hubs as H', 'H.id', '=', 'hub_transfer.hub_id')
             ->orderBy('hub_transfer.created_at', 'desc')
             ->whereDate('hub_transfer.created_at', date('Y-m-d'))
-            ->paginate($paging);
+            ->paginate($per_page);
     }
 
-   public function filterPaginate($paging) {
+   public function filterPaginate($per_page) {
         return self::select('hub_transfer.*', 'P.description', 'H.name as hub')
             ->leftJoin('products as P', 'P.sku', '=', 'hub_transfer.sku')
             ->leftJoin('hubs as H', 'H.id', '=', 'hub_transfer.hub_id')
             ->orderBy('hub_transfer.created_at', 'desc')
             ->whereDate('hub_transfer.created_at', date('Y-m-d'))
             ->whereBetween(DB::raw('DATE(hub_transfer.created_at)'), [request()->date_from, request()->date_to])
-            ->paginate($paging);
+            ->paginate($per_page);
     }
 
     public function filter($date_from, $date_to) {

@@ -37,8 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('/role', RoleController::class);
     Route::post('/role/update/{id}', [RoleController::class, 'update']);
 
-    Route::get('/hubs/{slug}/{hub_id}', [HubController::class, 'hubInventory']);
-    Route::get('/hubs/{slug}/{hub_id}/search', [HubController::class, 'searchProduct'])->name('searchProductHub');
+    Route::get('/hubs/{hub_id}/search', [HubController::class, 'searchProduct'])->name('searchProductHub');
+    Route::get('/hubs/{hub_id}', [HubController::class, 'hubInventory']);
+    Route::get('/hub/bundle-qty-list/{sku}', [HubController::class, 'hubInventory']);
 
     Route::post('/hub/update/{id}', [HubController::class, 'update']);
     Route::get('/hub/search', [HubController::class, 'search'])->name('searchHub');
