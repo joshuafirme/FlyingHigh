@@ -83,9 +83,9 @@ class HubController extends Controller
         ], 200);
     }
 
-    public function getBundleQtyList($sku, HubInventory $hub_inv)
+    public function getBundleQtyList($sku, $hub_id, HubInventory $hub_inv)
     {
-        $data = $hub_inv->getBundleQtyList($sku);
+        $data = $hub_inv->getBundleQtyList($sku,$hub_id);
 
         return response()->json([
             'message' => 'success',

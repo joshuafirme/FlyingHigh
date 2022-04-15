@@ -21,9 +21,10 @@ class HubInventory extends Model
 
     public function getByHub($hub_id, $per_page) 
     {
-        return self::select('P.*', $this->table . '.stock')
+        return self::select('P.*', $this->table . '.stock', 'hub_id')
             ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
             ->where($this->table . '.hub_id', $hub_id)
+            ->orderBy($this->table . '.updated_at', 'desc')
             ->paginate($per_page);
     }
 
@@ -36,6 +37,7 @@ class HubInventory extends Model
                $query->where($this->table . '.sku', 'LIKE', '%' . request()->key . '%')
                      ->orWhere('description', 'LIKE', '%' . request()->key . '%');
             })
+            ->orderBy($this->table . '.updated_at', 'desc')
             ->paginate($per_page);
     }
 
@@ -46,13 +48,23 @@ class HubInventory extends Model
         return count($res) > 0 ? true : false;
     }
 
+    public function ignoreOtherSKU($partNumber) {
+        $ignore = false;
+        if ($partNumber == "32666" || $partNumber == "COD" || $partNumber == "PHVT" || $partNumber == "SHIPTAX") {
+            $ignore = true;
+        }
+        return $ignore;
+    }
+
     public function isAllStockEnough($all_sku, $hub_id) {
         $product = new Product;
         $has_enough_stock = true;
         $sku_list = [];
         foreach ($all_sku as $item) {  
-
-            $bundles = $product->getBundlesBySKU($item->partNumber, $hub_id);
+            if ($this->ignoreOtherSKU($item->partNumber)) {
+                continue;
+            }
+            $bundles = $product->getBundlesBySKU($item->partNumber);
             if ($this->isAllBundleStockEnough($bundles, $item->quantity, $hub_id)) {}
             else {
                 array_push($sku_list, $item->partNumber);
@@ -112,7 +124,7 @@ class HubInventory extends Model
     }
     public function incrementStock($sku, $qty, $hub_id) {
         $product = new Product;
-        $bundles = $product->getBundlesBySKU($sku, $hub_id);
+        $bundles = $product->getBundlesBySKU($sku);
         $this->incrementBundleSKU($bundles, $qty, $hub_id);
         self::where('sku', $sku)
         ->where('hub_id', $hub_id)->update([
@@ -122,7 +134,7 @@ class HubInventory extends Model
 
     public function decrementStock($sku, $qty, $hub_id) {
         $product = new Product;
-        $bundles = $product->getBundlesBySKU($sku, $hub_id);
+        $bundles = $product->getBundlesBySKU($sku);
         $this->decrementBundleSKU($bundles, $qty, $hub_id);
         self::where('sku', $sku)
         ->where('hub_id', $hub_id)->update([
@@ -140,21 +152,22 @@ class HubInventory extends Model
         return false;
     }
 
-    public function getBundleQtyList($sku) 
+    public function getBundleQtyList($sku, $hub_id) 
     {
         $sku_list = array();
         $product = new Product;
-        $bundles = $product->getBundlesBySKU($sku, $hub_id);
-        $bundles = $this->getBundlesBySKU($sku);
+        $bundles = $product->getBundlesBySKU($sku);
 
         foreach ($bundles as $sku){
-            $data = self::select('sku','description','qty')
+            $data = self::select($this->table . '.sku','description', 'stock')
                 ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
-                ->where('sku', $sku)->first();
+                ->where($this->table . '.sku', $sku)
+                ->where('hub_id', $hub_id)->first();
+
             array_push($sku_list, [
                 "sku" => $data->sku,
                 "description" => $data->description,
-                "qty" => $data->qty,
+                "stock" => $data->stock,
             ]);
         }
 

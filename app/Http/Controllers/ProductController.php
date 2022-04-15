@@ -20,7 +20,7 @@ use Cache;
 class ProductController extends Controller
 {
     public function index() {
-        $products = Product::paginate(10);
+        $products = Product::orderBy('created_at','desc')->paginate(10);
         $remarks = AdjustmentRemarks::where('status', 1)->get();
         $product_count = Product::count('id');
         $hubs = Hub::where('status', 1)->get();
@@ -184,7 +184,7 @@ class ProductController extends Controller
         if ($product->isSkuExists($request->sku)) {
             return redirect()->back()->with('danger', 'SKU is already exists.');
         }
-        else if ($product->isBarcodeExists($barcode)) {
+        else if ($product->isBarcodeExists($request->barcode)) {
             return redirect()->back()->with('danger', 'Barcode is already exists.');
         }
         Cache::forget('all_sku_cache');
@@ -192,11 +192,12 @@ class ProductController extends Controller
         $inputs['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
        
         $bundles = isset($request->bundles) ? implode(',', $request->bundles) : [];
-        $request['bundles'] = $bundles;
-        
+        $inputs['bundles'] = $bundles;
+       
+        Product::create($inputs);
+
         $product->incrementStock($request->sku, $request->qty);
 
-        Product::create($inputs);
         return redirect()->back()->with('success', 'Product was successfully added.');
     }
 

@@ -125,6 +125,10 @@ class PickupController extends Controller
 
         if ($isAllStockEnough->result) {
             foreach ($line_items as $item) {
+                // ignore CASH ON DELIVERY SHIP, etc...
+                if ($hub_inv->ignoreOtherSKU($item->partNumber)) { 
+                    continue; 
+                }
                 $hub_inv->decrementStock($item->partNumber, $item->quantity, $hub_id);
             }
             $pickup->tagAsPickedUp($shipmentId, $hub_id);

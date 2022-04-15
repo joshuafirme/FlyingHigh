@@ -15,13 +15,12 @@
         $('.btn-view-detail').click(function() {
             let data = JSON.parse($(this).attr('data-info'));
             let modal = $('#detailModal');
-            console.log(data)
             for (var key of Object.keys(data)) {
                 if (key == 'expiration') {
                     data[key] = data[key] ? data[key].substring(0, 10) : '';
                 }
-                 if (key == 'status') {
-                    data[key] = data[key] == 1 ? 'Active': 'Inactive';
+                if (key == 'status') {
+                    data[key] = data[key] == 1 ? 'Active' : 'Inactive';
                 }
                 if (key == 'has_bundle') {
                     if (data[key] == 1) {
@@ -32,16 +31,16 @@
                         modal.find('[name=' + key + ']').prop('checked', false);
                         $('#bundle-qty-container').addClass('d-none');
                     }
-                    
+
                     continue;
                 }
                 modal.find('[name=' + key + ']').val(data[key]);
             }
         });
 
-        function getBundleQty(data) {
+        function getBundleQty(info) {
             // Replace this endpoint, qty must come from hub
-            fetch("/api/product/bundle-qty-list/" + data.sku)
+            fetch("/hub/bundle-qty-list/" + info.sku + "/" + info.hub_id)
                 .then(data => data.json())
                 .then(result => {
                     $('#tbl-bundle-qty').html('');
@@ -49,10 +48,11 @@
                     if (result.data.length > 0) {
                         for (let item of result.data) {
                             let html = '<tr>';
-                            html += '<td><a target="_blank" href="/hubs/hub-1/1/search?key=' + item.sku + '">' +
+                            html += '<td><a target="_blank" href="/hubs/info./search?key=' + item.sku +
+                                '">' +
                                 item.sku + ' | ' + item.description + '</a></td>';
-                            html += '<td>' + item.qty + '</td>';
-                            html += '<td><a target="_blank" href="/hubs/hub-1/1/search?key=' + item.sku +
+                            html += '<td>' + item.stock + '</td>';
+                            html += '<td><a target="_blank" href="/hubs/'+ info.hub_id +'/search?key=' + item.sku +
                                 '"><i class="fa fa-eye"></i></a></td>';
                             html += '</tr>';
                             $('#tbl-bundle-qty').append(html);
@@ -60,7 +60,7 @@
                     } else {
                         let html = '<tr>';
                         html +=
-                        '<td colspan="2"><div class="alert alert-primary">No data found.</div></td>';
+                            '<td colspan="2"><div class="alert alert-primary">No data found.</div></td>';
                         html += '</tr>';
                         $('#tbl-bundle-qty').append(html);
                     }
