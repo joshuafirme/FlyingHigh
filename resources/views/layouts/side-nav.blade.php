@@ -90,14 +90,14 @@
                         </span></a>
                     <ul class="submenu">
                         <li class="">
-                            <a href="{{ url('pickup') }}">For
+                            <a href="{{ url('pickup/0') }}">For
                                 Pick-up</a>
                         </li>
                         <li>
-                            <a href="{{ url('pickedup-list') }}">Picked-up</a>
+                            <a href="{{ url('pickup/1') }}">Picked-up</a>
                         </li>
                         <li>
-                            <a href="#">Returned</a>
+                            <a href="{{ url('pickup/3') }}">Returned</a>
                         </li>
                     </ul>
                 </li>

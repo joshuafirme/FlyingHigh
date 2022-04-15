@@ -48,7 +48,6 @@
                                             <th scope="col">BatchID</th>
                                             <th scope="col">Customer</th>
                                             <th scope="col">Date time submitted</th>
-                                            <th scope="col">Status</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
@@ -64,14 +63,6 @@
                                                     </td>
                                                     <td>{{ $item->dateTimeSubmittedIso }}</td>
                                                     <td>
-                                                        @if ($item->status == 0)
-                                                            <span
-                                                                class="badge badge-pill badge-primary">Unclaimed</span>
-                                                        @elseif ($item->status == 2)
-                                                            <span class="badge badge-pill badge-warning">Overdue</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
                                                         <div class="btn-group">
                                                             <a href="#" class="btn btn-dark btn-sm"
                                                                 data-toggle="dropdown" role="button"
@@ -84,11 +75,15 @@
                                                                     data-order-details="{{ json_encode($item) }}"><i
                                                                         class="fa fa-exchange-alt"></i> Pickup
                                                                     Details</a>
-                                                                @if ($item->status == 1)
+                                                                @if ($item->status == 0)
                                                                     <a class="btn dropdown-item btn-tag-as-overdue"
                                                                         data-shipmentId="{{ $item->shipmentId }}"><i
                                                                             class=" fa fa-clock"></i> Tag as
                                                                         Overdue</a>
+                                                                @elseif ($item->status == 1)
+                                                                    <a class="btn dropdown-item btn-tag-as-overdue"
+                                                                        data-shipmentId="{{ $item->shipmentId }}"><i
+                                                                            class=" fa fa-undo"></i> Return</a>
                                                                 @endif
                                                                 <a class="
                                                                         btn dropdown-item"

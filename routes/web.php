@@ -53,7 +53,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/pickup/search', [PickupController::class, 'search'])->name('searchPickup');
     Route::post('/pickup/tag-as-overdue/{shipmentId}', [PickupController::class, 'tagAsOverdue']);
     Route::post('/pickup/tag-as-picked-up/{shipmentId}', [PickupController::class, 'tagAsPickedUp']);
-    Route::get('/pickup', [PickupController::class, 'index']);
+    Route::post('/pickup/return/{shipmentId}', [PickupController::class, 'tagAsReturned']);
+    Route::get('/pickup/{status}', [PickupController::class, 'index']);
     Route::get('/get-line-items/{orderId}', [PickupController::class, 'getLineItems']);
 
     Route::get('/pickedup-list', [PickupController::class, 'pickedUpList']);

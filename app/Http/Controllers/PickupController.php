@@ -12,9 +12,16 @@ use Utils;
 
 class PickupController extends Controller
 {
-    public function index() 
+    public function index($status, Pickup $pickup) 
     {
-        $pickups = Pickup::whereIn('status', [0,2])->paginate(10);
+        $status_list = [];
+        if ($status == 0) {
+            $status_list = [0,2];
+        }
+        else {
+            array_push($status_list, $status);
+        }
+        $pickups = $pickup->getPickup($status_list, 10);
         $hubs = Hub::where('status', 1)->get();
         return view('pickup.index', compact('pickups', 'hubs'));
     }
@@ -131,7 +138,8 @@ class PickupController extends Controller
                 }
                 $hub_inv->decrementStock($item->partNumber, $item->quantity, $hub_id);
             }
-            $pickup->tagAsPickedUp($shipmentId, $hub_id);
+            $status = 1;
+            $pickup->changeStatus($shipmentId, $status, $hub_id);
         }
         else {
               return response()->json([
@@ -148,7 +156,18 @@ class PickupController extends Controller
 
     public function tagAsOverDue($shipmentId, Pickup $pickup)
     {
-        $pickup->tagAsOverDue($shipmentId);
+        $status = 2;
+        $pickup->changeStatus($shipmentId, $status);
+
+        return response()->json([
+            'message' => 'success'
+        ], 200);
+    }
+
+    public function tagAsReturned($shipmentId, Pickup $pickup)
+    { 
+        $status = 3;
+        $pickup->changeStatus($shipmentId, $status);
 
         return response()->json([
             'message' => 'success'

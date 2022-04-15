@@ -18,7 +18,14 @@
             let order_details = v.attr('data-order-details');
             order_details = JSON.parse(order_details);
             console.log(order_details)
+
+            if (order_details.status == 1) {
+                $('#pickup-form').attr('action', '/pickup/return/' + order_details.shipmentId);
+                $('#btn-pickedup').html('Return');
+            }
+
             $('#pickupModal').attr('shipmentId', order_details.shipmentId);
+             $('#pickupModal').attr('status', order_details.status);
             $('#shipmentId').text(order_details.shipmentId);
             $('#orderId').text(order_details.orderId);
             $('#contractDate').text(order_details.contractDate);
@@ -59,6 +66,13 @@
         $('#pickup-form').submit(function(event) {
             let btn = $('#btn-pickedup');
             let shipmentId = $('#pickupModal').attr('shipmentId');
+            let status = $('#pickupModal').attr('status');
+            let url = '/pickup/tag-as-picked-up/' + shipmentId;
+            // 1 = picked up
+            if (status == 1) {
+                url = '/pickup/return/' + shipmentId;
+            }
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "",
@@ -73,7 +87,7 @@
                     $.ajax({
                             type: 'POST',
                             _token: '{{ csrf_token() }}',
-                            url: '/pickup/tag-as-picked-up/' + shipmentId,
+                            url: url,
                             data: $(this).serialize()
                         })
 

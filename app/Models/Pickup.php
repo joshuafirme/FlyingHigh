@@ -42,6 +42,13 @@ class Pickup extends Model
         "hub_id"
     ];
 
+    public function getPickup($status_list, $per_page) {
+        return self::whereIn('pickups.status', $status_list)
+            ->select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub')
+            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
+            ->paginate($per_page);
+    }
+
     public function isOrderExists($orderId) {
         $res = self::where('orderId', $orderId)->get();
         return count($res) > 0 ? true : false;
@@ -51,18 +58,11 @@ class Pickup extends Model
         return self::where('shipmentId', $shipmentId)->value('orderId');
     }
 
-    public function tagAsPickedUp($shipmentId, $hub_id) {
+    public function changeStatus($shipmentId, $status, $hub_id = "") {
         self::where('shipmentId', $shipmentId)
         ->update([
             'hub_id' => $hub_id,
-            'status' => 1
-        ]);
-    }
-
-    public function tagAsOverdue($shipmentId) {
-        self::where('shipmentId', $shipmentId)
-        ->update([
-            'status' => 2
+            'status' => $status
         ]);
     }
 
