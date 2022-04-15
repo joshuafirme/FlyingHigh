@@ -9,11 +9,12 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
+                <h4 class="text-dark">Pick-up</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Pick-up</a></li>
-                            <li class="breadcrumb-item active">For Pick-up List</li>
+                            <li class="breadcrumb-item active">{{ $sub_title }}</li>
                         </ol>
                     </div>
                 </div>
@@ -25,7 +26,7 @@
                         <div class="card-body">
                             <div class="mt-3 mb-3">
                                 <div class="float-right">
-                                    <form action="{{ route('searchPickup') }}" method="get">
+                                    <form action="{{ url('/pickup/'.$status.'/search') }}" method="get">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="key" style="width: 280px;"
                                                 placeholder="Search by Shipment ID or Order ID"
@@ -81,7 +82,7 @@
                                                                             class=" fa fa-clock"></i> Tag as
                                                                         Overdue</a>
                                                                 @elseif ($item->status == 1)
-                                                                    <a class="btn dropdown-item btn-tag-as-overdue"
+                                                                    <a class="btn dropdown-item btn-tag-as-returned"
                                                                         data-shipmentId="{{ $item->shipmentId }}"><i
                                                                             class=" fa fa-undo"></i> Return</a>
                                                                 @endif

@@ -122,7 +122,7 @@
             return false;
         });
 
-        $('.btn-tag-as-overdue').click(function(event) {
+        $(document).on('click','.btn-tag-as-overdue',function(event) {
             let shipmentId = $(this).attr('data-shipmentId');
             Swal.fire({
                 title: 'Are you sure?',
@@ -162,6 +162,44 @@
             return false;
         });
 
+         $(document).on('click','.btn-tag-as-returned',function(event) {
+            let shipmentId = $(this).attr('data-shipmentId');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to tag this Picked Up as Returned?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                            type: 'POST',
+                            url: '/pickup/return/' + shipmentId,
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                        })
+                        .done(function(data) {
+
+                            if (data.message == 'success') {
+                                swalSuccess('Product was successfully Tags as Returned');
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1500);
+                            } else {
+                                swalError('Error occured, please contact support!');
+                            }
+                        })
+                        .fail(function() {
+                            swalError('Error occured, please contact support!');
+                        });
+                }
+            })
+            return false;
+        });
+        
 
         function swalSuccess(message) {
             Swal.fire(

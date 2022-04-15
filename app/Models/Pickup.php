@@ -49,6 +49,15 @@ class Pickup extends Model
             ->paginate($per_page);
     }
 
+    public function searchPickup($key, $status_list, $per_page) {
+        return self::whereIn('pickups.status', $status_list)
+            ->select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub')
+            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
+            ->where('shipmentId', 'LIKE', '%' . $key . '%')
+            ->orWhere('orderId', 'LIKE', '%' . $key . '%')
+            ->paginate($per_page);
+    }
+
     public function isOrderExists($orderId) {
         $res = self::where('orderId', $orderId)->get();
         return count($res) > 0 ? true : false;
@@ -58,7 +67,7 @@ class Pickup extends Model
         return self::where('shipmentId', $shipmentId)->value('orderId');
     }
 
-    public function changeStatus($shipmentId, $status, $hub_id = "") {
+    public function changeStatus($shipmentId, $status, $hub_id = 0) {
         self::where('shipmentId', $shipmentId)
         ->update([
             'hub_id' => $hub_id,

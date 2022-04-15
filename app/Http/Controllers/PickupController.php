@@ -14,39 +14,45 @@ class PickupController extends Controller
 {
     public function index($status, Pickup $pickup) 
     {
+        $stat = $this->getStatus($status);
+        $sub_title =  $stat->status_text;
+        $status_list =  $stat->status_list;
+        $pickups = $pickup->getPickup($status_list,10);
+        $hubs = Hub::where('status', 1)->get();
+        return view('pickup.index', compact('pickups', 'hubs', 'sub_title', 'status'));
+    }
+
+    public function search($status, Pickup $pickup)
+    {
+        $stat = $this->getStatus($status);
+        $sub_title =  $stat->status_text;
+        $status_list =  $stat->status_list;
+        $key = isset(request()->key) ? request()->key : "";
+        $pickups = $pickup->searchPickup($key, $status_list, 10);
+        $hubs = Hub::where('status', 1)->get();
+        $product_count = Pickup::count('id');
+        return view('pickup.index', compact('pickups', 'hubs', 'sub_title', 'status'));
+    }
+
+    public function getStatus($status) {
+        $sub_title = "";
         $status_list = [];
         if ($status == 0) {
             $status_list = [0,2];
+            $sub_title = 'For Pick-up';
         }
-        else {
+        else if ($status == 1) {
+            $sub_title = 'Picked-up';
             array_push($status_list, $status);
         }
-        $pickups = $pickup->getPickup($status_list, 10);
-        $hubs = Hub::where('status', 1)->get();
-        return view('pickup.index', compact('pickups', 'hubs'));
-    }
-
-    public function search()
-    {
-        $key = isset(request()->key) ? request()->key : "";
-        $pickups = Pickup::where('shipmentId', 'LIKE', '%' . $key . '%')
-                    ->orWhere('orderId', 'LIKE', '%' . $key . '%')
-                    ->paginate(10);
-        $hubs = Hub::where('status', 1)->get();
-        $product_count = Pickup::count('id');
-        return view('pickup.index', compact('pickups', 'hubs'));
-    }
-
-    public function pickedUpList() 
-    {
-        $pickups = Pickup::where('pickups.status', 1)
-            ->select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub')
-            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
-            ->paginate(10);
-            
-        $hubs = Hub::where('status', 1)->get();
-
-        return view('pickup.pickedup-list', compact('pickups', 'hubs'));
+        else if ($status == 3) {
+            $sub_title = 'Returned';
+            array_push($status_list, $status);
+        }
+        return json_decode(json_encode([
+            'status_text' => $sub_title,
+            'status_list' => $status_list
+        ]));
     }
 
     public function getLineItems($orderId, LineItem $lineItem) 
