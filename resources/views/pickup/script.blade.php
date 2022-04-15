@@ -86,10 +86,10 @@
                                 }, 1500);
                             }
                             else if (data.message == 'not_enough_stock') {
-                                let html = 'Some of stocks are not enough, please click the SKU below to see the available stock in the specific hub.<br>';
+                                let html = 'Some of stocks are not enough, please click the SKU below to see the available stock in a specific hub.<br>';
                                 console.log(data.sku_list)
                                 for (let sku of data.sku_list) {
-                                    html += '<a target="_blank" href="#">'+sku+'</a><br>'
+                                    html += '<a target="_blank" href="#">'+sku+'</a><br>';
                                 }
                                 swalError(html);
                             } 

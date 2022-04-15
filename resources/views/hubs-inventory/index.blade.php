@@ -1,4 +1,4 @@
-@section('title', 'Product')
+@section('title', 'Hub')
 @include('layouts.header')
 
 @include('layouts.top-nav')
@@ -23,6 +23,23 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
+                            <div class="mb-4 mt-2 d-md-flex flex-md-wrap">
+
+                                 <div class="ml-auto">
+                                        <form action="{{ url('/hubs/'.$slug.'/'.$hub_id.'/search') }}" method="get">
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" name="key"
+                                                    style="width: 280px;" placeholder="Search by SKU or Description"
+                                                    value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary" type="submit">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-borderless table-hover">
                                     <thead>
@@ -32,7 +49,6 @@
                                             <th scope="col">Stock</th>
                                             <th scope="col">Buffer Stock</th>
                                             <th scope="col">Expiration</th>
-                                            <th scope="col">Created at</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
@@ -45,7 +61,6 @@
                                                     <td>{{ $item->stock }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
                                                     <td>{{ $item->expiration ? $item->expiration : 'N/A' }}</td>
-                                                    <td>{{ Utils::formatDate($item->created_at) }}</td>
                                                     <td>
                                                         <div class="btn-group">
                                                             <a href="#" class="btn btn-dark btn-sm"
@@ -53,11 +68,10 @@
                                                                 aria-haspopup="true" aria-expanded="false"><i
                                                                     class="fas fa-ellipsis-v"></i></a>
                                                             <div class="dropdown-menu">
-                                                                <a class="btn dropdown-item btn-pickup"
-                                                                    data-target="#pickupModal" data-toggle="modal"
-                                                                    data-sku="{{ $item->sku }}"
-                                                                    data-desc="{{ $item->description }}"><i
-                                                                        class="fa fa-exchange-alt"></i> Pick-ups</a>
+                                                                <a class="btn dropdown-item btn-view-detail"
+                                                                    data-target="#detailModal" data-toggle="modal"
+                                                                    data-info="{{ json_encode($item) }}"><i
+                                                                        class="fa fa-eye"></i> View Details</a>
                                                             </div>
                                                         </div>
                                                     </td>

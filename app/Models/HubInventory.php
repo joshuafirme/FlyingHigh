@@ -19,6 +19,24 @@ class HubInventory extends Model
         'stock',
     ];
 
+    public function getByHub($hub_id, $per_page) 
+    {
+        return self::select('P.*', 'hub_inventory.stock')
+            ->leftJoin('products as P', 'P.sku', '=', 'hub_inventory.sku')
+            ->where('hub_inventory.hub_id', $hub_id)
+            ->paginate($per_page);
+    }
+
+    public function searchByHub($key, $hub_id, $per_page) 
+    {
+        return self::select('P.*', 'hub_inventory.stock')
+            ->leftJoin('products as P', 'P.sku', '=', 'hub_inventory.sku')
+            ->where('hub_inventory.hub_id', $hub_id)
+            ->where('description', 'LIKE', '%' . $key . '%')
+            ->orWhere('hub_inventory.sku', 'LIKE', '%' . $key . '%')
+            ->paginate($per_page);
+    }
+
     public function isSkuExistsInHub($sku, $hub_id) 
     {
         $res = self::where('sku', $sku)

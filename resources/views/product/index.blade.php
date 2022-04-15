@@ -149,7 +149,7 @@
                                                                 <a class="btn btn-edit open-modal dropdown-item"
                                                                     data-backdrop="static" data-keyboard="false"
                                                                     modal-type="update"
-                                                                    data-info="{{ json_encode($item) }} "><i
+                                                                    data-info="{{ json_encode($item) }}"><i
                                                                         class="fa fa-edit"></i> Edit</a>
                                                                 <a class="btn delete-record dropdown-item"
                                                                     data-id="{{ $item->id }}" object="product"
