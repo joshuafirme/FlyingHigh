@@ -191,9 +191,8 @@ class ProductController extends Controller
         $inputs = $request->all();
         $inputs['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
        
-        $bundles = isset($request->bundles) ? implode(',', $request->bundles) : [];
+        $bundles = isset($request->bundles) ? implode(',', $request->bundles) : '';
         $inputs['bundles'] = $bundles;
-       
         Product::create($inputs);
 
         $product->incrementStock($request->sku, $request->qty);
