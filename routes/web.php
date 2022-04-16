@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PickupController;
 use App\Http\Controllers\AdjustmentRemarksController;
+use App\Http\Controllers\ReturnReasonController;
 use App\Http\Controllers\Reports\StockAdjustmentController;
 use App\Http\Controllers\Reports\HubTransferController;
 /*
@@ -44,6 +45,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/hub/update/{id}', [HubController::class, 'update']);
     Route::get('/hub/search', [HubController::class, 'search'])->name('searchHub');
     Route::resource('/hub', HubController::class);
+
+    Route::post('/return-reason/delete/{id}', [ReturnReasonController::class, 'delete']);
+    Route::post('/return-reason/update/{id}', [ReturnReasonController::class, 'update']);
+    Route::resource('return-reason', ReturnReasonController::class);
 
     Route::post('/adjustment-remarks/delete/{id}', [AdjustmentRemarksController::class, 'delete']);
     Route::post('/adjustment-remarks/update/{id}', [AdjustmentRemarksController::class, 'update']);
