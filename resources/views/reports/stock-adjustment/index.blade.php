@@ -45,7 +45,7 @@
                                         <button class="btn btn-sm btn-primary" type="submit">Filter</button>
                                     </div>
                                      <div class="form-group ml-1">
-                                        <a class="btn btn-sm btn-primary" href="{{ url('/reports/stock-adjustment') }}"><i class="fa fa-sync" aria-hidden="true"></i> Reload</a>
+                                        <a class="btn btn-sm btn-primary" href="{{ url('/reports/stock-adjustment') }}"><i class="fa fa-sync" aria-hidden="true"></i> Refresh</a>
                                     </div>
                                 </form>
 
