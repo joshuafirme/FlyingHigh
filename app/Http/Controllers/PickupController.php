@@ -8,6 +8,7 @@ use App\Models\Pickup;
 use App\Models\LineItem;
 use App\Models\HubInventory;
 use App\Models\Hub;
+use App\Models\ReturnReason;
 use Utils;
 
 class PickupController extends Controller
@@ -19,7 +20,8 @@ class PickupController extends Controller
         $status_list =  $stat->status_list;
         $pickups = $pickup->getPickup($status_list,10);
         $hubs = Hub::where('status', 1)->get();
-        return view('pickup.index', compact('pickups', 'hubs', 'sub_title', 'status'));
+        $reasons = ReturnReason::where('status', 1)->get();
+        return view('pickup.index', compact('pickups', 'hubs', 'sub_title', 'status', 'reasons'));
     }
 
     public function search($status, Pickup $pickup)
@@ -173,7 +175,8 @@ class PickupController extends Controller
     public function tagAsReturned($shipmentId, Pickup $pickup)
     { 
         $status = 3;
-        $pickup->changeStatus($shipmentId, $status);
+        $reason = request()->reason;
+        $pickup->changeStatus($shipmentId, $status, $reason);
 
         return response()->json([
             'message' => 'success'

@@ -128,3 +128,33 @@
         </div>
     </div>
 </div>
+
+<!-- Return modal -->
+<div class="modal fade" id="returnModal" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <form id="return-form" class="modal-content" action="#">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Return</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row g-3">
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Reason</label>
+                    <select class="form-control" name="reason" id="reason" required>
+                        <option value="" disabled selected>Choose reason</option>
+                        @foreach ($reasons as $item)
+                            <option value="{{ $item->id }}">{{ $item->reason }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-primary" type="submit">Tag as Returned</button>
+            </div>
+        </form>
+    </div>
+</div>

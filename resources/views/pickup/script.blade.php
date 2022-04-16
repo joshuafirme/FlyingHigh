@@ -161,12 +161,14 @@
 
             return false;
         });
-
-         $(document).on('click','.btn-tag-as-returned',function(event) {
+        
+        $('#return-form').submit(function(event) {
+            
             let shipmentId = $(this).attr('data-shipmentId');
+            let reason = $('#reason').val();
             Swal.fire({
                 title: 'Are you sure?',
-                text: "Do you want to tag this Picked Up as Returned?",
+                text: "Do you want to tag this as Returned?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -178,7 +180,8 @@
                             type: 'POST',
                             url: '/pickup/return/' + shipmentId,
                             data: {
-                                _token: "{{ csrf_token() }}"
+                                _token: "{{ csrf_token() }}",
+                                reason: reason
                             },
                         })
                         .done(function(data) {
@@ -198,6 +201,11 @@
                 }
             })
             return false;
+        });
+
+         $(document).on('click','.btn-return',function(event) {
+            let shipmentId = $(this).attr('data-shipmentId');
+            $('#return-form').attr('data-shipmentId', shipmentId);
         });
         
 

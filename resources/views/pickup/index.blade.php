@@ -26,7 +26,7 @@
                         <div class="card-body">
                             <div class="mt-3 mb-3">
                                 <div class="float-right">
-                                    <form action="{{ url('/pickup/'.$status.'/search') }}" method="get">
+                                    <form action="{{ url('/pickup/' . $status . '/search') }}" method="get">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="key" style="width: 280px;"
                                                 placeholder="Search by Shipment ID or Order ID"
@@ -49,6 +49,11 @@
                                             <th scope="col">BatchID</th>
                                             <th scope="col">Customer</th>
                                             <th scope="col">Date time submitted</th>
+                                            @if ($status == 0 || $status == 2)
+                                                <th>Status</th>
+                                            @elseif ($status == 3)
+                                                <th>Reason</th>
+                                            @endif
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
@@ -63,6 +68,19 @@
                                                         {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
                                                     </td>
                                                     <td>{{ $item->dateTimeSubmittedIso }}</td>
+                                                    @if ($status == 0 || $status == 2)
+                                                        <td>
+                                                            @if ($item->status == 0)
+                                                                <span
+                                                                    class="badge badge-pill badge-primary">Unclaimed</span>
+                                                            @elseif ($item->status == 2)
+                                                                <span
+                                                                    class="badge badge-pill badge-warning">Overdue</span>
+                                                            @endif
+                                                        </td>
+                                                    @elseif ($status == 3)
+                                                        <td>{{ $item->reason }}</td>
+                                                    @endif
                                                     <td>
                                                         <div class="btn-group">
                                                             <a href="#" class="btn btn-dark btn-sm"
@@ -82,7 +100,8 @@
                                                                             class=" fa fa-clock"></i> Tag as
                                                                         Overdue</a>
                                                                 @elseif ($item->status == 1)
-                                                                    <a class="btn dropdown-item btn-tag-as-returned"
+                                                                    <a class="btn dropdown-item btn-return"
+                                                                        data-target="#returnModal" data-toggle="modal"
                                                                         data-shipmentId="{{ $item->shipmentId }}"><i
                                                                             class=" fa fa-undo"></i> Return</a>
                                                                 @endif

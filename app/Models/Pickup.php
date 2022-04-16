@@ -44,8 +44,9 @@ class Pickup extends Model
 
     public function getPickup($status_list, $per_page) {
         return self::whereIn('pickups.status', $status_list)
-            ->select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub')
+            ->select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
             ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
+            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
             ->paginate($per_page);
     }
 
@@ -67,11 +68,12 @@ class Pickup extends Model
         return self::where('shipmentId', $shipmentId)->value('orderId');
     }
 
-    public function changeStatus($shipmentId, $status, $hub_id = 0) {
+    public function changeStatus($shipmentId, $status, $reason="", $hub_id = 0) {
         self::where('shipmentId', $shipmentId)
         ->update([
             'hub_id' => $hub_id,
-            'status' => $status
+            'status' => $status,
+            'return_reason' => $reason
         ]);
     }
 
