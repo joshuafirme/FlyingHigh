@@ -9,7 +9,15 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="text-dark">Hub Transfer Report</h4>
+                <h4 class="text-dark">Reports</h4>
+                <div class="row align-items-center">
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Reports</a></li>
+                            <li class="breadcrumb-item active">Hub Transfer</li>
+                        </ol>
+                    </div>
+                </div>
             </div>
 
             <div class="row">

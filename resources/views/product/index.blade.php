@@ -9,11 +9,12 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
+                <h4>Product</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Products</a></li>
-                            <li class="breadcrumb-item active">Products List <span
+                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Product</a></li>
+                            <li class="breadcrumb-item active">Product List <span
                                     class="badge badge-pill badge-primary">{{ $product_count }}</span></li>
                         </ol>
                     </div>

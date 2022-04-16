@@ -9,10 +9,11 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
+                <h4>Catalog</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Adjustment Remarks</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Catalog</a></li>
                             <li class="breadcrumb-item active">Adjustment Remarks List</li>
                         </ol>
                     </div>

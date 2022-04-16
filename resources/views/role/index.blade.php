@@ -9,11 +9,12 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
+                <h4>Administration</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Role</a></li>
-                            <li class="breadcrumb-item active">Role List</li>
+                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Administration</a></li>
+                            <li class="breadcrumb-item active">Role</li>
                         </ol>
                     </div>
                 </div>
