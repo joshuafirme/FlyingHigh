@@ -29,7 +29,7 @@
                                     $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d');
                                     $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
                                 @endphp
-                                <form class="form-inline" action="{{ route('filterStockAdjustment') }}"
+                                <form class="form-inline" action="{{ route('filterHubTransfer') }}"
                                     method="get">
                                     <div class="form-group mr-4 col-12 col-md-auto">
                                         <label>Date from</label>

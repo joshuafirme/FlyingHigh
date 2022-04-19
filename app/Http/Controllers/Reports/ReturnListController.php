@@ -4,28 +4,28 @@ namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\HubTransfer;
-use App\Exports\HubTransferExport;
+use App\Models\StockAdjustment;
+use App\Exports\StockAdjustmentExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Utils;
 
-class HubTransferController extends Controller
+class ReturnListController extends Controller
 {
-   public function index(HubTransfer $sa) {
-        $hub_transfer = $sa->getAllPaginate(10);
-        return view('reports.hub-transfer.index', compact('hub_transfer'));
+      public function index(StockAdjustment $sa) {
+        $stock_adjustments = $sa->getAllPaginate(10);
+        return view('reports.stock-adjustment.index', compact('stock_adjustments'));
     }
 
-    public function filterHubTransfer(HubTransfer $sa) {
+    public function filterStockAdjustment(StockAdjustment $sa) {
 
-        $hub_transfer = $sa->filterPaginate(10);
-        return view('reports.hub-transfer.index', compact('hub_transfer'));
+        $stock_adjustments = $sa->filterPaginate(10);
+        return view('reports.stock-adjustment.index', compact('stock_adjustments'));
     }
 
-    public function previewReport($date_from, $date_to, HubTransfer $sa){
+    public function previewReport($date_from, $date_to, StockAdjustment $sa){
         
         $items = Utils::objectToArray($sa->filter($date_from, $date_to));
-        $title = "Hub Transfer Report";
+        $title = "Stock Adjustment Report";
         $headers = $sa->getHeaders();
         $columns = $sa->getColumns();
         
@@ -38,10 +38,10 @@ class HubTransferController extends Controller
         return $pdf->stream($date_from.'-to-'.$date_to.'.pdf');
     }
     
-    public function downloadReport($date_from, $date_to, HubTransfer $sa){
+    public function downloadReport($date_from, $date_to, StockAdjustment $sa){
         
         $items = Utils::objectToArray($sa->filter($date_from, $date_to));
-        $title = "Hub Transfer Report";
+        $title = "Stock Adjustment Report";
         $headers = $sa->getHeaders();
         $columns = $sa->getColumns();
         
@@ -51,11 +51,11 @@ class HubTransferController extends Controller
         $pdf->loadHTML($output);
         $pdf->setPaper('A4', 'landscape');
     
-        return $pdf->download('hub-transfer-report-'.$date_from.'-to-'.$date_to.'.pdf');
+        return $pdf->download('stock-adjustment-report-'.$date_from.'-to-'.$date_to.'.pdf');
     }
 
     public function exportReport()
     {
-         return Excel::download(new HubTransferExport, 'hub-transfer-report.xlsx');
+         return Excel::download(new StockAdjustmentExport, 'stock-adjustment-report.xlsx');
     }
 }

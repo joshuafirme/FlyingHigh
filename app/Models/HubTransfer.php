@@ -48,7 +48,6 @@ class HubTransfer extends Model
             ->leftJoin('products as P', 'P.sku', '=', 'hub_transfer.sku')
             ->leftJoin('hubs as H', 'H.id', '=', 'hub_transfer.hub_id')
             ->orderBy('hub_transfer.created_at', 'desc')
-            ->whereDate('hub_transfer.created_at', date('Y-m-d'))
             ->whereBetween(DB::raw('DATE(hub_transfer.created_at)'), [request()->date_from, request()->date_to])
             ->paginate($per_page);
     }
@@ -56,11 +55,10 @@ class HubTransfer extends Model
     public function filter($date_from, $date_to) {
         $date_from = $date_from ? $date_from : date('Y-m-d');
         $date_to = $date_to ? $date_to : date('Y-m-d');
-        return self::select('hub_transfer.*', 'P.description', 'H.name as hub')
+        return self::select('P.sku', 'P.description', 'H.name as hub', 'qty_transferred', 'hub_transfer.created_at')
             ->leftJoin('products as P', 'P.sku', '=', 'hub_transfer.sku')
             ->leftJoin('hubs as H', 'H.id', '=', 'hub_transfer.hub_id')
             ->orderBy('hub_transfer.created_at', 'desc')
-            ->whereDate('hub_transfer.created_at', date('Y-m-d'))
             ->whereBetween(DB::raw('DATE(hub_transfer.created_at)'), [$date_from, $date_to])
             ->get();
     }
