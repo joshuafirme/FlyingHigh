@@ -96,7 +96,7 @@
                         @endphp
                         @foreach ($hubs as $item)
                             <li class=""><a
-                                    href="{{ url('/hubs/' . $item->id) }}">{{ $item->name }}</a>
+                                    href="{{ url('/hubs/' . $item->id . '?hub_id=' . $item->id) }}">{{ $item->name }}</a>
                             </li>
                         @endforeach
                 </li>

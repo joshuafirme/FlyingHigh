@@ -16,7 +16,6 @@
     <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
     <link href="{{ asset('css/bootstrap-datepicker.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/chartist.min.css') }}">
-    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ asset('css/custom.css?v=' . time()) }}">
     <link rel="icon"
         href="https://i0.wp.com/flyinghighexpress.com/wp-content/uploads/2019/02/cropped-flyinghighenergyexpress-logoicon.png?fit=32%2C32&ssl=1">

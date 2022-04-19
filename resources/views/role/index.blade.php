@@ -59,16 +59,14 @@
                                                     @endphp
                                                 </td>
                                                 <td>
-                                                    @if ($item->name != 'Admin')
-                                                        <a class="btn btn-edit open-modal" modal-type="update"
-                                                            data-info="{{ json_encode($item) }} "><i
-                                                                class="fa fa-edit"></i></a>
-                                                        <a class="btn delete-record" data-id="{{ $item->id }}"
-                                                            object="role" data-toggle="modal"
-                                                            data-target="#delete-record-modal">
-                                                            <i class="fa fa-trash" style="color: red;"></i>
-                                                        </a>
-                                                    @endif
+                                                    <a class="btn btn-edit open-modal" modal-type="update"
+                                                        data-info="{{ json_encode($item) }} "><i
+                                                            class="fa fa-edit"></i></a>
+                                                    <a class="btn delete-record" data-id="{{ $item->id }}"
+                                                        object="role" data-toggle="modal"
+                                                        data-target="#delete-record-modal">
+                                                        <i class="fa fa-trash" style="color: red;"></i>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach

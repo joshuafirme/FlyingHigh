@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Auth;
+use App\Models\Hub;
 
 class User extends Authenticatable
 {
@@ -27,11 +28,26 @@ class User extends Authenticatable
     ];
 
     public static function isPermitted($page) {
+        $hub = new Hub;
         $is_permitted = false;
+
         if (Auth::check()) {
+
             $permissions = Role::permissions();
-            if (in_array($page, $permissions)) {
-                return true;
+
+            if ($page == 'Hub Inventory') {
+
+                $hub_name = $hub->getHubName(request()->hub_id);
+                
+                if (in_array($hub_name, $permissions)) {
+                    return true;
+                }
+
+            } 
+            else {
+                if (in_array($page, $permissions)) {
+                    return true;
+                }
             }
         }
     }

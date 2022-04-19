@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Stock</label>
-                    <input type="number" class="form-control" name="qty" readonly>
+                    <input type="number" class="form-control" name="stock" readonly>
                 </div>
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Buffer Stock</label>

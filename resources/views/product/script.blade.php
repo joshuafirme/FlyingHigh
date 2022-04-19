@@ -146,6 +146,23 @@
                 })
         }
 
+        function incrementStock(sku, qty) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/increment-stock',
+                    data: {
+                        sku: sku,
+                        qty: qty
+                    }
+                })
+                .done(function(data) {
+                    console.log(data)
+                })
+                .fail(function() {
+                    swalError('Importing failed, please try again or contact support.');
+                });
+        }
+
         $('.open-modal').click(function(event) {
 
             let modal = $('#postModal');
@@ -236,7 +253,6 @@
 
         $(document).on('keyup', '#barcode-scan', function(e) { 
             let barcode = $(this).val();
-            console.log(e.keyCode)
             if (e.keyCode == 86 || e.keyCode == 8) {
                 fetch("/api/product/barcode/" + barcode)
                     .then(data => data.json())
@@ -510,9 +526,44 @@
             }
         });
 
+        $('#btn-open-import-via-barcode').click(function(e) {
+            e.preventDefault();
+            $('#barcodeScanModal').modal('show');
+            let modal = $('#barcodeScanModal');
+            modal.find('[name=qty]').val(1);
+            setTimeout(function() {
+                $('#barcode-scan-input').focus();
+            },1000)
+        });
 
+        $('#barcode-scan-input').keyup(function(e) {
+            let modal = $('#barcodeScanModal');
+            let el = $(this);
+            let barcode = el.val();
+            modal.find('.error-message').addClass('d-none');
+            let qty = modal.find('[name=qty]').val();
+            console.log(e.keyCode)
+            if (e.keyCode == 86) {
+                fetch("/api/product/barcode/" + barcode)
+                    .then(data => data.json())
+                    .then(data => {
+                        console.log(data)
+                        if (data.sku) {
+                            el.val('');
+                            modal.find('[name=sku]').val(data.sku);
+                            modal.find('[name=description]').val(data.description);
+                            incrementStock(data.sku, qty);
+                        }
+                        else {
+                            modal.find('.error-message').removeClass('d-none');
+                            modal.find('.error-message').html(data.sku);
+                        }
+                });
+            }
+        });
 
         $('#import-via-api-form').submit(function(e) {
+            e.preventDefault();
             $('#btn-api-import').html('Importing...');
             let api_endpoint = $('[name=api_endpoint]').val();
             $.ajax({

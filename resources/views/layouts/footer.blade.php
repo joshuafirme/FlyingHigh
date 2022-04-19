@@ -11,8 +11,6 @@
 <script src="{{ asset('js/waves.min.js') }}"></script>
 <!-- App js-->
 <script src="{{ asset('js/app.js') }}"></script>
-<!-- Select2  -->
-<script src="{{ asset('js/select2.min.js') }}"></script>
 <!-- Datepicker  -->
 <script src="{{ asset('js/bootstrap-datepicker.js') }}"></script>
 <!-- slick  -->

@@ -13,12 +13,23 @@ use App\Models\Transaction;
 use App\Models\TransactionLineItems;
 use App\Models\AdjustmentRemarks;
 use App\Models\StockAdjustment;
+use App\Models\User;
 use Utils;
 use DB;
 use Cache;
 
 class ProductController extends Controller
 {
+    private $page = "Product";
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (User::isPermitted($this->page)) { return $next($request); }
+            return abort(401);
+        });
+    }
+    
     public function index() {
         $products = Product::orderBy('created_at','desc')->paginate(10);
         $remarks = AdjustmentRemarks::where('status', 1)->get();
@@ -184,9 +195,6 @@ class ProductController extends Controller
         if ($product->isSkuExists($request->sku)) {
             return redirect()->back()->with('danger', 'SKU is already exists.');
         }
-        else if ($product->isBarcodeExists($request->barcode)) {
-            return redirect()->back()->with('danger', 'Barcode is already exists.');
-        }
         Cache::forget('all_sku_cache');
         $inputs = $request->all();
         $inputs['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
@@ -257,6 +265,19 @@ class ProductController extends Controller
         return response()->json([
             'status' =>  'error',
             'message' => 'Deleting Product failed.'
+        ], 200);
+    }
+
+    
+
+    public function incrementStock(Product $product)
+    {
+        $sku = request()->sku;
+        $qty = request()->qty;
+        $product->where('sku', $sku)->update(['qty' => DB::raw('qty + ' . $qty)]);
+
+        return response()->json([
+            'message' => 'success'
         ], 200);
     }
 }

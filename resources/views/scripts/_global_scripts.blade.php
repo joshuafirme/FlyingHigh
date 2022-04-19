@@ -28,12 +28,6 @@
             enlarge();
         });
 
-        var select2 = $(".select2");
-        select2.select2({
-            tags: "true",
-            placeholder: "Select an option",
-        });
-
         function enlarge() {
             if ($(document).width() < 1220) {
                 $('body').addClass('enlarged');

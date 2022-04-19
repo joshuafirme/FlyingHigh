@@ -42,4 +42,5 @@ class ProductApi extends Controller
             'data' => $data
         ], 200);
     }
+    
 }

@@ -19,7 +19,6 @@ use App\Http\Controllers\Api\ProductApi;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 Route::get('transaction/{transNum}', [TransactionController::class, 'transaction']);
 Route::get('get-all-sku', [ProductApi::class, 'getAllSKU']);
 Route::get('product/sku/{sku}', [ProductApi::class, 'getBySKU']);

@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Hub;
 use Cache;
 
 class RoleController extends Controller
 {
-    private $page = "System Users";
+    private $page = "Role";
 
     public function __construct()
     {
@@ -27,7 +28,8 @@ class RoleController extends Controller
     public function index(Role $role) { 
         $page_title = "Role | ";
         $role = Role::paginate(5);
-        return view('role.index', compact('page_title', 'role'));
+        $hubs = Hub::where('status', 1)->get();
+        return view('role.index', compact('page_title', 'role', 'hubs'));
     }
 
     /**

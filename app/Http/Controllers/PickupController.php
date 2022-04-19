@@ -144,7 +144,16 @@ class PickupController extends Controller
                 if ($hub_inv->ignoreOtherSKU($item->partNumber)) { 
                     continue; 
                 }
-                $hub_inv->decrementStock($item->partNumber, $item->quantity, $hub_id);
+                if ($hub_inv->hasStock($sku, $item->quantity))   {
+                    $hub_inv->decrementStock($item->partNumber, $item->quantity, $hub_id);
+                }
+                else {
+                    return response()->json([
+                        'success' =>  false,
+                        'message' => 'not_enough_stock',
+                        'sku_list' => $isAllStockEnough->sku
+                    ], 200);
+                }
             }
             $status = 1;
             $pickup->changeStatus($shipmentId, $status, $hub_id);

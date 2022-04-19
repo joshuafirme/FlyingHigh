@@ -37,7 +37,7 @@
                                         </button>
                                         <button type="button"
                                             class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
-                                            data-toggle="modal" data-target="#apiModal" data-backdrop="static"
+                                            id="btn-open-import-via-barcode" data-backdrop="static"
                                             data-keyboard="false"><i class="fa fa-barcode"></i>
                                             Import Stock via Barcode
                                         </button>
@@ -49,7 +49,8 @@
                                         </button>
                                         <button type="button"
                                             class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
-                                            data-toggle="modal" data-target="#importModal"><i class="fas fa-file-import"></i>
+                                            data-toggle="modal" data-target="#importModal"><i
+                                                class="fas fa-file-import"></i>
                                             Import Excel
                                         </button>
                                         <button type="button"
@@ -58,6 +59,10 @@
                                             data-keyboard="false"><i class="fa fa-exchange-alt"></i>
                                             Hub Transfer
                                         </button>
+                                        <a href="{{ url('/product') }}" class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto">
+                                            <i class="fa fa-undo"></i>
+                                            Refresh
+                                        </a>
 
                                     </div>
 
@@ -111,13 +116,16 @@
                                                     }
                                                 @endphp
                                                 <tr id="record-id-{{ $item->id }}">
-                                                    <td>{{ $item->sku }}</td>
+                                                    <td><a class="btn-view-detail" href="#" data-target="#detailModal"
+                                                            data-toggle="modal" data-info="{{ json_encode($item) }}">
+                                                            {{ $item->sku }}</a></td>
                                                     <td>{{ $item->description }}</td>
                                                     <td class="{{ $text_class }}">{{ $item->qty }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
                                                     <td class="{{ $text_class }}">{!! $icon !!}
                                                         {{ $stock_level }}</td>
-                                                    <td>{{ $item->expiration && $item->expiration != '1970-01-01' ? $item->expiration : 'N/A' }}</td>
+                                                    <td>{{ $item->expiration && $item->expiration != '1970-01-01' ? $item->expiration : 'N/A' }}
+                                                    </td>
                                                     <td>@php
                                                         if ($item->status == 1) {
                                                             echo '<span class="badge rounded-pill bg-primary">Active</span>';

@@ -386,3 +386,42 @@
         </form>
     </div>
 </div>
+
+<!-- Transfer modal -->
+<div class="modal fade" id="barcodeScanModal" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <div action="#" method="post" class="modal-content" autocomplete="off">
+            <div class="modal-header">
+                <h5 class="modal-title">Import Stock via Barcode Scan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form autocomplete="off" class="modal-body row g-3">
+                <div class="col-12 mt-2">
+                    <label class="form-label">Scan Barcode</label>
+                    <input type="text" class="form-control" id="barcode-scan-input">
+                    <small class="text-danger error-message d-none">Barcode not found.</small>
+                </div>
+                 <div class="col-12 mt-2">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" class="form-control" name="qty" value="1" min="1">
+                </div>
+                 <div class="col-12 mt-3">
+                    <hr>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">SKU</label>
+                    <input type="text" class="form-control" name="sku" readonly>
+                </div>
+                 <div class="col-12 mt-3">
+                    <label class="form-label">Description</label>
+                    <input type="text" class="form-control" name="description" readonly>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

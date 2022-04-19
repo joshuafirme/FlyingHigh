@@ -12,7 +12,7 @@ use Auth;
 
 class UserController extends Controller
 {
-    private $page = "System Users";
+    private $page = "User";
 
     public function __construct()
     {

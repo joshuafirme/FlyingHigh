@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\HubController;
+use App\Http\Controllers\HubInventoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PickupController;
@@ -38,9 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('/role', RoleController::class);
     Route::post('/role/update/{id}', [RoleController::class, 'update']);
 
-    Route::get('/hubs/{hub_id}/search', [HubController::class, 'searchProduct'])->name('searchProductHub');
-    Route::get('/hubs/{hub_id}', [HubController::class, 'hubInventory']);
-    Route::get('/hub/bundle-qty-list/{sku}/{hub_id}', [HubController::class, 'getBundleQtyList']);
+    Route::get('/hubs/{hub_id}/search', [HubInventoryController::class, 'searchProduct'])->name('searchProductHub');
+    Route::get('/hubs/{hub_id}', [HubInventoryController::class, 'hubInventory']);
+    Route::get('/hub/bundle-qty-list/{sku}/{hub_id}', [HubInventoryController::class, 'getBundleQtyList']);
 
     Route::post('/hub/update/{id}', [HubController::class, 'update']);
     Route::get('/hub/search', [HubController::class, 'search'])->name('searchHub');
@@ -91,6 +92,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/stock-adjustment/download/{date_from}/{date_to}', [StockAdjustmentController::class, 'downloadReport']);
     Route::get('/reports/stock-adjustment/export/{date_from}/{date_to}', [StockAdjustmentController::class, 'exportReport']);
 
+    Route::post('increment-stock', [ProductController::class, 'incrementStock']);
 });
 
 

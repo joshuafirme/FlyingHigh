@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Hub;
+use App\Models\User;
 use App\Models\HubInventory;
 use Utils;
 use Str;
 
 class HubController extends Controller
 {
+
     public function index()
     {
         $hubs = Hub::paginate(10);
@@ -17,28 +19,6 @@ class HubController extends Controller
         $page_title = "Hubs";
         $hubs = Hub::paginate(10);
         return view('hub.index', compact('page_title', 'hubs', 'hubs'));
-    }
-
-    public function hubInventory($hub_id, HubInventory $hub_inv, Hub $hub)
-    {
-        $products = $hub_inv->getByHub($hub_id, 10);
-
-        $hub_name = $hub->getHubName($hub_id);
-        return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id'));
-    }
-
-    public function searchProduct($hub_id, HubInventory $hub_inv, Hub $hub)
-    {
-        $key = isset(request()->key) ? request()->key : "";
-        if ($key) {
-            $products = $hub_inv->searchByHub($hub_id, 10);
-        }
-        else {
-             $products = $hub_inv->getByHub($hub_id, 10);
-        }
-
-        $hub_name = $hub->getHubName($hub_id);
-        return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id'));
     }
 
     public function search()
@@ -80,16 +60,6 @@ class HubController extends Controller
         return response()->json([
             'status' =>  'error',
             'message' => 'Deleting hub failed.'
-        ], 200);
-    }
-
-    public function getBundleQtyList($sku, $hub_id, HubInventory $hub_inv)
-    {
-        $data = $hub_inv->getBundleQtyList($sku,$hub_id);
-
-        return response()->json([
-            'message' => 'success',
-            'data' => $data
         ], 200);
     }
 }
