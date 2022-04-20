@@ -6,7 +6,8 @@ use Auth;
 use Mail;
 use App\Mail\Mailer;
 use App\Models\User;
-use App\Models\Subscription;
+use App\Models\LineItem;
+use App\Models\HubInventory;
 use File;
 class Utils
 {
@@ -15,13 +16,54 @@ class Utils
         return json_decode(json_encode($data), true);
     }
 
+    public static function getPickupStatusBySlug($slug) 
+    {
+        switch ($slug) {
+            case 'for-pickup':
+                return 0;
+                break;
+            case 'picked-up':
+                return 1;
+                break;
+            case 'overdue':
+                return 2;
+                break;
+            case 'returned':
+                return 3;
+                break;
+        }
+    }
+
+    public static function getPickupStatusText($status) 
+    {
+        switch ($status) {
+            case 0:
+                return 'For Pickup';
+                break;
+            case 1:
+                return 'Picked Up';
+                break;
+            case 2:
+                return 'Overdue';
+                break;
+            case 3:
+                return 'Returned';
+                break;
+        }
+    }
+
     public static function renderReport($items, $title, $headers, $columns, $date_from, $date_to)
     {  
-        if($date_from == $date_to) {
+        if (strpos($title, 'For Pickup') !== false || strpos($title, 'Picked Up') !== false
+            ||strpos($title, 'Returned') !== false || strpos($title, 'Overdue') !== false) { 
+            return self::renderCustomReport($items, $title, $headers, $columns, $date_from, $date_to);
+        }
+        else {      if($date_from == $date_to) {
             $date = date("F j, Y", strtotime($date_from));
         }else {
             $date = date("F j, Y", strtotime($date_from)) .' - '. date("F j, Y", strtotime($date_to));
         }
+        
         $output = '
         <div style="width:100%">
         <h1 style="text-align:center;">Flying High Energy Express</h1>
@@ -37,28 +79,100 @@ class Utils
 
             $output .=
             '</thead>
-            <tbody>
-                ';
+            <tbody>';
             
             if($items){
                 foreach ($items as $data) {
-                
-                $output .='
-                <tr>';
-                    foreach ($columns as $column) {
-                        if ($column == 'created_at') {
-                            $data[$column] = Utils::formatDate($data[$column]);
-                        }
-                        $output .= '<td style="border: 1px solid; padding:10px;">'. $data[$column] .'</td>';
-                    }                 
-                $output .='</tr>';
-                
+                    $output .='
+                    <tr>';
+                        foreach ($columns as $column) {
+                            if ($column == 'created_at') {
+                                $data[$column] = Utils::formatDate($data[$column]);
+                            }
+                            $output .= '<td style="border: 1px solid; padding:10px;">'. $data[$column] .'</td>';
+                        }                 
+                    $output .='</tr>';
                 } 
             }
             else{
                 echo "No data found";
             }
+          
+            $output .='
+            </tbody>
+        </table>
+            </div>';
+    
+        return $output;
+        }
+  
+    }
+
+    public static function renderCustomReport($items, $title, $headers, $columns, $date_from, $date_to)
+    {  
+        $line_item = new LineItem;
+        $hub_inventory = new HubInventory;
+        if($date_from == $date_to) {
+            $date = date("F j, Y", strtotime($date_from));
+        }else {
+            $date = date("F j, Y", strtotime($date_from)) .' - '. date("F j, Y", strtotime($date_to));
+        }
         
+        $output = '
+        <div style="width:100%">
+        <h1 style="text-align:center;">Flying High Energy Express</h1>
+        <h2 style="text-align:center;">'. $title .'</h2>
+        
+        <p style="text-align:left;">Date: '. $date .'</p>
+        <table width="100%" style="border-collapse:collapse; border: 1px solid;">
+            <thead>';
+
+            foreach ($headers as $header) {
+                $output .= '<th style="border: 1px solid;">' . $header . '</th>';
+            }
+                $output .= '<th style="border: 1px solid;">Line Items</th>';
+
+            $output .=
+            '</thead>
+            <tbody>';
+            
+            if($items){
+                foreach ($items as $data) {
+                    $output .='<tr>';
+                        $line_items = $line_item->getLineItems($data['orderId']);
+                        $line_items_count = count($line_items)-4;
+                        foreach ($columns as $key => $column) {
+                            if ($column == 'custName') { 
+                                 $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data['custName'] . '<br>' . $data['customerEmail'] .'</td>';
+                            }
+                            else {
+                                 $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data[$column] .'</td>';
+                            }
+                            if ($key == count($columns)-1) {
+                                foreach ($line_items as $key => $item) {
+                                    if ($key == 0) {
+                                        $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
+                                    }
+                                }
+                            }
+                        }              
+                    $output .='</tr>';
+
+                    foreach ($line_items as $key => $item) {
+                        if ($hub_inventory->ignoreOtherSKU($item->partNumber)) {
+                            continue;
+                        }
+                        if ($key != 0) {
+                            $output .='<tr>';
+                            $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
+                            $output .='</tr>';
+                        }
+                    }
+                } 
+            }
+            else{
+                echo "No data found";
+            }
           
             $output .='
             </tbody>
@@ -67,6 +181,7 @@ class Utils
     
         return $output;
     }
+
 
     public function fileUpdoad($request, $folder_to_save = "img", $root = "assets/", $file_name = "") 
     {

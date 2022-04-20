@@ -147,7 +147,7 @@
                         <a href="{{ url('/reports/hub-transfer') }}">Hub Transfer</a>
                     </li>
                     <li>
-                        <a href="{{ url('/#') }}">Pick-up</a>
+                        <a href="{{ url('/reports/pickup/for-pickup') }}">Pickup Report</a>
                     </li>
                 </ul>
             </li>

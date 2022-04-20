@@ -41,7 +41,7 @@
                                         <input type="date" class="form-control ml-0 ml-sm-2" name="date_to"
                                             value="{{ $date_to }}" required>
                                     </div>
-                                    <div class="form-group m-auto">
+                                    <div class="form-group ml-1">
                                         <button class="btn btn-sm btn-primary" type="submit">Filter</button>
                                     </div>
                                       <div class="form-group ml-1">

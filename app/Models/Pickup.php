@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Pickup extends Model
 {
@@ -41,6 +42,46 @@ class Pickup extends Model
         "orderSource",
         "hub_id"
     ];
+
+    public function getHeaders() {
+        return ['Shipment Id', 'OrderID', 'BatchID', 'Customer Info', 'Date time submitted'];
+    }
+
+    public function getColumns() {
+        return ['shipmentId', 'orderId', 'batchId', 'custName', 'dateTimeSubmittedIso'];
+    }
+
+    public function getAllPaginate($per_page, $status) {
+        return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
+            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
+            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
+            ->orderBy('pickups.created_at', 'desc')
+            ->where('pickups.status', $status)
+            ->whereDate('pickups.created_at', date('Y-m-d'))
+            ->paginate($per_page);
+    }
+
+    public function filterPaginate($per_page, $status) {
+        return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
+            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
+            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
+            ->orderBy('pickups.created_at', 'desc')
+            ->where('pickups.status', $status)
+            ->whereBetween(DB::raw('DATE(pickups.created_at)'), [request()->date_from, request()->date_to])
+            ->paginate($per_page);
+    }
+
+    public function filter($date_from, $date_to, $status) {
+        $date_from = $date_from ? $date_from : date('Y-m-d');
+        $date_to = $date_to ? $date_to : date('Y-m-d');
+        return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
+            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
+            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
+            ->orderBy('pickups.created_at', 'desc')
+            ->where('pickups.status', $status)
+            ->whereBetween(DB::raw('DATE(pickups.created_at)'), [$date_from, $date_to])
+            ->get();
+    }
 
     public function getPickup($status_list, $per_page) {
         return self::whereIn('pickups.status', $status_list)
