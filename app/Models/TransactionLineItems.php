@@ -28,4 +28,9 @@ class TransactionLineItems extends Model
         "receiptDate",
         "lotExpiration",
     ];
+
+    public function getLineItems($transactionReferenceNumber) {
+        return self::leftJoin('products', 'products.sku', '=', 'transaction_line_items.itemNumber')
+        ->where('transactionReferenceNumber', $transactionReferenceNumber)->get();
+    }
 }

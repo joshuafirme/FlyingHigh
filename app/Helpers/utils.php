@@ -8,6 +8,7 @@ use App\Mail\Mailer;
 use App\Models\User;
 use App\Models\LineItem;
 use App\Models\HubInventory;
+use App\Models\TransactionLineItems;
 use File;
 class Utils
 {
@@ -116,8 +117,8 @@ class Utils
 
     public static function renderCustomReport($items, $title, $headers, $columns, $date_from, $date_to)
     {  
-        $line_item = new LineItem;
         $hub_inventory = new HubInventory;
+        $trans_line_item = new TransactionLineItems;
         if($date_from == $date_to) {
             $date = date("F j, Y", strtotime($date_from));
         }else {
@@ -132,29 +133,29 @@ class Utils
         <p style="text-align:left;">Date: '. $date .'</p>
         <table width="100%" style="border-collapse:collapse; border: 1px solid;">
             <thead>';
-
-            if (strpos($title, 'Inbound Transfer') === true) {
+        
+            if (strpos($title, 'Inbound Transfer') !== false) {
                 foreach ($headers as $header) {
                     $output .= '<th style="border: 1px solid;">' . $header . '</th>';
                 }
+                $output .= '<th style="border: 1px solid;">Order Number</th>';
+                $output .= '<th style="border: 1px solid;">SKU</th>';
+                $output .= '<th style="border: 1px solid;">Description</th>';
                 $output .=
                 '</thead>
                 <tbody>';
                 if($items){
                     foreach ($items as $data) {
                         $output .='<tr>';
-                            $line_items = $line_item->getLineItems($data['orderId']);
-                            $line_items_count = count($line_items)-4;
+                            $trans_line_items = $trans_line_item->getLineItems($data['transactionReferenceNumber']);
+                            $line_items_count = count($trans_line_items);
                             foreach ($columns as $key => $column) {
-                                if ($column == 'custName') { 
-                                    $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data['custName'] . '<br>' . $data['customerEmail'] .'</td>';
-                                }
-                                else {
-                                    $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data[$column] .'</td>';
-                                }
+                                $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data[$column] .'</td>';
                                 if ($key == count($columns)-1) {
-                                    foreach ($line_items as $key => $item) {
+                                    foreach ($trans_line_items as $key => $item) {
                                         if ($key == 0) {
+                                            $output .= '<td style="border: 1px solid; padding:10px;">'. $item->orderNumber .'</td>';
+                                            $output .= '<td style="border: 1px solid; padding:10px;">'. $item->itemNumber .'</td>';
                                             $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
                                         }
                                     }
@@ -162,13 +163,15 @@ class Utils
                             }              
                         $output .='</tr>';
 
-                        foreach ($line_items as $key => $item) {
-                            if ($hub_inventory->ignoreOtherSKU($item->partNumber)) {
+                        foreach ($trans_line_items as $key => $item) {
+                            if ($hub_inventory->ignoreOtherSKU($item->itemNumber)) {
                                 continue;
                             }
                             if ($key != 0) {
                                 $output .='<tr>';
-                                $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
+                                    $output .= '<td style="border: 1px solid; padding:10px;">'. $item->orderNumber .'</td>';
+                                    $output .= '<td style="border: 1px solid; padding:10px;">'. $item->itemNumber .'</td>';
+                                    $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
                                 $output .='</tr>';
                             }
                         }
@@ -179,6 +182,7 @@ class Utils
                 }
             }
             else {
+                $line_item = new LineItem;
                 foreach ($headers as $header) {
                     $output .= '<th style="border: 1px solid;">' . $header . '</th>';
                 }
