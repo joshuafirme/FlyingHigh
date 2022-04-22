@@ -14,6 +14,7 @@ use App\Http\Controllers\ReturnReasonController;
 use App\Http\Controllers\Reports\StockAdjustmentController;
 use App\Http\Controllers\Reports\HubTransferController;
 use App\Http\Controllers\Reports\PickupReportController;
+use App\Http\Controllers\Reports\InboundTransferController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -98,6 +99,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/pickup/preview/{date_from}/{date_to}/{status}', [PickupReportController::class, 'previewReport']);
     Route::get('/reports/pickup/download/{date_from}/{date_to}/{status}', [PickupReportController::class, 'downloadReport']);
     Route::get('/reports/pickup/export/{date_from}/{date_to}/{status}', [PickupReportController::class, 'exportReport']);
+
+    Route::get('/reports/inbound-transfer/filter', [InboundTransferController::class, 'filter']);
+    Route::get('/reports/inbound-transfer/preview/{date_from}/{date_to}', [InboundTransferController::class, 'previewReport']);
+    Route::get('/reports/inbound-transfer/download/{date_from}/{date_to}', [InboundTransferController::class, 'downloadReport']);
+    Route::get('/reports/inbound-transfer/export/{date_from}/{date_to}', [InboundTransferController::class, 'exportReport']);
+    Route::get('/reports/inbound-transfer', [InboundTransferController::class, 'index']);
+
 
     Route::post('increment-stock', [ProductController::class, 'incrementStock']);
 });

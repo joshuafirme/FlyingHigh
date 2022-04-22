@@ -112,7 +112,7 @@
                     </a>
                 </li>-->
 
-            <li class="">
+         <!--   <li class="">
                 <a class="" href="https://clanvent-alpha.laravel-script.com/admin/invoices"
                     class="">
                     <img
@@ -120,7 +120,7 @@
                     <span>
                         Invoice Manage </span>
                 </a>
-            </li>
+            </li>-->
 
 
             <li>
@@ -138,13 +138,13 @@
                     </span></a>
                 <ul class="submenu">
                     <li>
-                        <a href="{{ url('/#') }}">Warehouse Transfer</a>
+                        <a href="{{ url('/reports/inbound-transfer') }}">Inbound Transfers</a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/reports/hub-transfer') }}">Hub Transfers</a>
                     </li>
                     <li>
                         <a href="{{ url('/reports/stock-adjustment') }}">Stock Adjustment</a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/reports/hub-transfer') }}">Hub Transfer</a>
                     </li>
                     <li>
                         <a href="{{ url('/reports/pickup/for-pickup') }}">Pickup Report</a>
