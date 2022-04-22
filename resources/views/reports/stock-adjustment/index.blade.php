@@ -10,7 +10,7 @@
         <div class="container-fluid" id="app">
             <div class="page-title-box">
                 <h4 class="text-dark">Reports</h4>
-                 <div class="row align-items-center">
+                <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Reports</a></li>
@@ -44,8 +44,10 @@
                                     <div class="form-group m-auto">
                                         <button class="btn btn-sm btn-primary" type="submit">Filter</button>
                                     </div>
-                                     <div class="form-group ml-1">
-                                        <a class="btn btn-sm btn-primary" href="{{ url('/reports/stock-adjustment') }}"><i class="fa fa-sync" aria-hidden="true"></i> Refresh</a>
+                                    <div class="form-group ml-1">
+                                        <a class="btn btn-sm btn-primary"
+                                            href="{{ url('/reports/stock-adjustment') }}"><i class="fa fa-sync"
+                                                aria-hidden="true"></i> Refresh</a>
                                     </div>
                                 </form>
 
@@ -69,7 +71,8 @@
                                             <th scope="col">Description</th>
                                             <th scope="col">Action</th>
                                             <th scope="col">Qty Adjusted</th>
-                                            <th scope="col">Ramarks</th>
+                                            <th scope="col">Adjusted by</th>
+                                            <th scope="col">Remarks</th>
                                             <th scope="col">Date time adjusted</th>
                                         </tr>
                                     </thead>
@@ -81,6 +84,7 @@
                                                     <td>{{ $item->description }}</td>
                                                     <td>{{ $item->action }}</td>
                                                     <td>{{ $item->qty_adjusted }}</td>
+                                                    <td>{{ $item->adjusted_by }}</td>
                                                     <td>{{ $item->remarks }}</td>
                                                     <td>{{ Utils::formatDate($item->created_at) }}</td>
                                                 </tr>
