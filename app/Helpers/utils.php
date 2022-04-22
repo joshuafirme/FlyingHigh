@@ -52,6 +52,11 @@ class Utils
         }
     }
 
+    public static function validateExpiration($expiration) 
+    {
+        return $expiration && strpos($expiration, '1970-01-01') === false ? $expiration : 'N/A';
+    }
+
     public static function renderReport($items, $title, $headers, $columns, $date_from, $date_to)
     {  
         if (strpos($title, 'For Pickup') !== false || strpos($title, 'Picked Up') !== false

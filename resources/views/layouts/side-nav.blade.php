@@ -149,6 +149,12 @@
                     <li>
                         <a href="{{ url('/reports/pickup/for-pickup') }}">Pickup Report</a>
                     </li>
+                    <li>
+                        <a href="{{ url('/reports/warehouse-inventory') }}">Warehouse Inventory</a>
+                    </li>
+                      <li>
+                        <a href="{{ url('/reports/hub-inventory') }}">Hub Inventory</a>
+                    </li>
                 </ul>
             </li>
 

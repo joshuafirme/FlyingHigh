@@ -59,8 +59,9 @@
                                             data-keyboard="false"><i class="fa fa-exchange-alt"></i>
                                             Hub Transfer
                                         </button>
-                                        <a href="{{ url('/product') }}" class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto">
-                                            <i class="fa fa-undo"></i>
+                                        <a href="{{ url('/product') }}"
+                                            class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto">
+                                            <i class="fa fa-sync"></i>
                                             Refresh
                                         </a>
 
@@ -114,6 +115,12 @@
                                                         $stock_level = 'Critical';
                                                         $icon = '<i class="fas fa-exclamation-circle"></i>';
                                                     }
+                                                    $expiration = Utils::validateExpiration($item->expiration);
+                                                    $date_now = date('Y-m-d');
+                                                    $item_condition = '';
+                                                    if ($expiration != 'N/A' && $date_now > $expiration) {
+                                                        $item_condition = 'Expired';
+                                                    }
                                                 @endphp
                                                 <tr id="record-id-{{ $item->id }}">
                                                     <td><a class="btn-view-detail" href="#" data-target="#detailModal"
@@ -124,7 +131,9 @@
                                                     <td>{{ $item->buffer_stock }}</td>
                                                     <td class="{{ $text_class }}">{!! $icon !!}
                                                         {{ $stock_level }}</td>
-                                                    <td>{{ $item->expiration && $item->expiration != '1970-01-01' ? $item->expiration : 'N/A' }}
+                                                    <td>
+                                                        {{ $expiration }} <br>
+                                                        <span class="text-danger">{{ $item_condition }}</span>
                                                     </td>
                                                     <td>@php
                                                         if ($item->status == 1) {
