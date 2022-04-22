@@ -72,12 +72,12 @@ class Product extends Model
         $sku_list = [];
         foreach ($all_sku as $key => $sku) {  
 
-            $bundles = $this->getBundlesBySKU($sku);
+          /*  $bundles = $this->getBundlesBySKU($sku);
             if ($this->isAllBundleStockEnough($bundles, $qty[$key])) {}
             else {
                 array_push($sku_list, $sku);
                 $has_enough_stock = false;
-            }
+            } */
 
             if ($this->hasStock($sku, $qty[$key])) {
                 // enough stock, do nothing...
@@ -129,16 +129,16 @@ class Product extends Model
 
     public function incrementStock($sku, $qty) {
 
-        $bundles = $this->getBundlesBySKU($sku);
-        $this->incrementBundleSKU($bundles, $qty);
+    //    $bundles = $this->getBundlesBySKU($sku);
+    //    $this->incrementBundleSKU($bundles, $qty);
 
         self::where('sku', $sku)->update(['qty' => DB::raw('qty + ' . $qty)]);
     }
 
     public function decrementStock($sku, $qty) {
 
-        $bundles = $this->getBundlesBySKU($sku);
-        $this->decrementBundleSKU($bundles, $qty);
+    //    $bundles = $this->getBundlesBySKU($sku);
+    //    $this->decrementBundleSKU($bundles, $qty);
 
         self::where('sku', $sku)->update(['qty' => DB::raw('qty - ' . $qty)]);
     }

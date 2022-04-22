@@ -169,7 +169,7 @@
                                                                     Stock</a>
                                                                 <a class="btn btn-stock-adjustment dropdown-item"
                                                                     data-target="#stockAdjustmentModal"
-                                                                    data-toggle="modal" data-sku="{{ $item->sku }}"
+                                                                    data-toggle="modal" data-sku="{{ $item->sku }}" data-stock="{{ $item->qty }}"
                                                                     data-desc="{{ $item->description }}"
                                                                     data-backdrop="static" data-keyboard="false"><i
                                                                         class="fas fa-sort-amount-up"></i></i> Stock

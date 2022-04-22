@@ -16,7 +16,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Barcode</label>
-                    <input type="text" class="form-control" name="barcode" required>
+                    <input type="text" class="form-control" name="barcode">
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Description</label>
@@ -31,7 +31,7 @@
                     <input type="number" class="form-control" name="buffer_stock" required>
                 </div>
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">JTE lot code</label>
+                    <label class="form-label">JDE lot code</label>
                     <input type="text" class="form-control" name="jde_lot_code">
                 </div>
                 <div class="col-md-6 mt-3">
@@ -50,7 +50,7 @@
                         <option value="0">Inactive</option>
                     </select>
                 </div>
-                <div class="col-sm-6 mt-3">
+              <!--  <div class="col-sm-6 mt-3">
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" name="has_bundle" id="has_bundle">
                         <label class="form-check-label">Bundled</label>
@@ -73,7 +73,7 @@
                         <tbody id="tbl-bundle-qty">
                         </tbody>
                     </table>
-                </div>
+                </div>-->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
@@ -207,8 +207,12 @@
                     <label class="form-label">Description</label>
                     <input type="text" class="form-control" name="description" readonly>
                 </div>
+                 <div class="col-md-12 mt-3">
+                    <label class="form-label">Stock</label>
+                    <input type="number" class="form-control" name="stock" readonly>
+                </div>
                 <div class="col-md-12 mt-3">
-                    <label class="form-label">Quantity</label>
+                    <label class="form-label">Quantity to adjust</label>
                     <input type="number" class="form-control" name="qty" required>
                 </div>
                 <div class="col-sm-12 col-md-6 col-lg-4 mt-2">
@@ -355,7 +359,7 @@
                     <input type="number" class="form-control" name="buffer_stock" readonly>
                 </div>
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">JTE lot code</label>
+                    <label class="form-label">JDE lot code</label>
                     <input type="text" class="form-control" name="jde_lot_code" readonly>
                 </div>
                 <div class="col-md-6 mt-3">
@@ -370,7 +374,7 @@
                     <label class="form-label">Status</label>
                     <input type="text" class="form-control" name="status" readonly>
                 </div>
-                <div id="bundle-qty-container-details" class="col-sm-12 col-md-12 mt-4 d-none">
+               <!-- <div id="bundle-qty-container-details" class="col-sm-12 col-md-12 mt-4 d-none">
                     <label for="">Bundle Stocks</label>
                     <table class="table table-striped pb-3">
                         <thead>
@@ -381,7 +385,7 @@
                         <tbody id="tbl-bundle-qty-details">
                         </tbody>
                     </table>
-                </div>
+                </div>-->
             </div>
         </form>
     </div>

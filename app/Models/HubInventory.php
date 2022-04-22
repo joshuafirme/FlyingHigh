@@ -64,12 +64,12 @@ class HubInventory extends Model
             if ($this->ignoreOtherSKU($item->partNumber)) {
                 continue;
             }
-            $bundles = $product->getBundlesBySKU($item->partNumber);
+            /*$bundles = $product->getBundlesBySKU($item->partNumber);
             if ($this->isAllBundleStockEnough($bundles, $item->quantity, $hub_id)) {}
             else {
                 array_push($sku_list, $item->partNumber);
                 $has_enough_stock = false;
-            }
+            }*/
 
             if ($this->hasStock($item->partNumber, $item->quantity, $hub_id)) {
                 // enough stock, do nothing...
@@ -123,9 +123,9 @@ class HubInventory extends Model
         }
     }
     public function incrementStock($sku, $qty, $hub_id) {
-        $product = new Product;
-        $bundles = $product->getBundlesBySKU($sku);
-        $this->incrementBundleSKU($bundles, $qty, $hub_id);
+      //  $product = new Product;
+      //  $bundles = $product->getBundlesBySKU($sku);
+      //  $this->incrementBundleSKU($bundles, $qty, $hub_id);
         self::where('sku', $sku)
         ->where('hub_id', $hub_id)->update([
             'stock' => DB::raw('stock + ' . $qty)
@@ -133,9 +133,9 @@ class HubInventory extends Model
     }
 
     public function decrementStock($sku, $qty, $hub_id) {
-        $product = new Product;
-        $bundles = $product->getBundlesBySKU($sku);
-        $this->decrementBundleSKU($bundles, $qty, $hub_id);
+      //  $product = new Product;
+      //  $bundles = $product->getBundlesBySKU($sku);
+      //  $this->decrementBundleSKU($bundles, $qty, $hub_id);
         self::where('sku', $sku)
         ->where('hub_id', $hub_id)->update([
             'stock' => DB::raw('stock - ' . $qty)

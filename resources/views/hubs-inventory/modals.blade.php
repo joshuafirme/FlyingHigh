@@ -45,7 +45,7 @@
                     <label class="form-label">Status</label>
                     <input type="text" class="form-control" name="status" readonly>
                 </div>
-                <div id="bundle-qty-container" class="col-sm-12 col-md-12 mt-4 d-none">
+               <!-- <div id="bundle-qty-container" class="col-sm-12 col-md-12 mt-4 d-none">
                     <label for="">Bundle Stocks</label>
                     <table class="table table-striped pb-3">
                         <thead>
@@ -56,7 +56,7 @@
                         <tbody id="tbl-bundle-qty">
                         </tbody>
                     </table>
-                </div>
+                </div>-->
             </div>
         </form>
     </div>

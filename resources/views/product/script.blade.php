@@ -1,10 +1,10 @@
 <script>
     $(function() {
         "use strict";
-        const bundles_choices = new Choices('#choices-multiple-remove-button', {
-            removeItemButton: true,
-            placeholderValue: 'Choose SKU',
-        });
+      //  const bundles_choices = new Choices('#choices-multiple-remove-button', {
+      //      removeItemButton: true,
+      //      placeholderValue: 'Choose SKU',
+      //  });
 
         const el_choices_multi_sku = document.getElementById('choices-multiple-sku');
         const multi_sku = new Choices(el_choices_multi_sku, {
@@ -180,7 +180,7 @@
                 $('#bundle-qty-container').addClass('d-none');
                 initChoices('choices-multiple-remove-button');
             } else {
-                bundles_choices.clearStore();
+              //  bundles_choices.clearStore();
                 modal.find('.modal-title').text('Update Product');
                 let data = JSON.parse($(this).attr('data-info'));
                 modal.find('form').attr('action', "/product/update/" + data.id);
@@ -303,9 +303,11 @@
             let v = $(this);
             let sku = v.attr('data-sku');
             let description = v.attr('data-desc');
+            let stock = v.attr('data-stock');
             let mdl = $('#stockAdjustmentModal');
             mdl.find('[name=sku]').val(sku);
             mdl.find('[name=description]').val(description);
+            mdl.find('[name=stock]').val(stock);
         });
 
         $('.btn-bulk-transfer').click(function() {
