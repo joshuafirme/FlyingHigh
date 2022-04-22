@@ -60,7 +60,8 @@ class Utils
     public static function renderReport($items, $title, $headers, $columns, $date_from, $date_to)
     {  
         if (strpos($title, 'For Pickup') !== false || strpos($title, 'Picked Up') !== false
-            ||strpos($title, 'Returned') !== false || strpos($title, 'Overdue') !== false) { 
+            || strpos($title, 'Returned') !== false || strpos($title, 'Overdue') !== false
+            || strpos($title, 'Inbound Transfer') !== false) { 
             return self::renderCustomReport($items, $title, $headers, $columns, $date_from, $date_to);
         }
         else {      if($date_from == $date_to) {
@@ -132,51 +133,96 @@ class Utils
         <table width="100%" style="border-collapse:collapse; border: 1px solid;">
             <thead>';
 
-            foreach ($headers as $header) {
-                $output .= '<th style="border: 1px solid;">' . $header . '</th>';
-            }
-                $output .= '<th style="border: 1px solid;">Line Items</th>';
-
-            $output .=
-            '</thead>
-            <tbody>';
-            
-            if($items){
-                foreach ($items as $data) {
-                    $output .='<tr>';
-                        $line_items = $line_item->getLineItems($data['orderId']);
-                        $line_items_count = count($line_items)-4;
-                        foreach ($columns as $key => $column) {
-                            if ($column == 'custName') { 
-                                 $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data['custName'] . '<br>' . $data['customerEmail'] .'</td>';
-                            }
-                            else {
-                                 $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data[$column] .'</td>';
-                            }
-                            if ($key == count($columns)-1) {
-                                foreach ($line_items as $key => $item) {
-                                    if ($key == 0) {
-                                        $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
+            if (strpos($title, 'Inbound Transfer') === true) {
+                foreach ($headers as $header) {
+                    $output .= '<th style="border: 1px solid;">' . $header . '</th>';
+                }
+                $output .=
+                '</thead>
+                <tbody>';
+                if($items){
+                    foreach ($items as $data) {
+                        $output .='<tr>';
+                            $line_items = $line_item->getLineItems($data['orderId']);
+                            $line_items_count = count($line_items)-4;
+                            foreach ($columns as $key => $column) {
+                                if ($column == 'custName') { 
+                                    $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data['custName'] . '<br>' . $data['customerEmail'] .'</td>';
+                                }
+                                else {
+                                    $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data[$column] .'</td>';
+                                }
+                                if ($key == count($columns)-1) {
+                                    foreach ($line_items as $key => $item) {
+                                        if ($key == 0) {
+                                            $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
+                                        }
                                     }
                                 }
-                            }
-                        }              
-                    $output .='</tr>';
+                            }              
+                        $output .='</tr>';
 
-                    foreach ($line_items as $key => $item) {
-                        if ($hub_inventory->ignoreOtherSKU($item->partNumber)) {
-                            continue;
+                        foreach ($line_items as $key => $item) {
+                            if ($hub_inventory->ignoreOtherSKU($item->partNumber)) {
+                                continue;
+                            }
+                            if ($key != 0) {
+                                $output .='<tr>';
+                                $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
+                                $output .='</tr>';
+                            }
                         }
-                        if ($key != 0) {
-                            $output .='<tr>';
-                            $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
-                            $output .='</tr>';
-                        }
-                    }
-                } 
+                    } 
+                }
+                else{
+                    echo "No data found";
+                }
             }
-            else{
-                echo "No data found";
+            else {
+                foreach ($headers as $header) {
+                    $output .= '<th style="border: 1px solid;">' . $header . '</th>';
+                }
+                    $output .= '<th style="border: 1px solid;">Line Items</th>';
+                $output .=
+                '</thead>
+                <tbody>';
+                if($items){
+                    foreach ($items as $data) {
+                        $output .='<tr>';
+                            $line_items = $line_item->getLineItems($data['orderId']);
+                            $line_items_count = count($line_items)-4;
+                            foreach ($columns as $key => $column) {
+                                if ($column == 'custName') { 
+                                    $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data['custName'] . '<br>' . $data['customerEmail'] .'</td>';
+                                }
+                                else {
+                                    $output .= '<td style="border: 1px solid; padding:10px;" rowspan="'.$line_items_count.'">'. $data[$column] .'</td>';
+                                }
+                                if ($key == count($columns)-1) {
+                                    foreach ($line_items as $key => $item) {
+                                        if ($key == 0) {
+                                            $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
+                                        }
+                                    }
+                                }
+                            }              
+                        $output .='</tr>';
+
+                        foreach ($line_items as $key => $item) {
+                            if ($hub_inventory->ignoreOtherSKU($item->partNumber)) {
+                                continue;
+                            }
+                            if ($key != 0) {
+                                $output .='<tr>';
+                                $output .= '<td style="border: 1px solid; padding:10px;">'. $item->description .'</td>';
+                                $output .='</tr>';
+                            }
+                        }
+                    } 
+                }
+                else{
+                    echo "No data found";
+                }
             }
           
             $output .='

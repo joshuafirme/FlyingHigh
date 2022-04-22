@@ -12,6 +12,7 @@ class TransactionLineItems extends Model
     protected $table = 'transaction_line_items';
 
     protected $fillable = [
+        "transactionReferenceNumber",
         "orderNumber",
         "orderType",
         "lineNumber",

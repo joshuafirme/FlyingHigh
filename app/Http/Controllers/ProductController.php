@@ -68,6 +68,7 @@ class ProductController extends Controller
 
                 foreach ($po->purchaseOrderReceiptDetails as $item) {
                     $trans_item = new TransactionLineItems;
+                    $trans_item->transactionReferenceNumber = $data->transactionReferenceNumber;
                     $trans_item->orderNumber = $po->orderNumber;
                     $trans_item->orderType = $po->orderType;
 
