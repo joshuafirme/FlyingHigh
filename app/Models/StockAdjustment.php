@@ -15,6 +15,7 @@ class StockAdjustment extends Model
 
     protected $fillable = [
         'sku',
+        'lot_code',
         'qty_adjusted',
         'action',
         'user_id',
@@ -29,9 +30,10 @@ class StockAdjustment extends Model
         return ['sku', 'description', 'action', 'qty_adjusted', 'adjusted_by', 'remarks', 'created_at'];
     }
 
-    public function record($sku, $qty, $action, $remarks_id) {
+    public function record($sku, $lot_code, $qty, $action, $remarks_id) {
         self::create([
             'sku' => $sku,
+            'lot_code' => $lot_code,
             'qty_adjusted'=> $qty,
             'action' => $action,
             'user_id' => Auth::id(),

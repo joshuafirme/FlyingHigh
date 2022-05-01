@@ -58,26 +58,10 @@ class Product extends Model
         ->get();
     }
 
-    public function hasStock($sku, $qty) 
-    {
-        $current_qty = self::where('sku', $sku)->value('qty');
-        if ($current_qty >= $qty) {
-            return true;
-        }
-        return false;
-    }
-
     public function isAllStockEnough($all_sku, $qty) {
         $has_enough_stock = true;
         $sku_list = [];
         foreach ($all_sku as $key => $sku) {  
-
-          /*  $bundles = $this->getBundlesBySKU($sku);
-            if ($this->isAllBundleStockEnough($bundles, $qty[$key])) {}
-            else {
-                array_push($sku_list, $sku);
-                $has_enough_stock = false;
-            } */
 
             if ($this->hasStock($sku, $qty[$key])) {
                 // enough stock, do nothing...
@@ -93,70 +77,23 @@ class Product extends Model
         ]);
     }
 
-     public function isAllBundleStockEnough($all_sku, $qty) {
-        $has_enough_stock = true;
-        foreach ($all_sku as $key => $sku) {  
-            if ($this->hasStock($sku, $qty)) {
+    public function isAllSKUExists($all_sku) {
+        $sku_exists = true;
+        $sku_list = [];
+        foreach ($all_sku as $key => $item) {  
+
+            if ($this->isSkuExists($item->itemNumber)) {
                 // enough stock, do nothing...
             }
             else {
-                $has_enough_stock = false;
+                array_push($sku_list, $item->itemNumber);
+                $sku_exists = false;
             }
         }
-        return $has_enough_stock;
+        return json_encode([
+            'result' => $sku_exists,
+            'sku_list' => $sku_list
+        ]);
     }
-
-    public function incrementBundleSKU($bundles, $qty) {
-        if (count($bundles) > 0) {
-            foreach ($bundles as $sku) {
-                $this->incrementStock($sku, $qty);
-            }
-        }
-    }
-
-    public function decrementBundleSKU($bundles, $qty) {
-        if (count($bundles) > 0) {
-            foreach ($bundles as $sku) {
-                $this->decrementStock($sku, $qty);
-            }
-        }
-    }
-
-    public function getBundlesBySKU($sku) {
-        $bundles = self::where('sku', $sku)->value('bundles');
-        return $bundles ? explode(',', $bundles) : [];
-    }
-
-    public function incrementStock($sku, $qty) {
-
-    //    $bundles = $this->getBundlesBySKU($sku);
-    //    $this->incrementBundleSKU($bundles, $qty);
-
-        self::where('sku', $sku)->update(['qty' => DB::raw('qty + ' . $qty)]);
-    }
-
-    public function decrementStock($sku, $qty) {
-
-    //    $bundles = $this->getBundlesBySKU($sku);
-    //    $this->decrementBundleSKU($bundles, $qty);
-
-        self::where('sku', $sku)->update(['qty' => DB::raw('qty - ' . $qty)]);
-    }
-
-    public function getBundleQtyList($sku) 
-    {
-        $sku_list = array();
-        $bundles = $this->getBundlesBySKU($sku);
-
-        foreach ($bundles as $sku){
-            $data = DB::table('products')->select('sku','description','qty')->where('sku', $sku)->first();
-            array_push($sku_list, [
-                "sku" => $data->sku,
-                "description" => $data->description,
-                "qty" => $data->qty,
-            ]);
-        }
-
-        return $sku_list;
-    }
+    
 }

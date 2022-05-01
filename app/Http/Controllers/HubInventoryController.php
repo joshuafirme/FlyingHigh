@@ -25,7 +25,11 @@ class HubInventoryController extends Controller
         $products = $hub_inv->getByHub($hub_id, 10);
 
         $hub_name = $hub->getHubName($hub_id);
-        return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id'));
+        return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id', 'hub_inv'));
+    }
+
+    public function getAllStock($sku, HubInventory $hub_inv) {
+        return $hub_inv->getAllStock($sku);
     }
 
     public function searchProduct($hub_id, HubInventory $hub_inv, Hub $hub)
@@ -40,15 +44,5 @@ class HubInventoryController extends Controller
 
         $hub_name = $hub->getHubName($hub_id);
         return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id'));
-    }
-
-    public function getBundleQtyList($sku, $hub_id, HubInventory $hub_inv)
-    {
-        $data = $hub_inv->getBundleQtyList($sku,$hub_id);
-
-        return response()->json([
-            'message' => 'success',
-            'data' => $data
-        ], 200);
     }
 }

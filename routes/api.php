@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\ProductApi;
+use App\Http\Controllers\Api\LotCodeApi;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,5 @@ Route::get('get-all-sku', [ProductApi::class, 'getAllSKU']);
 Route::get('product/sku/{sku}', [ProductApi::class, 'getBySKU']);
 Route::get('product/barcode/{barcode}', [ProductApi::class, 'getByBarcode']);
 Route::get('product/bundle-qty-list/{sku}', [ProductApi::class, 'getBundleQtyList']);
+
+Route::get('lotcode/{sku}', [LotCodeApi::class, 'getLotCode']);

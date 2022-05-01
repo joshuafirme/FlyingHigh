@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Product;
+use App\Models\LotCode;
 use Maatwebsite\Excel\Concerns\ToModel;
 use DateTime;
 use Carbon;
@@ -17,17 +18,29 @@ class ProductImport implements ToModel
     */
     public function model(array $row)
     {
-        $product = new Product;
-        if (!$product->isSkuExists($row[0]) && $row[0] != 'SKU') {
+        if ($row[0] != 'SKU') {
+            $lot_code = new LotCode;
             $exp_date = ExcelDate::excelToDateTimeObject($row[3]);
+            // lot code
+            if (($row[1] != "" || $row[1] != null) && !$lot_code->isSKUAndLotCodeExists($row[0],$row[1])) {
+                $lot_code->createLotCode($row[0], $row[1], $exp_date, 20);
+            }
             
-            return new Product([
-                'sku' => $row[0],
-                'jde_lot_code' => $row[1],
-                'supplier_lot_code' => $row[2],
-                'expiration' => $exp_date,
-                'description' => $row[4],
-            ]);
+            if ($row[1] == "" || $row[1] == null) {
+                $lot_code->createLotCode($row[0], 0, "", 20);
+            }
+    
+            $product = new Product;
+            if (!$product->isSkuExists($row[0])) {
+                return new Product([
+                    'sku' => $row[0],
+                // 'jde_lot_code' => $row[1],
+                // 'expiration' => $exp_date,
+                    'supplier_lot_code' => $row[2],
+                    'description' => $row[4],
+                ]);
+            }
+
         }
     }
 }

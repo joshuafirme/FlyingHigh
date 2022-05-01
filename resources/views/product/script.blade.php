@@ -116,33 +116,45 @@
             });
         }
 
-        function getBundleQty(sku, type = "edit") {
-  
-            fetch("/api/product/bundle-qty-list/" + sku)
+        function initLoader() {
+            $('.tbl-lot-codes').html('<tr><td colspan="3" class="text-center"><i class="fas fa-circle-notch fa-spin" style="font-size: 21px;"></i></td></tr>');
+        }
+
+        function getLotCodes(sku, type = "edit") {
+            
+            initLoader();    
+            fetch("/api/lotcode/" + sku)
                 .then(data => data.json())
                 .then(result => {
                     console.log(result)
-                    if (result.data.length > 0) {
-                        let table = 'tbl-bundle-qty'
-                        if (type == 'details') {
-                            table = 'tbl-bundle-qty-details';
+                    setTimeout(() => {
+                    $('.tbl-lot-codes').html('');
+                        if (result.length > 0) {
+                                for (let item of result) {
+                                    let lot_code = item.lot_code == 0 ? 'N/A' : item.lot_code;
+                                    let expiration = item.expiration ? item.expiration.substring(0, 10) : 'N/A';
+                                    let html = '<tr>';
+                                    if (type=='edit') {
+                                        html += '<td><input type="text" name="lot_code[]" readonly class="form-control" value="'+ lot_code +'"></td>';
+                                        html += '<td>'+item.stock+'</td>';
+                                        html += '<td><input type="date" name="expiration[]" class="form-control" value="'+ expiration +'"></td>';
+                                    }
+                                    else {
+                                        html += '<td>'+ lot_code +'</td>';
+                                        html += '<td>'+item.stock+'</td>';
+                                        html += '<td>'+ expiration +'</td>';
+                                    }
+                                    html += '</tr>';
+                                    $('.tbl-lot-codes').append(html);
+                                }
                         }
-                        $('#'+table).html('');
-                        for (let item of result.data) {
+                        else {
                             let html = '<tr>';
-                            html += '<td><a target="_blank" href="/product/search?key='+item.sku+'">'+item.sku+' | '+item.description+'</a></td>';
-                            html += '<td>'+item.qty+'</td>';
-                            html += '<td><a target="_blank" href="/product/search?key='+item.sku+'"><i class="fa fa-eye"></i></a></td>';
+                            html += '<td colspan="3"><div class="alert alert-primary">No data found.</div></td>';
                             html += '</tr>';
-                            $('#'+table).append(html);
+                            $('.tbl-lot-codes').append(html);
                         }
-                    }
-                    else {
-                        let html = '<tr>';
-                        html += '<td colspan="2"><div class="alert alert-primary">No data found.</div></td>';
-                        html += '</tr>';
-                        $('#tbl-bundle-qty').append(html);
-                    }
+                    }, 300);
                 })
         }
 
@@ -191,29 +203,12 @@
                     if (key == 'expiration') {
                         data[key] = data[key] ? data[key].substring(0, 10) : '';
                     }
-                    if (key == 'has_bundle') {
-                        if (data[key] == 1) {
-                            modal.find('[name=' + key + ']').prop('checked', true);
-                            $('#choices-multiple-remove-button').prop('required', true);
-                            $('#bundle-qty-container').removeClass('d-none');
-                            getBundleQty(data.sku);
-                        } else {
-                            modal.find('[name=' + key + ']').prop('checked', false);
-                            $('#choices-multiple-remove-button').prop('required', false);
-                            $('#bundle-qty-container').addClass('d-none');
-                        }
-                        if ($('[name=' + key + ']').is(':checked')) {
-                            $('.bundle-choices').removeClass('d-none');
-                        } else {
-                            $('.bundle-choices').addClass('d-none');
-                        }
-                        continue;
-                    }
                     if (key == 'qty') {
                         modal.find('[name=' + key + ']').prop('readonly', true);
                     }
                     modal.find('[name=' + key + ']').val(data[key]);
                 }
+                getLotCodes(data.sku);
             }
         });
 
@@ -276,18 +271,10 @@
                 if (key == 'status') {
                     data[key] = data[key] == 1 ? 'Active' : 'Inactive';
                 }
-                if (key == 'has_bundle') {
-                    if (data[key] == 1) {
-                        $('#bundle-qty-container-details').removeClass('d-none');
-                        getBundleQty(data.sku, 'details');
-                    } else {
-                        $('#bundle-qty-container-details').addClass('d-none');
-                    }
-
-                    continue;
-                }
+                
                 modal.find('[name=' + key + ']').val(data[key]);
             }
+            getLotCodes(data.sku, 'details');
         });
 
         $('.btn-transfer').click(function() {
@@ -308,6 +295,27 @@
             mdl.find('[name=sku]').val(sku);
             mdl.find('[name=description]').val(description);
             mdl.find('[name=stock]').val(stock);
+
+            
+            fetch("/api/lotcode/" + sku)
+                .then(data => data.json())
+                .then(data => {
+                    console.log(data)
+                    mdl.find('[name=lot_code]').html('');
+                    for (let item of data) {
+                        let html = `<option exp="${item.expiration}" value="${item.lot_code}">${item.lot_code == 0 ? 'N/A' : item.lot_code}</option>`
+                        mdl.find('[name=lot_code]').append(html);
+                    }
+                    let exp = $("#lot_codes option:selected").attr('exp');
+                    mdl.find('[name=expiration]').val(exp);
+            });
+        });
+
+        $('#lot_codes').change(function() { 
+            let mdl = $('#stockAdjustmentModal');
+            let exp = $('option:selected', this).attr('exp');
+            mdl.find('[name=expiration]').val(exp);
+
         });
 
         $('.btn-bulk-transfer').click(function() {
@@ -391,7 +399,11 @@
                                 setTimeout(function() {
                                     location.reload();
                                 }, 2500);
-                            } else {
+                            }
+                            else if (data.message == 'not_enough_stock') {
+                                swalError('Invalid qty');
+                            }
+                            else {
                                 swalError('Error occured, please contact dev team.');
                             }
                             $('#btn-adjust').html("Adjust");
@@ -578,7 +590,16 @@
                     console.log(data)
                     if (data.message == 'transaction_success') {
                         swalSuccess('Transaction success!')
-                    } else {
+                    } 
+                    else if (data.message == 'some_sku_not_exists') {
+                        let html = data.description + '<br>';
+                        console.log(data.sku_list)
+                        for (let sku of data.sku_list) {
+                            html += '<a target="_blank" href="#">'+sku+'</a><br>';
+                        }
+                        swalError(html);
+                    }
+                    else {
                         swalError('Transaction reference number ' + data
                             .transactionReferenceNumber + ' is already exists.');
                     }

@@ -93,7 +93,6 @@
                                             <th scope="col">Stock</th>
                                             <th scope="col">Buffer Stock</th>
                                             <th scope="col">Stock Level</th>
-                                            <th scope="col">Expiration</th>
                                             <th scope="col">Status</th>
                                             <th scope="col">Created at</th>
                                             <th scope="col">Action</th>
@@ -106,35 +105,28 @@
                                                     $text_class = 'text-success';
                                                     $stock_level = 'Normal';
                                                     $icon = '<i class="fas fa-check-circle"></i>';
-                                                    if ($item->qty == 0) {
+                                                    $stock = $lot_code->getAllStock($item->sku);
+                                                    if ($stock == 0) {
                                                         $text_class = 'text-danger';
                                                         $stock_level = 'Out of stock';
                                                         $icon = '<i class="fas fa-exclamation-circle"></i>';
-                                                    } elseif ($item->qty <= $item->buffer_stock) {
+                                                    } elseif ($stock <= $item->buffer_stock) {
                                                         $text_class = 'text-warning';
                                                         $stock_level = 'Critical';
                                                         $icon = '<i class="fas fa-exclamation-circle"></i>';
                                                     }
                                                     $expiration = Utils::validateExpiration($item->expiration);
                                                     $date_now = date('Y-m-d');
-                                                    $item_condition = '';
-                                                    if ($expiration != 'N/A' && $date_now > $expiration) {
-                                                        $item_condition = 'Expired';
-                                                    }
                                                 @endphp
                                                 <tr id="record-id-{{ $item->id }}">
                                                     <td><a class="btn-view-detail" href="#" data-target="#detailModal"
                                                             data-toggle="modal" data-info="{{ json_encode($item) }}">
                                                             {{ $item->sku }}</a></td>
                                                     <td>{{ $item->description }}</td>
-                                                    <td class="{{ $text_class }}">{{ $item->qty }}</td>
+                                                    <td class="{{ $text_class }}">{{ $stock }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
                                                     <td class="{{ $text_class }}">{!! $icon !!}
                                                         {{ $stock_level }}</td>
-                                                    <td>
-                                                        {{ $expiration }} <br>
-                                                        <span class="text-danger">{{ $item_condition }}</span>
-                                                    </td>
                                                     <td>@php
                                                         if ($item->status == 1) {
                                                             echo '<span class="badge rounded-pill bg-primary">Active</span>';
@@ -169,7 +161,8 @@
                                                                     Stock</a>
                                                                 <a class="btn btn-stock-adjustment dropdown-item"
                                                                     data-target="#stockAdjustmentModal"
-                                                                    data-toggle="modal" data-sku="{{ $item->sku }}" data-stock="{{ $item->qty }}"
+                                                                    data-toggle="modal" data-sku="{{ $item->sku }}"
+                                                                    data-stock="{{ $stock }}"
                                                                     data-desc="{{ $item->description }}"
                                                                     data-backdrop="static" data-keyboard="false"><i
                                                                         class="fas fa-sort-amount-up"></i></i> Stock

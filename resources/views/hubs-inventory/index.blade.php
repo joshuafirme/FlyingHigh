@@ -49,7 +49,6 @@
                                             <th scope="col">Description</th>
                                             <th scope="col">Stock</th>
                                             <th scope="col">Buffer Stock</th>
-                                            <th scope="col">Expiration</th>
                                             <th scope="col">Date time Last Transferred</th>
                                             <th scope="col">Action</th>
                                         </tr>
@@ -60,9 +59,8 @@
                                                 <tr id="record-id-{{ $item->id }}">
                                                     <td>{{ $item->sku }}</td>
                                                     <td>{{ $item->description }}</td>
-                                                    <td>{{ $item->stock }}</td>
+                                                    <td>{{ $hub_inv->getAllStock($item->sku) }}</td>
                                                     <td>{{ $item->buffer_stock }}</td>
-                                                    <td>{{ $item->expiration && $item->expiration != '1970-01-01' ? $item->expiration : 'N/A' }}</td>
                                                     <td>{{ Utils::formatDate($item->updated_at) }}</td>
                                                     <td>
                                                         <div class="btn-group">

@@ -14,6 +14,7 @@ use App\Models\TransactionLineItems;
 use App\Models\AdjustmentRemarks;
 use App\Models\StockAdjustment;
 use App\Models\User;
+use App\Models\LotCode;
 use Utils;
 use DB;
 use Cache;
@@ -35,8 +36,9 @@ class ProductController extends Controller
         $products = Product::orderBy('created_at','desc')->paginate(10);
         $remarks = AdjustmentRemarks::where('status', 1)->get();
         $product_count = Product::count('id');
+        $lot_code = new LotCode;
         $hubs = Hub::where('status', 1)->get();
-        return view('product.index', compact('remarks', 'products', 'hubs', 'product_count'));
+        return view('product.index', compact('remarks', 'products', 'hubs', 'product_count', 'lot_code'));
     }
 
     public function getHubsStockBySku($sku, Product $product)
@@ -45,7 +47,7 @@ class ProductController extends Controller
     }
 
 
-    public function importAPI(Request $request, Transaction $trans, Product $product) 
+    public function importAPI(Request $request, Transaction $trans, Product $product, LotCode $lot_code) 
     {
         $path = public_path() . '/purchase_order.json';
         $data = json_decode(file_get_contents($path));
@@ -60,19 +62,33 @@ class ProductController extends Controller
             ], 200);
         }
         else {
-            $trans->transactionReferenceNumber = $data->transactionReferenceNumber;
-            $trans->transactionType = $data->transactionType;
-            $trans->save();
-
             foreach ($data->purchaseOrderReceiptHeaders as $po) {
+                $is_all_sku_exists = json_decode($product->isAllSKUExists($po->purchaseOrderReceiptDetails));
+                if (!$is_all_sku_exists->result) { 
+                    $sku_count = count($is_all_sku_exists->sku_list);
+                    $these_this = $sku_count > 1 ? 'These' : 'The';
+                    $is_are = $sku_count > 1 ? 'are' : 'is';
+                    return response()->json([
+                        'success' =>  false,
+                        'message' => 'some_sku_not_exists',
+                        'description' => $these_this . ' SKU below ' . $is_are . ' not exists',
+                        'sku_list' => $is_all_sku_exists->sku_list,
+                        'status' => 1
+                    ], 200); 
+                }
 
                 foreach ($po->purchaseOrderReceiptDetails as $item) {
                     $trans_item = new TransactionLineItems;
                     $trans_item->transactionReferenceNumber = $data->transactionReferenceNumber;
                     $trans_item->orderNumber = $po->orderNumber;
                     $trans_item->orderType = $po->orderType;
-
-                    $product->incrementStock($item->itemNumber, $item->qtyRcdGood);
+                    
+                    if ($lot_code->isLotCodeExists($item->lotNumber)) {
+                        $lot_code->incrementStock($item->itemNumber, $item->lotNumber, $item->qtyRcdGood);
+                    }
+                    else {
+                        $lot_code->createLotCode($item->itemNumber, $item->itemNumber, $item->lotNumber, $item->qtyRcdGood);
+                    }
 
                     $trans_item->lineNumber = $item->lineNumber;
                     $trans_item->itemNumber = $item->itemNumber;
@@ -90,7 +106,11 @@ class ProductController extends Controller
                     $trans_item->save();
                 }
             }
+
             
+            $trans->transactionReferenceNumber = $data->transactionReferenceNumber;
+            $trans->transactionType = $data->transactionType;
+            $trans->save();
 
             return response()->json([
                 'success' =>  true,
@@ -189,7 +209,8 @@ class ProductController extends Controller
         $hubs = Hub::where('status', 1)->get();
         $product_count = Product::count('id');
         $page_title = "products";
-        return view('product.index', compact('page_title', 'products', 'hubs', 'product_count', 'remarks'));
+        $lot_code = new LotCode;
+        return view('product.index', compact('page_title', 'products', 'hubs', 'product_count', 'remarks', 'lot_code'));
     }
 
     public function store(Request $request, Product $product)
@@ -205,24 +226,30 @@ class ProductController extends Controller
         $inputs['bundles'] = $bundles;
         Product::create($inputs);
 
-        $product->incrementStock($request->sku, $request->qty);
-
         return redirect()->back()->with('success', 'Product was successfully added.');
     }
 
-    public function adjustStock(Request $request, Product $product, StockAdjustment $stock_adjustment) {
+    public function adjustStock(Request $request, StockAdjustment $stock_adjustment, LotCode $lot_code) {
         $sku = $request->sku;
+        $lot_number = $request->lot_code;
         $qty = $request->qty;
         $action = $request->action;
  
         if ($action == 'add') {
-            $product->incrementStock($sku, $qty);
+            $lot_code->incrementStock($sku, $lot_number, $qty);
         }
-        else {
-            $product->decrementStock($sku, $qty);
+        else { 
+            if ($lot_code->hasStock($sku, $qty)) {
+                 $lot_code->decrementStock($sku, $lot_number, $qty);
+            }
+            else {
+                 return response()->json([
+                    'message' => 'not_enough_stock'
+                ], 200);
+            }
         }
 
-        $stock_adjustment->record($sku, $qty, $action, $request->remarks_id);
+        $stock_adjustment->record($sku, $lot_number, $qty, $action, $request->remarks_id);
 
         return response()->json([
             'message' => 'success'
@@ -238,13 +265,22 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {   
+     
         Cache::forget('all_sku_cache');
-        $except_values = ['_token','search_terms'];
+        $except_values = ['_token','search_terms','lot_code'];
         $request['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
         $bundles = isset($request->bundles) ? implode(',', $request->bundles) : [];
         $request['bundles'] = $bundles;
         
         Product::where('id',$id)->update($request->except($except_values));
+
+        foreach ($request['lot_code'] as $key => $lot_code) {
+            $expiration = $request->expiration[$key];
+         //   return $expiration;
+            $lc = new LotCode;
+            $lc->where('lot_code', $lot_code)->update(['expiration' => $expiration]);
+        }
+
         return redirect()->back()->with('success', 'Product was updated successfully.');
     }
 

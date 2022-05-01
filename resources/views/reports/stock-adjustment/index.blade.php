@@ -68,6 +68,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">SKU</th>
+                                            <th scope="col">Lot Code</th>
                                             <th scope="col">Description</th>
                                             <th scope="col">Action</th>
                                             <th scope="col">Qty Adjusted</th>
@@ -81,6 +82,7 @@
                                             @foreach ($stock_adjustments as $item)
                                                 <tr>
                                                     <td>{{ $item->sku }}</td>
+                                                    <td>{{ $item->lot_code }}</td>
                                                     <td>{{ $item->description }}</td>
                                                     <td>{{ $item->action }}</td>
                                                     <td>{{ $item->qty_adjusted }}</td>

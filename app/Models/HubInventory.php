@@ -15,9 +15,14 @@ class HubInventory extends Model
 
     protected $fillable = [
         'sku',
+        'lot_code',
         'hub_id',
         'stock',
     ];
+
+     public function getAllStock($sku) {
+        return self::where('sku', $sku)->sum('stock');
+    }
 
     public function getByHub($hub_id, $per_page) 
     {
@@ -115,33 +120,21 @@ class HubInventory extends Model
         }
     }
 
-    public function decrementBundleSKU($bundles, $qty, $hub_id) {
-        if (count($bundles) > 0) {
-            foreach ($bundles as $sku) {
-                $this->decrementStock($sku, $qty, $hub_id);
-            }
-        }
-    }
-    public function incrementStock($sku, $qty, $hub_id) {
-      //  $product = new Product;
-      //  $bundles = $product->getBundlesBySKU($sku);
-      //  $this->incrementBundleSKU($bundles, $qty, $hub_id);
+    public function incrementStock($sku, $lot_code, $qty, $hub_id) {
         self::where('sku', $sku)
+        ->where('lot_code', $lot_code)
         ->where('hub_id', $hub_id)->update([
             'stock' => DB::raw('stock + ' . $qty)
         ]);
     }
 
-    public function decrementStock($sku, $qty, $hub_id) {
-      //  $product = new Product;
-      //  $bundles = $product->getBundlesBySKU($sku);
-      //  $this->decrementBundleSKU($bundles, $qty, $hub_id);
+    public function decrementStock($sku, $lot_code, $qty, $hub_id) {
         self::where('sku', $sku)
+        ->where('lot_code', $lot_code)
         ->where('hub_id', $hub_id)->update([
             'stock' => DB::raw('stock - ' . $qty)
         ]);
     }
-
 
     public function hasStock($sku, $qty, $hub_id) 
     {
