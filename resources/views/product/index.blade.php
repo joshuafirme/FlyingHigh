@@ -151,7 +151,8 @@
                                                                     data-backdrop="static" data-keyboard="false"
                                                                     data-target="#transferModal" data-toggle="modal"
                                                                     data-sku="{{ $item->sku }}"
-                                                                    data-desc="{{ $item->description }}"><i
+                                                                    data-desc="{{ $item->description }}"
+                                                                    data-stock="{{ $stock }}"><i
                                                                         class="fa fa-exchange-alt"></i> Hub Transfer</a>
                                                                 <a class="btn dropdown-item btn-hubs-stock"
                                                                     data-target="#hubsStockModal" data-toggle="modal"

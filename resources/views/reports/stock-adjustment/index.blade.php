@@ -28,18 +28,31 @@
                                 @php
                                     $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d');
                                     $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
+                                    $remarks_id = request()->remarks_id;
                                 @endphp
                                 <form class="form-inline" action="{{ route('filterStockAdjustment') }}"
                                     method="get">
-                                    <div class="form-group mr-4 col-12 col-md-auto">
+                                    <div class="form-group mr-3 col-12 col-md-auto">
                                         <label>Date from</label>
                                         <input type="date" class="form-control ml-0 ml-sm-2" name="date_from"
                                             value="{{ $date_from }}" required>
                                     </div>
-                                    <div class="form-group mr-4 col-12 col-md-auto">
+                                    <div class="form-group mr-3 col-12 col-md-auto">
                                         <label>Date to</label>
                                         <input type="date" class="form-control ml-0 ml-sm-2" name="date_to"
                                             value="{{ $date_to }}" required>
+                                    </div>
+                                    <div class="form-group ml-3 col-12 col-md-auto">
+                                        <label>Remarks</label>
+                                        <select class="form-control ml-0 ml-sm-2" name="remarks_id" required>
+                                            <option disabled selected>Select a remarks</option>
+                                            @foreach ($adjustment_remarks as $item)
+                                                @php
+                                                    $selected = $item->id == request()->remarks_id ? 'selected' : '';
+                                                @endphp
+                                                <option value="{{ $item->id }}" {{ $selected }}>{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="form-group m-auto">
                                         <button class="btn btn-sm btn-primary" type="submit">Filter</button>
@@ -53,13 +66,13 @@
 
                                 <div class="form-group ml-auto mt-4 mt-sm-2">
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/stock-adjustment/export/' . $date_from . '/' . $date_to) }}"
+                                        href="{{ url('/reports/stock-adjustment/export/' . $date_from . '/' . $date_to . '/' . $remarks_id) }}"
                                         target="_blank"><i class="fas fa-file-export"></i> Export Excel</a>
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/stock-adjustment/download/' . $date_from . '/' . $date_to) }}"
+                                        href="{{ url('/reports/stock-adjustment/download/' . $date_from . '/' . $date_to . '/' . $remarks_id) }}"
                                         target="_blank"><i class="fa fa-download"></i> Download PDF</a>
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/stock-adjustment/preview/' . $date_from . '/' . $date_to) }}"
+                                        href="{{ url('/reports/stock-adjustment/preview/' . $date_from . '/' . $date_to . '/' . $remarks_id) }}"
                                         target="_blank"><i class="fa fa-print"></i> Print</a>
                                 </div>
                             </div>
@@ -82,7 +95,7 @@
                                             @foreach ($stock_adjustments as $item)
                                                 <tr>
                                                     <td>{{ $item->sku }}</td>
-                                                    <td>{{ $item->lot_code }}</td>
+                                                    <td>{{ $item->lot_code ? $item->lot_code : 'N/A' }}</td>
                                                     <td>{{ $item->description }}</td>
                                                     <td>{{ $item->action }}</td>
                                                     <td>{{ $item->qty_adjusted }}</td>

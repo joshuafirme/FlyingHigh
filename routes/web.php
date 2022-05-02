@@ -90,9 +90,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/reports/stock-adjustment', [StockAdjustmentController::class, 'index']);
     Route::get('/reports/stock-adjustment/filter', [StockAdjustmentController::class, 'filterStockAdjustment'])->name('filterStockAdjustment');
-    Route::get('/reports/stock-adjustment/preview/{date_from}/{date_to}', [StockAdjustmentController::class, 'previewReport']);
-    Route::get('/reports/stock-adjustment/download/{date_from}/{date_to}', [StockAdjustmentController::class, 'downloadReport']);
-    Route::get('/reports/stock-adjustment/export/{date_from}/{date_to}', [StockAdjustmentController::class, 'exportReport']);
+    Route::get('/reports/stock-adjustment/preview/{date_from}/{date_to}/{remarks_id}', [StockAdjustmentController::class, 'previewReport']);
+    Route::get('/reports/stock-adjustment/download/{date_from}/{date_to}/{remarks_id}', [StockAdjustmentController::class, 'downloadReport']);
+    Route::get('/reports/stock-adjustment/export/{date_from}/{date_to}/{remarks_id}', [StockAdjustmentController::class, 'exportReport']);
 
     Route::get('/reports/pickup/filter', [PickupReportController::class, 'filterPickup'])->name('filterPickup');
     Route::get('/reports/pickup/{status}', [PickupReportController::class, 'index']);

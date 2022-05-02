@@ -15,6 +15,8 @@
         $('.btn-view-detail').click(function() {
             let data = JSON.parse($(this).attr('data-info'));
             let modal = $('#detailModal');
+            
+            getLotCodes(data.sku, 'details');
             for (var key of Object.keys(data)) {
                 if (key == 'expiration') {
                     data[key] = data[key] ? data[key].substring(0, 10) : '';
@@ -36,32 +38,45 @@
             }
         });
 
-        function getBundleQty(info) {
-            // Replace this endpoint, qty must come from hub
-            fetch("/hub/bundle-qty-list/" + info.sku + "/" + info.hub_id)
+        function initLoader() {
+            $('.tbl-lot-codes').html('<tr><td colspan="3" class="text-center"><i class="fas fa-circle-notch fa-spin" style="font-size: 21px;"></i></td></tr>');
+        }
+
+        function getLotCodes(sku, type = "edit") {
+            
+            initLoader();    
+            fetch("/api/lotcode/" + sku)
                 .then(data => data.json())
                 .then(result => {
-                    $('#tbl-bundle-qty').html('');
                     console.log(result)
-                    if (result.data.length > 0) {
-                        for (let item of result.data) {
-                            let html = '<tr>';
-                            html += '<td><a target="_blank" href="/hubs/info./search?key=' + item.sku +
-                                '">' +
-                                item.sku + ' | ' + item.description + '</a></td>';
-                            html += '<td>' + item.stock + '</td>';
-                            html += '<td><a target="_blank" href="/hubs/'+ info.hub_id +'/search?key=' + item.sku +
-                                '"><i class="fa fa-eye"></i></a></td>';
-                            html += '</tr>';
-                            $('#tbl-bundle-qty').append(html);
+                    setTimeout(() => {
+                    $('.tbl-lot-codes').html('');
+                        if (result.length > 0) {
+                                for (let item of result) {
+                                    let lot_code = item.lot_code == 0 ? 'N/A' : item.lot_code;
+                                    let expiration = item.expiration ? item.expiration.substring(0, 10) : 'N/A';
+                                    let html = '<tr>';
+                                    if (type=='edit') {
+                                        html += '<td><input type="text" name="lot_code[]" readonly class="form-control" value="'+ lot_code +'"></td>';
+                                        html += '<td>'+item.stock+'</td>';
+                                        html += '<td><input type="date" name="expiration[]" class="form-control" value="'+ expiration +'"></td>';
+                                    }
+                                    else {
+                                        html += '<td>'+ lot_code +'</td>';
+                                        html += '<td>'+item.stock+'</td>';
+                                        html += '<td>'+ expiration +'</td>';
+                                    }
+                                    html += '</tr>';
+                                    $('.tbl-lot-codes').append(html);
+                                }
                         }
-                    } else {
-                        let html = '<tr>';
-                        html +=
-                            '<td colspan="2"><div class="alert alert-primary">No data found.</div></td>';
-                        html += '</tr>';
-                        $('#tbl-bundle-qty').append(html);
-                    }
+                        else {
+                            let html = '<tr>';
+                            html += '<td colspan="3"><div class="alert alert-primary">No data found.</div></td>';
+                            html += '</tr>';
+                            $('.tbl-lot-codes').append(html);
+                        }
+                    }, 300);
                 })
         }
 

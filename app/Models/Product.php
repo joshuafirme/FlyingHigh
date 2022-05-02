@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DB;
+use Utils;
+use App\Models\LotCode;
 
 class Product extends Model
 {
@@ -27,7 +29,17 @@ class Product extends Model
     ];
 
     public function getAllSKU() {
-        return self::select('id','sku','description','qty')->where('status', 1)->get();
+        $data = self::select('id','sku','description')->where('status', 1)->get();
+        $lc = new LotCode;
+        $data_arr = [];
+        foreach ($data as $item) {
+            array_push($data_arr,[
+                'id' => $item->id,
+                'sku' => $item->sku,
+                'description' => $item->description,
+            ]);
+        }
+        return $data_arr;
     }
 
     public function getByBarcode($barcode) {
@@ -37,7 +49,15 @@ class Product extends Model
     }
 
     public function getBySKU($sku) {
-        return self::select('id','sku','description','qty')->where('sku', $sku)->first();
+        $data = self::select('id','sku','description','qty')->where('sku', $sku)->first();
+        $lc = new LotCode;
+        return json_encode([
+            'id' => $data->id,
+            'sku' => $data->sku,
+            'description' => $data->description,
+            'stock' => $lc->getAllStock($data->sku),
+            'lot_codes' => $lc->getLotCode($data->sku)
+        ]);
     }
 
     public function isSkuExists($sku) {
@@ -51,30 +71,28 @@ class Product extends Model
     }
 
     public function getHubsStockBySku($sku) {
-        return self::select('HI.sku', 'HI.stock', 'description', 'H.name as hub')
-        ->leftJoin('hub_inventory as HI', 'HI.sku', '=', 'products.sku')
-        ->leftJoin('hubs as H', 'H.id', '=', 'HI.hub_id')
-        ->where('HI.sku', $sku)
-        ->get();
+        $data = self::select('HI.sku', 'HI.stock', 'description', 'H.name as hub', 'HI.lot_code')
+            ->leftJoin('hub_inventory as HI', 'HI.sku', '=', 'products.sku')
+            ->leftJoin('hubs as H', 'H.id', '=', 'HI.hub_id')
+            ->where('HI.sku', $sku)
+            ->get();
+
+        $data_arr = [];
+        foreach ($data as $item) {
+            array_push($data_arr,[
+                'sku' => $item->sku,
+                'lot_code' => $item->lot_code,
+                'stock' => $item->stock,
+                'hub' => $item->hub,
+                'expiration' => Utils::formatDate($this->getExpiration($item->lot_code))
+            ]);
+        }
+        return $data_arr;
     }
 
-    public function isAllStockEnough($all_sku, $qty) {
-        $has_enough_stock = true;
-        $sku_list = [];
-        foreach ($all_sku as $key => $sku) {  
-
-            if ($this->hasStock($sku, $qty[$key])) {
-                // enough stock, do nothing...
-            }
-            else {
-                array_push($sku_list, $sku);
-                $has_enough_stock = false;
-            }
-        }
-        return json_encode([
-            'result' => $has_enough_stock,
-            'sku' => $sku_list
-        ]);
+        public function getExpiration($lot_code) {
+        $lc = new LotCode;
+        return $lc->getExpiration($lot_code);
     }
 
     public function isAllSKUExists($all_sku) {

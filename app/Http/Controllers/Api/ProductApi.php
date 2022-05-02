@@ -30,7 +30,7 @@ class ProductApi extends Controller
     }
 
     public function getBySKU($sku, Product $product) {
-        return response()->json($product->getBySKU($sku));
+        return $product->getBySKU($sku);
     }
 
     public function getBundleQtyList($sku, Product $product)

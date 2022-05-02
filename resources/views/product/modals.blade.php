@@ -70,11 +70,15 @@
             <div class="modal-body row g-3">
                 <div class="col-md-12 mt-3">
                     <label class="form-label">SKU</label>
-                    <input type="text" class="form-control" name="sku" required readonly>
+                    <input type="text" class="form-control" name="sku" readonly>
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Description</label>
-                    <input type="text" class="form-control" name="description" required readonly>
+                    <input type="text" class="form-control" name="description" readonly>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">Stock</label>
+                    <input type="text" class="form-control" name="current_stock" readonly>
                 </div>
                 <div class="col-md-12 mt-3">
                     <label for="validationCustom04" class="form-label">Hub</label>
@@ -257,6 +261,7 @@
                     <table class="table pb-3">
                         <thead>
                             <th scope="col">SKU</th>
+                            <th scope="col">Lot Code</th>
                             <th scope="col">Stock</th>
                             <th scope="col">Qty to transfer</th>
                             <th scope="col">Hub</th>
@@ -295,7 +300,9 @@
                     <table class="table table-striped pb-3">
                         <thead>
                             <th>Hub</th>
+                            <th>Lot Code</th>
                             <th>Stock</th>
+                            <th>Expiration</th>
                         </thead>
                         <tbody id="tbl-hubs-stock">
                         </tbody>
@@ -331,10 +338,6 @@
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Description</label>
                     <input type="text" class="form-control" name="description" readonly>
-                </div>
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Stock</label>
-                    <input type="number" class="form-control" name="qty" readonly>
                 </div>
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Buffer Stock</label>

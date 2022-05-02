@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
+use App\Models\LotCode;
 use DB;
 
 class HubInventory extends Model
@@ -20,13 +21,22 @@ class HubInventory extends Model
         'stock',
     ];
 
-     public function getAllStock($sku) {
-        return self::where('sku', $sku)->sum('stock');
+    public function createLotCode($sku, $lot_code, $qty, $hub_id) {
+         self::create([
+            'sku' => $sku,
+            'lot_code' => $lot_code,
+            'hub_id' => $hub_id,
+            'stock' => $qty,
+        ]);
+    }
+
+     public function getAllStock($sku, $hub_id) {
+        return self::where('sku', $sku)->where('hub_id', $hub_id)->sum('stock');
     }
 
     public function getByHub($hub_id, $per_page) 
     {
-        return self::select('P.*', $this->table . '.stock', 'hub_id')
+        return self::select('P.*', $this->table . '.stock', $this->table . '.lot_code', 'hub_id', $this->table . '.updated_at')
             ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
             ->where($this->table . '.hub_id', $hub_id)
             ->orderBy($this->table . '.updated_at', 'desc')
@@ -35,7 +45,7 @@ class HubInventory extends Model
 
     public function searchByHub($hub_id, $per_page) 
     { 
-        return self::select('P.*', $this->table . '.stock')
+        return self::select('P.*', $this->table . '.stock', $this->table . '.lot_code', 'hub_id')
             ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
             ->where($this->table . '.hub_id', $hub_id)
             ->where(function ($query) {
@@ -46,9 +56,10 @@ class HubInventory extends Model
             ->paginate($per_page);
     }
 
-    public function isSkuExistsInHub($sku, $hub_id) 
+    public function isLotCodeExistsInHub($sku, $lot_code, $hub_id) 
     {
         $res = self::where('sku', $sku)
+                ->where('lot_code', $lot_code)
                 ->where('hub_id', $hub_id)->get();
         return count($res) > 0 ? true : false;
     }
@@ -120,9 +131,8 @@ class HubInventory extends Model
         }
     }
 
-    public function incrementStock($sku, $lot_code, $qty, $hub_id) {
-        self::where('sku', $sku)
-        ->where('lot_code', $lot_code)
+    public function incrementStock($lot_code, $qty, $hub_id) {
+        self::where('lot_code', $lot_code)
         ->where('hub_id', $hub_id)->update([
             'stock' => DB::raw('stock + ' . $qty)
         ]);
@@ -145,25 +155,8 @@ class HubInventory extends Model
         return false;
     }
 
-    public function getBundleQtyList($sku, $hub_id) 
-    {
-        $sku_list = array();
-        $product = new Product;
-        $bundles = $product->getBundlesBySKU($sku);
-
-        foreach ($bundles as $sku){
-            $data = self::select($this->table . '.sku','description', 'stock')
-                ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
-                ->where($this->table . '.sku', $sku)
-                ->where('hub_id', $hub_id)->first();
-
-            array_push($sku_list, [
-                "sku" => $data->sku,
-                "description" => $data->description,
-                "stock" => $data->stock,
-            ]);
-        }
-
-        return $sku_list;
+    public function getExpiration($lot_code) {
+        $lc = new LotCode;
+        return $lc->getExpiration($lot_code);
     }
 }

@@ -23,11 +23,11 @@ class StockAdjustment extends Model
     ];
 
     public function getHeaders() {
-        return ['SKU', 'Description', 'Action', 'Qty Adjusted', 'Adjusted by', 'Remarks', 'Date Time Adjusted'];
+        return ['SKU', 'Lot Code', 'Description', 'Action', 'Qty Adjusted', 'Adjusted by', 'Remarks', 'Date Time Adjusted'];
     }
 
      public function getColumns() {
-        return ['sku', 'description', 'action', 'qty_adjusted', 'adjusted_by', 'remarks', 'created_at'];
+        return ['sku', 'lot_code', 'description', 'action', 'qty_adjusted', 'adjusted_by', 'remarks', 'created_at'];
     }
 
     public function record($sku, $lot_code, $qty, $action, $remarks_id) {
@@ -58,18 +58,20 @@ class StockAdjustment extends Model
             ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
             ->orderBy('stock_adjustment.created_at', 'desc')
             ->whereBetween(DB::raw('DATE(stock_adjustment.created_at)'), [request()->date_from, request()->date_to])
+            ->where('remarks_id', request()->remarks_id)
             ->paginate($per_page);
     }
 
     public function filter($date_from, $date_to) {
         $date_from = $date_from ? $date_from : date('Y-m-d');
         $date_to = $date_to ? $date_to : date('Y-m-d');
-        return self::select('P.sku', 'P.description', 'action', 'qty_adjusted', 'AR.name as remarks', 'stock_adjustment.created_at', 'U.name as adjusted_by')
+        return self::select('P.sku', 'P.description', 'action', 'qty_adjusted', 'AR.name as remarks', 'stock_adjustment.created_at', 'U.name as adjusted_by', 'stock_adjustment.lot_code')
             ->leftJoin('users as U', 'U.id', '=', 'stock_adjustment.user_id')
             ->leftJoin('products as P', 'P.sku', '=', 'stock_adjustment.sku')
             ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
             ->orderBy('stock_adjustment.created_at', 'desc')
             ->whereBetween(DB::raw('DATE(stock_adjustment.created_at)'), [$date_from, $date_to])
+            ->where('remarks_id', request()->remarks_id)
             ->get();
     }
     

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Reports;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\StockAdjustment;
+use App\Models\AdjustmentRemarks;
 use App\Exports\StockAdjustmentExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Utils;
@@ -13,13 +14,15 @@ class StockAdjustmentController extends Controller
 {
     public function index(StockAdjustment $sa) {
         $stock_adjustments = $sa->getAllPaginate(10);
-        return view('reports.stock-adjustment.index', compact('stock_adjustments'));
+        $adjustment_remarks = AdjustmentRemarks::where('status', 1)->get();
+        return view('reports.stock-adjustment.index', compact('stock_adjustments', 'adjustment_remarks'));
     }
 
     public function filterStockAdjustment(StockAdjustment $sa) {
 
         $stock_adjustments = $sa->filterPaginate(10);
-        return view('reports.stock-adjustment.index', compact('stock_adjustments'));
+        $adjustment_remarks = AdjustmentRemarks::where('status', 1)->get();
+        return view('reports.stock-adjustment.index', compact('stock_adjustments', 'adjustment_remarks'));
     }
 
     public function previewReport($date_from, $date_to, StockAdjustment $sa){

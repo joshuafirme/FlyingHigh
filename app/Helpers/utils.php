@@ -96,6 +96,9 @@ class Utils
                             if ($column == 'created_at') {
                                 $data[$column] = Utils::formatDate($data[$column]);
                             }
+                            if ($column == 'lot_code') {
+                                $data[$column] = $data[$column] ? $data[$column] : 'N/A';
+                            }
                             $output .= '<td style="border: 1px solid; padding:10px;">'. $data[$column] .'</td>';
                         }                 
                     $output .='</tr>';

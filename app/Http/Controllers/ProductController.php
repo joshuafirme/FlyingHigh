@@ -130,23 +130,25 @@ class ProductController extends Controller
         return back();
     }
 
-    public function transfer(Product $product, HubInventory $hub, HubTransfer $hub_transfer)
+    public function transfer(Product $product, HubInventory $hub, HubTransfer $hub_transfer, LotCode $lc)
     {
         $sku = request()->sku;
+        // FEFO - get the first expiry
+        $lot_code = $lc->getFirstExpiry($sku);
         $qty = request()->stock;
         $hub_id = request()->hub_id;
         $except_values = ['description'];
         
-        if ($product->hasStock($sku, $qty)) {
-            if ($hub->isSkuExistsInHub($sku, $hub_id)) {
-                $hub->incrementStock($sku, $qty, $hub_id);
-                $hub_transfer->record($sku, $qty, $hub_id);
+        if ($lc->hasStock($lot_code, $qty)) {
+            if ($hub->isLotCodeExistsInHub($lot_code, $hub_id)) {
+                $hub->incrementStock($lot_code, $qty, $hub_id);
+                $hub_transfer->record($sku, $lot_code, $qty, $hub_id);
             }
             else {
-                HubInventory::create(request()->except($except_values));
-                $hub_transfer->record($sku, $qty, $hub_id);
+                $hub->createLotCode($sku, $lot_code, $qty, $hub_id);
+                $hub_transfer->record($sku, $lot_code, $qty, $hub_id);
             }
-            $product->decrementStock($sku, $qty);
+            $lc->decrementStock($sku, $lot_code, $qty);
             return response()->json([
                 'success' =>  true,
                 'message' => 'transfer_success'
@@ -158,31 +160,35 @@ class ProductController extends Controller
         ], 200);
     }
 
-    public function bulkTransfer(Request $request, Product $product, HubInventory $hub, HubTransfer $hub_transfer)
+    public function bulkTransfer(
+        Request $request, 
+        Product $product, 
+        HubInventory $hub, 
+        HubTransfer $hub_transfer, 
+        LotCode $lc
+    )
     {
         $all_sku = $request->sku;
+        $lot_codes = $request->lot_code;
         $qty = $request->qty;
         $hub_id = $request->hub_id;
         $except_values = ['bundles', 'search_terms'];
-        $isAllStockEnough = json_decode($product->isAllStockEnough($all_sku, $qty));
+        $isAllStockEnough = json_decode($lc->isAllStockEnough($all_sku, $qty));
       
         if ($isAllStockEnough->result) {
 
-            foreach ($all_sku as $key => $sku) {  
-                if ($product->hasStock($sku, $qty[$key])) {
-                    if ($hub->isSkuExistsInHub($sku, $hub_id[$key])) {
-                        $hub->incrementStock($sku, $qty[$key], $hub_id[$key]);
-                        $hub_transfer->record($sku, $qty[$key], $hub_id[$key]);
+            foreach ($all_sku as $ctr => $sku) {  
+                if ($lc->hasStock($sku, $qty[$ctr])) { 
+                    if ($hub->isLotCodeExistsInHub($sku, $lot_codes[$ctr], $hub_id[$ctr])) { 
+                        $hub->incrementStock($lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
+                        $hub_transfer->record($sku, $lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
                     }
                     else {
-                        HubInventory::create([
-                            'sku' => $sku,
-                            'stock' => $qty[$key],
-                            'hub_id' => $hub_id[$key]
-                        ]);
-                        $hub_transfer->record($sku, $qty[$key], $hub_id[$key]);
+                        $hub->createLotCode($sku, $lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
+                        $hub_transfer->record($sku, $lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
                     }
-                    $product->decrementStock($sku, $qty[$key]);
+                    
+                   $lc->decrementStock($sku, $lot_codes[$ctr], $qty[$ctr]);
                 }
             }
             return response()->json([

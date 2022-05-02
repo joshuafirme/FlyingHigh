@@ -29,19 +29,26 @@
             false,
         );
 
-        function appendInputs(data) {
+        function appendInputs(data){
             var html = '';
             html += '<tr id="' + data.id + '_' + data.sku + '">';
             html += '<td>';
             html += data.description;
-            html += '<input type="hidden" class="form-control" name="sku[]" value="' + data.sku +
-                '">';
+            html += '<input type="hidden" class="form-control" name="sku[]" value="' + data.sku + '">';
             html += '</td>';
-            html += '<td>' + data.qty + '</td>';
             html += '<td>';
-            html +=
-                '<input type="number" class="form-control" name="qty[]" required max="' +
-                data.qty + '" min="1">';
+            html += '<select class="form-control" name="lot_code[]" required>';
+      
+            for (let item of data.lot_codes) {
+                let lot_code = item.lot_code != 0 ? item.lot_code : 'N/A';
+                html += '<option value="'+ item.lot_code +'">'+ lot_code +'</option>';
+            }
+ 
+            html += '</select>';
+            html += '</td>';
+            html += '<td>' + data.stock + '</td>';
+            html += '<td>';
+            html +='<input type="number" class="form-control" name="qty[]" required max="' + data.stock + '" min="1">';
             html += '</td>';
 
             html += '<td>';
@@ -226,14 +233,16 @@
                         for (let item of data) {
                             let html = '<tr>';
                             html += '<td>'+item.hub+'</td>';
+                            html += '<td>'+item.lot_code+'</td>';
                             html += '<td>'+item.stock+'</td>';
+                            html += '<td>'+item.expiration+'</td>';
                             html += '</tr>';
                             $('#tbl-hubs-stock').append(html);
                         }
                     }
                     else {
                         let html = '<tr>';
-                        html += '<td colspan="2"><div class="alert alert-primary">No data found.</div></td>';
+                        html += '<td colspan="4"><div class="alert alert-primary">No data found.</div></td>';
                         html += '</tr>';
                         $('#tbl-hubs-stock').append(html);
                     }
@@ -281,9 +290,11 @@
             let v = $(this);
             let sku = v.attr('data-sku');
             let description = v.attr('data-desc');
+            let current_stock = v.attr('data-stock');
             let tm = $('#transferModal');
             tm.find('[name=sku]').val(sku);
             tm.find('[name=description]').val(description);
+            tm.find('[name=current_stock]').val(current_stock);
         });
 
         $('.btn-stock-adjustment').click(function() {

@@ -46,9 +46,10 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">SKU</th>
+                                            <th scope="col">Lot Code</th>
                                             <th scope="col">Description</th>
+                                            <th scope="col">Expiration Date</th>
                                             <th scope="col">Stock</th>
-                                            <th scope="col">Buffer Stock</th>
                                             <th scope="col">Date time Last Transferred</th>
                                             <th scope="col">Action</th>
                                         </tr>
@@ -56,11 +57,15 @@
                                     <tbody>
                                         @if (count($products))
                                             @foreach ($products as $item)
+                                                @php
+                                                    $expiration = $hub_inv->getExpiration($item->lot_code);
+                                                @endphp
                                                 <tr id="record-id-{{ $item->id }}">
                                                     <td>{{ $item->sku }}</td>
+                                                    <td>{{ $item->lot_code ? $item->lot_code : 'N/A' }}</td>
                                                     <td>{{ $item->description }}</td>
-                                                    <td>{{ $hub_inv->getAllStock($item->sku) }}</td>
-                                                    <td>{{ $item->buffer_stock }}</td>
+                                                    <td>{{ $expiration ? $expiration : 'N/A' }}</td>
+                                                    <td>{{ $hub_inv->getAllStock($item->sku, request()->hub_id) }}</td>
                                                     <td>{{ Utils::formatDate($item->updated_at) }}</td>
                                                     <td>
                                                         <div class="btn-group">

@@ -34,8 +34,6 @@ class ProductImport implements ToModel
             if (!$product->isSkuExists($row[0])) {
                 return new Product([
                     'sku' => $row[0],
-                // 'jde_lot_code' => $row[1],
-                // 'expiration' => $exp_date,
                     'supplier_lot_code' => $row[2],
                     'description' => $row[4],
                 ]);
