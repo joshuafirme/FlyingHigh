@@ -77,8 +77,17 @@
                     <input type="text" class="form-control" name="description" readonly>
                 </div>
                 <div class="col-md-12 mt-3">
+                    <label class="form-label">Lot Code</label>
+                    <select class="form-control" name="lot_code" required>
+                    </select>
+                </div>
+                <div class="col-md-12 mt-3">
                     <label class="form-label">Stock</label>
-                    <input type="text" class="form-control" name="current_stock" readonly>
+                    <input type="number" class="form-control" name="current_stock" readonly>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">Expiration</label>
+                    <input type="text" class="form-control" name="expiration" readonly>
                 </div>
                 <div class="col-md-12 mt-3">
                     <label for="validationCustom04" class="form-label">Hub</label>

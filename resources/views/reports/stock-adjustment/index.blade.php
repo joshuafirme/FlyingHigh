@@ -124,7 +124,7 @@
                             </div>
 
                             @php
-                                echo $stock_adjustments->links('pagination::bootstrap-4');
+                                echo $stock_adjustments->appends(request()->query())->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>

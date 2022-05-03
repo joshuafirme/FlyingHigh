@@ -35,23 +35,26 @@
                                             modal-type="create">
                                             <i class="fa fa-plus"></i> Create
                                         </button>
-                                        <button type="button"
+                                        <!-- <button type="button"
                                             class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
                                             id="btn-open-import-via-barcode" data-backdrop="static"
                                             data-keyboard="false"><i class="fa fa-barcode"></i>
                                             Import Stock via Barcode
-                                        </button>
-                                        <button type="button"
-                                            class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
-                                            data-toggle="modal" data-target="#apiModal" data-backdrop="static"
-                                            data-keyboard="false"><i class="fa fa-code"></i>
-                                            Import Stock via API
-                                        </button>
+                                        </button>-->
                                         <button type="button"
                                             class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
                                             data-toggle="modal" data-target="#importModal"><i
                                                 class="fas fa-file-import"></i>
                                             Import Excel
+                                        </button>
+                                        <a class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto"
+                                            href="{{ url('/product/export') }}" target="_blank"><i
+                                                class="fas fa-file-export"></i> Export Excel</a>
+                                        <button type="button"
+                                            class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
+                                            data-toggle="modal" data-target="#apiModal" data-backdrop="static"
+                                            data-keyboard="false"><i class="fa fa-code"></i>
+                                            Import Stock via API
                                         </button>
                                         <button type="button"
                                             class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto"

@@ -28,6 +28,22 @@ class Product extends Model
         'status',
     ];
 
+    public function getAll() {
+        $data = self::select('sku','description','buffer_stock')->where('status', 1)->get();
+        $lc = new LotCode;
+        $data_arr = [];
+        foreach ($data as $item) {
+            $stock = $lc->getAllStock($item->sku);
+            array_push($data_arr,[
+                'sku' => $item->sku,
+                'description' => $item->description,
+                'stock' => $stock ? $stock : '0',
+                'buffer_stock' => $item->buffer_stock ? $item->buffer_stock : '0',
+            ]);
+        }
+        return $data_arr;
+    }
+
     public function getAllSKU() {
         $data = self::select('id','sku','description')->where('status', 1)->get();
         $lc = new LotCode;

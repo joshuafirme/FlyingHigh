@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Reports;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\HubTransfer;
+use App\Models\Hub;
 use App\Exports\HubTransferExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Utils;
@@ -13,13 +14,15 @@ class HubTransferController extends Controller
 {
    public function index(HubTransfer $sa) {
         $hub_transfer = $sa->getAllPaginate(10);
-        return view('reports.hub-transfer.index', compact('hub_transfer'));
+        $hubs = Hub::where('status', 1)->get();
+        return view('reports.hub-transfer.index', compact('hub_transfer','hubs'));
     }
 
     public function filterHubTransfer(HubTransfer $sa) {
 
         $hub_transfer = $sa->filterPaginate(10);
-        return view('reports.hub-transfer.index', compact('hub_transfer'));
+        $hubs = Hub::where('status', 1)->get();
+        return view('reports.hub-transfer.index', compact('hub_transfer','hubs'));
     }
 
     public function previewReport($date_from, $date_to, HubTransfer $sa){

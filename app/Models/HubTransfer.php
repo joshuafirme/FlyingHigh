@@ -50,6 +50,7 @@ class HubTransfer extends Model
             ->leftJoin('hubs as H', 'H.id', '=', 'hub_transfer.hub_id')
             ->orderBy('hub_transfer.created_at', 'desc')
             ->whereBetween(DB::raw('DATE(hub_transfer.created_at)'), [request()->date_from, request()->date_to])
+            ->where('hub_id', request()->hub_id)
             ->paginate($per_page);
     }
 
@@ -61,6 +62,7 @@ class HubTransfer extends Model
             ->leftJoin('hubs as H', 'H.id', '=', 'hub_transfer.hub_id')
             ->orderBy('hub_transfer.created_at', 'desc')
             ->whereBetween(DB::raw('DATE(hub_transfer.created_at)'), [$date_from, $date_to])
+            ->where('hub_id', request()->hub_id)
             ->get();
     }
 }

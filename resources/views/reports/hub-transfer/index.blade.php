@@ -28,6 +28,7 @@
                                 @php
                                     $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d');
                                     $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
+                                    $hub_id = request()->hub_id;
                                 @endphp
                                 <form class="form-inline" action="{{ route('filterHubTransfer') }}"
                                     method="get">
@@ -41,6 +42,18 @@
                                         <input type="date" class="form-control ml-0 ml-sm-2" name="date_to"
                                             value="{{ $date_to }}" required>
                                     </div>
+                                    <div class="form-group col-12 col-md-auto">
+                                        <label>Hub</label>
+                                        <select class="form-control ml-0 ml-sm-2" name="hub_id" required>
+                                            <option disabled selected>Select a Hub</option>
+                                            @foreach ($hubs as $item)
+                                                @php
+                                                    $selected = $item->id == $hub_id ? 'selected' : '';
+                                                @endphp
+                                                <option value="{{ $item->id }}" {{ $selected }}>{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                     <div class="form-group ml-1">
                                         <button class="btn btn-sm btn-primary" type="submit">Filter</button>
                                     </div>
@@ -51,13 +64,13 @@
 
                                 <div class="form-group ml-auto mt-4 mt-sm-2">
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/hub-transfer/export/' . $date_from . '/' . $date_to) }}"
+                                        href="{{ url('/reports/hub-transfer/export/' . $date_from . '/' . $date_to . '/' . $hub_id) }}"
                                         target="_blank"><i class="fas fa-file-export"></i> Export Excel</a>
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/hub-transfer/download/' . $date_from . '/' . $date_to) }}"
+                                        href="{{ url('/reports/hub-transfer/download/' . $date_from . '/' . $date_to . '/' . $hub_id) }}"
                                         target="_blank"><i class="fa fa-download"></i> Download PDF</a>
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/hub-transfer/preview/' . $date_from . '/' . $date_to) }}"
+                                        href="{{ url('/reports/hub-transfer/preview/' . $date_from . '/' . $date_to . '/' . $hub_id) }}"
                                         target="_blank"><i class="fa fa-print"></i> Print</a>
                                 </div>
                             </div>
@@ -103,7 +116,7 @@
                             </div>
 
                             @php
-                                echo $hub_transfer->links('pagination::bootstrap-4');
+                                echo $hub_transfer->appends(request()->query())->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>

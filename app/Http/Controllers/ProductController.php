@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ProductImport;
+use App\Exports\ProductExport;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Hub;
@@ -133,14 +134,13 @@ class ProductController extends Controller
     public function transfer(Product $product, HubInventory $hub, HubTransfer $hub_transfer, LotCode $lc)
     {
         $sku = request()->sku;
-        // FEFO - get the first expiry
-        $lot_code = $lc->getFirstExpiry($sku);
+        $lot_code = request()->lot_code;
         $qty = request()->stock;
         $hub_id = request()->hub_id;
         $except_values = ['description'];
         
         if ($lc->hasStock($lot_code, $qty)) {
-            if ($hub->isLotCodeExistsInHub($lot_code, $hub_id)) {
+            if ($hub->isLotCodeExistsInHub($sku, $lot_code, $hub_id)) {
                 $hub->incrementStock($lot_code, $qty, $hub_id);
                 $hub_transfer->record($sku, $lot_code, $qty, $hub_id);
             }
@@ -173,7 +173,7 @@ class ProductController extends Controller
         $qty = $request->qty;
         $hub_id = $request->hub_id;
         $except_values = ['bundles', 'search_terms'];
-        $isAllStockEnough = json_decode($lc->isAllStockEnough($all_sku, $qty));
+        $isAllStockEnough = json_decode($lc->isAllStockEnough($lot_codes, $qty));
       
         if ($isAllStockEnough->result) {
 
@@ -200,7 +200,7 @@ class ProductController extends Controller
             return response()->json([
                 'success' =>  false,
                 'message' => 'not_enough_stock',
-                'sku_list' => $isAllStockEnough->sku
+                'lot_codes' => $isAllStockEnough->lot_codes
             ], 200);
         }
     }
@@ -323,5 +323,10 @@ class ProductController extends Controller
         return response()->json([
             'message' => 'success'
         ], 200);
+    }
+
+    public function export()
+    {
+         return Excel::download(new ProductExport, 'product.xlsx');
     }
 }

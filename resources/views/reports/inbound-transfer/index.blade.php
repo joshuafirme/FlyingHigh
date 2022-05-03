@@ -105,7 +105,7 @@
                             </div>
 
                             @php
-                                echo $transactions->links('pagination::bootstrap-4');
+                                echo $transactions->appends(request()->query())->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>

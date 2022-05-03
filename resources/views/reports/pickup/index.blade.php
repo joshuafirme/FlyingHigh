@@ -140,7 +140,7 @@
                             </div>
 
                             @php
-                                echo $pickups->links('pagination::bootstrap-4');
+                                echo $pickups->appends(request()->query())->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>
