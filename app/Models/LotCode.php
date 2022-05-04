@@ -21,6 +21,13 @@ class LotCode extends Model
         'status',
     ];
 
+    public function getAllPaginate($per_page) {
+        return self::select($this->table . '.*', 'P.description')
+            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+            ->orderBy($this->table . '.updated_at', 'desc')
+            ->paginate($per_page);
+    }
+
     public function createLotCode($sku, $lot_code, $expiration, $qty) {
          LotCode::create([
             'sku' => $sku,
@@ -28,6 +35,10 @@ class LotCode extends Model
             'expiration' => $expiration,
             'stock' => $qty,
         ]);
+    }
+
+    public function archiveLotCode($id) {
+        return self::where('id', $id)->update(['status' => 0]);
     }
 
     public function getOneLotCode($lot_code) {
@@ -41,6 +52,7 @@ class LotCode extends Model
                 ->orWhere('lot_code', 0);
             })
             ->orderBy('expiration', 'asc')
+            ->where('status', 1)
             ->value('lot_code');
     }
 
@@ -49,13 +61,14 @@ class LotCode extends Model
     }
 
     public function getLotCode($sku) {
-        return self::select('lot_code', 'stock', 'expiration')
+        return self::select('id', 'lot_code', 'stock', 'expiration')
             ->where('sku', $sku)
             ->where(function ($query) {
                $query->whereDate('expiration', '>', date('Y-m-d'))
                      ->orWhere('lot_code', 0);
             })
             ->orderBy('expiration', 'asc')
+            ->where('status', 1)
             ->get();
     }
     
@@ -81,6 +94,7 @@ class LotCode extends Model
                 $query->whereDate('expiration', '>', date('Y-m-d'))
                 ->orWhere('lot_code', 0);
             })
+            ->where('status', 1)
             ->sum('stock');
     }
     

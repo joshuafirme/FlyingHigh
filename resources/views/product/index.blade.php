@@ -146,10 +146,6 @@
                                                                 aria-expanded="false"><i
                                                                     class="fas fa-ellipsis-v"></i></a>
                                                             <div class="dropdown-menu">
-                                                                <a class="btn dropdown-item btn-view-detail"
-                                                                    data-target="#detailModal" data-toggle="modal"
-                                                                    data-info="{{ json_encode($item) }}"><i
-                                                                        class="fa fa-eye"></i> View Details</a>
                                                                 <a class="btn dropdown-item btn-transfer"
                                                                     data-backdrop="static" data-keyboard="false"
                                                                     data-target="#transferModal" data-toggle="modal"

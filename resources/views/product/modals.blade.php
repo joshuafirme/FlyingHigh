@@ -35,15 +35,16 @@
                     </select>
                 </div>
                 <div class="col-sm-12 col-md-12 mt-4">
+                    <a class="btn btn-sm btn-primary float-right mb-3" id="btn-add-lot-code"><i
+                            class="fa fa-plus"></i> Add Lot Code</a>
                     <table class="table table-hover pb-3">
-                        <thead>
+                        <thead id="thead-lot-codes">
                             <th>JDE Lot Code</th>
                             <th>Stock</th>
                             <th>Expiration</th>
+                            <th>Action</th>
                         </thead>
                         <tbody class="tbl-lot-codes">
-                            <tr>
-                            </tr>
                         </tbody>
                     </table>
                 </div>

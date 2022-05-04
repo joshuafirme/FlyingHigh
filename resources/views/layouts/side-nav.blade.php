@@ -138,6 +138,12 @@
                     </span></a>
                 <ul class="submenu">
                     <li>
+                        <a href="{{ url('/reports/inventory') }}">Warehouse Inventory</a>
+                    </li>   
+                    <li>
+                        <a href="{{ url('/') }}">Hub Inventory</a>
+                    </li>
+                    <li>
                         <a href="{{ url('/reports/inbound-transfer') }}">Inbound Transfers</a>
                     </li>
                     <li>
@@ -148,12 +154,6 @@
                     </li>
                     <li>
                         <a href="{{ url('/reports/pickup/for-pickup') }}">Pickup Report</a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/reports/warehouse-inventory') }}">Warehouse Inventory</a>
-                    </li>
-                      <li>
-                        <a href="{{ url('/reports/hub-inventory') }}">Hub Inventory</a>
                     </li>
                 </ul>
             </li>

@@ -42,6 +42,11 @@ class ProductController extends Controller
         return view('product.index', compact('remarks', 'products', 'hubs', 'product_count', 'lot_code'));
     }
 
+    public function archiveLotCode($id, LotCode $lc)
+    {
+        return $lc->archiveLotCode($id);
+    }
+
     public function getHubsStockBySku($sku, Product $product)
     {
         return $product->getHubsStockBySku($sku);
@@ -220,19 +225,88 @@ class ProductController extends Controller
     }
 
     public function store(Request $request, Product $product)
-    {
+    { 
+        Cache::forget('all_sku_cache');
+
+        $add_lot_code = json_decode($this->addLotCode($request, $action = 'store'));
+
+        if ($add_lot_code->success == false) {
+            return redirect()->back()->with('danger', $add_lot_code->lot_codes . ' lot code'.$add_lot_code->is_are.' already exists.');
+        }
+        
         if ($product->isSkuExists($request->sku)) {
             return redirect()->back()->with('danger', 'SKU is already exists.');
         }
-        Cache::forget('all_sku_cache');
-        $inputs = $request->all();
+
+        $inputs = $request->except('lot_code', 'stock', 'expiration');
         $inputs['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
        
         $bundles = isset($request->bundles) ? implode(',', $request->bundles) : '';
-        $inputs['bundles'] = $bundles;
+        $inputs['bundles'] = $bundles;      
         Product::create($inputs);
 
         return redirect()->back()->with('success', 'Product was successfully added.');
+    }
+
+    public function update(Request $request, $id)
+    {   
+        Cache::forget('all_sku_cache');
+        
+        $except_values = ['_token','search_terms','lot_code','lot_code','stock','expiration'];
+        $request['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
+        $bundles = isset($request->bundles) ? implode(',', $request->bundles) : [];
+        $request['bundles'] = $bundles;
+        
+        Product::where('id',$id)->update($request->except($except_values));
+
+        foreach ($request['lot_code'] as $key => $lot_code) {
+            $expiration = $request->expiration[$key];
+            $lc = new LotCode;
+            $lc->where('lot_code', $lot_code)->update(['expiration' => $expiration]);
+        }
+        
+        $add_lot_code = json_decode($this->addLotCode($request, $action = 'update'));
+        
+        if ($add_lot_code->success == false) {
+            return redirect()->back()->with('danger', $add_lot_code->lot_codes . ' lot code'.$add_lot_code->is_are.' already exists.');
+        }
+
+        return redirect()->back()->with('success', 'Product was updated successfully.');
+    }
+
+    public function addLotCode($request, $action) {
+        $lc = new LotCode;
+        $lot_codes = [];
+        $lot_code_count = 0;
+        $ctr = 0;
+        if ($action == 'update') {
+            $current_lot_code_count = count($lc->getLotCode($request->sku));
+        }
+        foreach ($request['lot_code'] as $key => $lot_code) {
+            if ($current_lot_code_count > 0 && $current_lot_code_count <= $key) {
+                
+                if ($lc->isLotCodeExists($lot_code)) {
+                    array_push($lot_codes, $lot_code);
+                }
+                else {
+                    $expiration = $request->expiration[$key];
+                    $lc->createLotCode($request->sku, $lot_code, $expiration, $request->stock[$ctr]);
+                }
+                $ctr++;
+            }
+        }
+        if (count($lot_codes) > 0) {
+            $is_are = count($lot_codes) > 1 ? 's are' : ' is';
+            $lot_codes = implode(', ', $lot_codes);     
+            return json_encode([
+                'success' => false,
+                'lot_codes' => $lot_codes,
+                'is_are' => $is_are
+            ]);
+        }
+        return json_encode([
+            'success' => true
+        ]);
     }
 
     public function adjustStock(Request $request, StockAdjustment $stock_adjustment, LotCode $lot_code) {
@@ -262,40 +336,6 @@ class ProductController extends Controller
         ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {   
-     
-        Cache::forget('all_sku_cache');
-        $except_values = ['_token','search_terms','lot_code'];
-        $request['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
-        $bundles = isset($request->bundles) ? implode(',', $request->bundles) : [];
-        $request['bundles'] = $bundles;
-        
-        Product::where('id',$id)->update($request->except($except_values));
-
-        foreach ($request['lot_code'] as $key => $lot_code) {
-            $expiration = $request->expiration[$key];
-         //   return $expiration;
-            $lc = new LotCode;
-            $lc->where('lot_code', $lot_code)->update(['expiration' => $expiration]);
-        }
-
-        return redirect()->back()->with('success', 'Product was updated successfully.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Product $product)
     {
         Cache::forget('all_sku_cache');

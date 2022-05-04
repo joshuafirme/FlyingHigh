@@ -136,15 +136,16 @@
                                 for (let item of result) {
                                     let lot_code = item.lot_code == 0 ? 'N/A' : item.lot_code;
                                     let expiration = item.expiration ? item.expiration.substring(0, 10) : 'N/A';
-                                    let html = '<tr>';
+                                    let html = '<tr id="'+item.id+'">';
                                     if (type=='edit') {
                                         html += '<td><input type="text" name="lot_code[]" readonly class="form-control" value="'+ lot_code +'"></td>';
                                         html += '<td>'+item.stock+'</td>';
                                         html += '<td><input type="date" name="expiration[]" class="form-control" value="'+ expiration +'"></td>';
+                                        html += '<td><a data-id="'+item.id+'" class="btn-archive" href="#" style="color:#DC0100;">Archive</a></td>';
                                     }
                                     else {
-                                        html += '<td>'+ lot_code +'</td>';
-                                        html += '<td>'+item.stock+'</td>';
+                                        html += '<td>'+ lot_code+'</td>';
+                                        html += '<td>'+ item.stock +'</td>';
                                         html += '<td>'+ expiration +'</td>';
                                     }
                                     html += '</tr>';
@@ -222,13 +223,13 @@
                 let modal_type = $(this).attr('modal-type');
                 clearInputs();
                 if (modal_type == 'create') {
+                    $('.tbl-lot-codes').html('');
                     $('[name=status]').val(1);
                     modal.find('.modal-title').text('Create Product');
                     modal.find('form').attr('action', "{{ route('product.store') }}");
                     $('#bundle-qty-container').addClass('d-none');
                     initChoices('choices-multiple-remove-button');
                 } else {
-                //  bundles_choices.clearStore();
                     modal.find('.modal-title').text('Update Product');
                     let data = JSON.parse($(this).attr('data-info'));
                     modal.find('form').attr('action', "/product/update/" + data.id);
@@ -246,6 +247,31 @@
                     }
                     getLotCodes(data.sku);
                 }
+            });
+            
+            $('#btn-add-lot-code').click(function() { 
+                let html = '<tr>';
+                    html += '<td><input type="text" name="lot_code[]" class="form-control"></td>';
+                    html += '<td><input type="number" name="stock[]" class="form-control" required></td>';
+                    html += '<td><input type="date" name="expiration[]" class="form-control"></td>';
+                html += '</tr>'
+                $('.tbl-lot-codes').append(html);
+            });
+
+            $('.btn-view-detail').click(function() {
+                let data = JSON.parse($(this).attr('data-info'));
+                let modal = $('#detailModal');
+                for (var key of Object.keys(data)) {
+                    if (key == 'expiration') {
+                        data[key] = data[key] ? data[key].substring(0, 10) : '';
+                    }
+                    if (key == 'status') {
+                        data[key] = data[key] == 1 ? 'Active' : 'Inactive';
+                    }
+                    
+                    modal.find('[name=' + key + ']').val(data[key]);
+                }
+                getLotCodes(data.sku, 'details');
             });
 
             $(document).on('click', '.btn-hubs-stock', function() {
@@ -284,6 +310,39 @@
                 $('#' + id).remove();
             });
 
+            $(document).on('click', '.btn-archive', function() {
+                let v = $(this);
+                let id = v.attr('data-id');
+                 Swal.fire({
+                    title: 'Are you sure do you want to archive this lot code?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#btn-transfer').html("Please wait...");
+                        $.ajax({
+                                type: 'POST',
+                                url: "/product/lotcode/archive/"+id
+                            })
+
+                            .done(function(data) {
+                                $('#' + id).remove();
+                                swalSuccess('Product Lot code was successfully archived.')
+                            })
+                            .fail(function() {
+                                alert("Error occured. Please try again.");
+                            });
+                    }
+                })
+
+                return false;
+            });
+            
+
             $(document).on('keyup', '#barcode-scan', function(e) { 
                 let barcode = $(this).val();
                 if (e.keyCode == 86 || e.keyCode == 8) {
@@ -299,20 +358,13 @@
                 }
             });
 
-            $('.btn-view-detail').click(function() {
+            $('.btn-lot-codes').click(function() {
                 let data = JSON.parse($(this).attr('data-info'));
-                let modal = $('#detailModal');
-                for (var key of Object.keys(data)) {
-                    if (key == 'expiration') {
-                        data[key] = data[key] ? data[key].substring(0, 10) : '';
-                    }
-                    if (key == 'status') {
-                        data[key] = data[key] == 1 ? 'Active' : 'Inactive';
-                    }
-                    
-                    modal.find('[name=' + key + ']').val(data[key]);
-                }
-                getLotCodes(data.sku, 'details');
+                let mdl = $('#lotCodesModal');
+                mdl.find('.modal-title').text('Lot Codes');
+                mdl.find('.sku-text').html(data.sku); 
+                mdl.find('.description-text').html(data.description); 
+                getLotCodes(data.sku, 'lotcodes');
             });
 
             $('.btn-transfer').click(function() {

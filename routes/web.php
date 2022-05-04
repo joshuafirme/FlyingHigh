@@ -15,6 +15,7 @@ use App\Http\Controllers\Reports\StockAdjustmentController;
 use App\Http\Controllers\Reports\HubTransferController;
 use App\Http\Controllers\Reports\PickupReportController;
 use App\Http\Controllers\Reports\InboundTransferController;
+use App\Http\Controllers\Reports\InventoryReportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -71,6 +72,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/client/search', [ClientController::class, 'search'])->name('searchClient');
     Route::resource('/client', ClientController::class);
 
+    
+    Route::post('/product/lotcode/archive/{id}', [ProductController::class, 'archiveLotCode']);
     Route::get('/product/export', [ProductController::class, 'export']);
     Route::get('/product/hubs/{sku}', [ProductController::class, 'getHubsStockBySku']);
     Route::get('/product/api/import', [ProductController::class, 'importAPI'])->name('importAPI');
@@ -106,6 +109,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/inbound-transfer/download/{date_from}/{date_to}', [InboundTransferController::class, 'downloadReport']);
     Route::get('/reports/inbound-transfer/export/{date_from}/{date_to}', [InboundTransferController::class, 'exportReport']);
     Route::get('/reports/inbound-transfer', [InboundTransferController::class, 'index']);
+
+    Route::get('/reports/inventory', [InventoryReportController::class, 'index']);
 
 
     Route::post('increment-stock', [ProductController::class, 'incrementStock']);
