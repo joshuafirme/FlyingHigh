@@ -4,7 +4,9 @@
 @include('layouts.top-nav')
 
 @include('layouts.side-nav')
-
+@php
+    $status_obj = json_decode(Utils::getStatusTextClass($status));
+@endphp
 <div class="content-page">
     <div class="content">
         <div class="container-fluid" id="app">
@@ -15,7 +17,7 @@
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Reports</a></li>
                             <li class="breadcrumb-item active">Pickup</li>
-                            <li class="breadcrumb-item active">{{ $status_title ? $status_title : Utils::getPickupStatusText($status) }}</li>
+                            <li class="breadcrumb-item active">{{ $status_title ? $status_title : $status_obj->text }}</li>
 
                         </ol>
                     </div>
@@ -38,9 +40,9 @@
                                         <select class="form-control ml-0 ml-sm-2" name="status" required>
                                             <option value="0" {{ $status == 0 ? 'selected' : '' }}>For Pick Up
                                             </option>
+                                            <option value="1" {{ $status == 1 ? 'selected' : '' }}>Completed</option>
                                             <option value="2" {{ $status == 2 ? 'selected' : '' }}>Overdue</option>
-                                            <option value="1" {{ $status == 1 ? 'selected' : '' }}>Picked Up</option>
-                                            <option value="3" {{ $status == 3 ? 'selected' : '' }}>Returned</option>
+                                            <option value="3" {{ $status == 3 ? 'selected' : '' }}>Partially Completed</option>
                                         </select>
                                     </div>
                                     <div class="form-group mr-4 col-12 col-md-auto">

@@ -97,9 +97,9 @@ class LotCode extends Model
             ->where('status', 1)
             ->sum('stock');
     }
-    
-    public function incrementStock($sku, $lotNumber, $qty) { 
-        self::where('sku', $sku)->where('lot_code', $lotNumber)->update(['stock' => DB::raw('stock + ' . $qty)]);
+
+    public function incrementStock($sku, $lot_code, $qty) { 
+        self::where('sku', $sku)->where('lot_code',$lot_code)->increment('stock', $qty);
     }
 
     public function decrementStock($sku, $lot_code, $qty) {

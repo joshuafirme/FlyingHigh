@@ -49,6 +49,27 @@
                 })
         }
 
+        function appendLotCodes(sku, mdl) {
+            fetch("/api/lotcode/" + sku)
+                .then(data => data.json())
+                .then(data => {
+                    console.log(data)
+                    mdl.find('[name=lot_code]').html('');
+                    for (let item of data) {
+                        let html = `<option exp="${item.expiration}" value="${item.lot_code}">${item.lot_code == 0 ? 'N/A' : item.lot_code}</option>`
+                        mdl.find('[name=lot_code]').append(html);
+                    }
+                    let exp = mdl.find("[name=lot_code] option:selected").attr('exp');
+                    mdl.find('[name=expiration]').val(exp);
+            });
+        }
+
+        $('#lot_codes').change(function() { 
+                let mdl = $('#returnModal');
+                let exp = $('option:selected', this).attr('exp');
+                mdl.find('[name=expiration]').val(exp);
+        });
+
         function changeStatus(shipmentId, status) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -115,6 +136,7 @@
             mdl.find('[name=sku]').val(sku);
             mdl.find('[name=orderId]').val(orderId);
             mdl.find('[name=qty]').attr('max', qty);
+            appendLotCodes(sku, mdl);
         });
 
         

@@ -157,7 +157,7 @@
 </div>
 
 <!-- Return modal -->
-<div class="modal fade" id="returnModal" tabindex="-1">
+<div class="modal fade mt-5" id="returnModal" tabindex="-1">
     <div class="modal-dialog modal-md">
         <form id="return-form" class="modal-content" action="#" autocomplete="off">
             @csrf
@@ -178,6 +178,16 @@
                     <input type="number" class="form-control" name="sku" readonly>
                 </div>
                 <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Lot Code</label>
+                    <select class="form-control" name="lot_code" id="lot_codes" required>
+                        <option value="" disabled selected>Choose lot code</option>
+                    </select>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">RMA Number</label>
+                    <input class="form-control" name="rma_number" required>
+                </div>
+                <div class="col-md-12 mb-2">
                     <label class="col-form-label">Quantity</label>
                     <input type="number" class="form-control" name="qty" required>
                 </div>
@@ -193,7 +203,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
-                <button class="btn btn-sm btn-primary" type="submit">Tag as Returned</button>
+                <button class="btn btn-sm btn-primary" type="submit">Return</button>
             </div>
         </form>
     </div>

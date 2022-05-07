@@ -9,6 +9,7 @@ use App\Models\LineItem;
 use App\Models\HubInventory;
 use App\Models\Hub;
 use App\Models\ReturnReason;
+use App\Models\LotCode;
 use Utils;
 
 class PickupController extends Controller
@@ -192,20 +193,28 @@ class PickupController extends Controller
 
     }
 
-    public function tagAsReturned() {
+    public function tagAsReturned(LotCode $lc) {
         $sku = request()->sku;
+        $lot_code = request()->lot_code;
         $orderId = request()->orderId;
         $qty = request()->qty;
         $reason = request()->reason;
+        $rma_number = request()->rma_number;
 
-        if ($sku && $orderId && $qty && $reason) {
+        if ($sku && $orderId && $qty && $reason && $rma_number) {
+
+            $lc->incrementStock($sku, $lot_code, $qty);
+
             LineItem::where('orderId', $orderId)
             ->where('partNumber', $sku)
             ->update([ 
+                'lot_code' => $lot_code,
                 'qty_returned' => $qty,
                 'return_reason' => $reason,
+                'rma_number' => $rma_number,
                 'status' => 2 
             ]);
+
 
             return response()->json(['success' => true], 200);
         }

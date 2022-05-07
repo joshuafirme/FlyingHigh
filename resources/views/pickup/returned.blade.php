@@ -31,7 +31,7 @@ $status = request()->status;
                                     <form action="{{ url('/pickup/' . $status . '/search') }}" method="get">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="key" style="width: 280px;"
-                                                placeholder="Search by Shipment ID or Order ID"
+                                                placeholder="Search by Order ID or RMA Number"
                                                 value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">
@@ -47,11 +47,11 @@ $status = request()->status;
                                     <thead>
                                         <tr>
                                             <th scope="col">OrderID</th>
+                                            <th scope="col">RMA Number</th>
                                             <th scope="col">SKU</th>
                                             <th scope="col">Qty Returned</th>
                                             <th scope="col">Return reason</th>
                                             <th scope="col">Date time returned</th>
-                                            <th scope="col">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -59,12 +59,11 @@ $status = request()->status;
                                             @foreach ($returned_list as $item)
                                                 <tr>
                                                     <td>{{ $item->orderId }}</td>
+                                                    <td>{{ $item->rma_number }}</td>
                                                     <td>{{ $item->partNumber }}</td>
                                                     <td>{{ $item->qty_returned }}</td>
                                                     <td>{{ $item->reason }}</td>
-                                                    <td>{{ $item->updated_at }}</td>
-                                                    <td></td>
-                                                   
+                                                    <td>{{ Utils::formatDate($item->updated_at) }}</td>
                                                 </tr>
                                             @endforeach
                                         @else

@@ -28,21 +28,24 @@ class LineItem extends Model
         "lineItemTotal",
         "status",
         "return_reason",
-        "qty_returned"
+        "qty_returned",
+        "rma_number",
+        "lot_code"
     ];
 
     public function getLineItems($orderId) {
         return self::select('P.sku', 'P.description', 'quantity', 'line_items.status', 'orderId','partNumber', 'qty_returned')
-        ->leftJoin('products as P', 'P.sku', '=', 'line_items.partNumber')
+        ->leftJoin('products as P', 'P.sku', '=', 'line_items.partNumber', 'line_items.lot_number')
         ->where('orderId', $orderId)->get();
     }
 
     
     public function getReturnedList($per_page) {
         return self::select('P.sku', 'P.description', 'quantity', 'line_items.status', 'orderId','partNumber', 
-        'qty_returned','orderId','return_reason',$this->table . '.updated_at', 'R.reason')
+        'qty_returned','orderId','return_reason',$this->table . '.updated_at', 'R.reason','rma_number')
         ->leftJoin('products as P', 'P.sku', '=', $this->table . '.partNumber')
         ->leftJoin('return_reasons as R', 'R.id', '=', $this->table . '.return_reason')
+        ->orderBy($this->table.'.updated_at', 'desc')
         ->where($this->table . '.status', 2)->paginate($per_page);
     }
 }

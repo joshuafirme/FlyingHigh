@@ -140,8 +140,8 @@ class HubInventory extends Model
                             'stock' => DB::raw('stock - 1')
                     ]);
                     
-
                     $stock_temp--;
+                    
                 }
                 else {
                     $lot_code_ctr++;
