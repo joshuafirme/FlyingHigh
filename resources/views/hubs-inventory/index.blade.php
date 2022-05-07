@@ -65,7 +65,7 @@
                                                     <td>{{ $item->lot_code ? $item->lot_code : 'N/A' }}</td>
                                                     <td>{{ $item->description }}</td>
                                                     <td>{{ $expiration ? $expiration : 'N/A' }}</td>
-                                                    <td>{{ $hub_inv->getAllStock($item->sku, request()->hub_id) }}</td>
+                                                    <td>{{ $item->stock }}</td>
                                                     <td>{{ Utils::formatDate($item->updated_at) }}</td>
                                                     <td>
                                                         <div class="btn-group">

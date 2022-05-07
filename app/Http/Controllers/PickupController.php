@@ -13,15 +13,18 @@ use Utils;
 
 class PickupController extends Controller
 {
-    public function index($status, Pickup $pickup) 
+    public function index(Pickup $pickup) 
     {
-        $stat = $this->getStatus($status);
-        $sub_title =  $stat->status_text;
-        $status_list =  $stat->status_list;
-        $pickups = $pickup->getPickup($status_list,10);
+        $pickups = $pickup->getPickup(10);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
-        return view('pickup.index', compact('pickups', 'hubs', 'sub_title', 'status', 'reasons'));
+        return view('pickup.index', compact('pickups', 'hubs', 'reasons'));
+    }
+
+    public function getReturnedList(LineItem $line_item) 
+    {
+        $returned_list = $line_item->getReturnedList(10);
+        return view('pickup.returned', compact('returned_list'));
     }
 
     public function search($status, Pickup $pickup)
@@ -34,27 +37,6 @@ class PickupController extends Controller
         $hubs = Hub::where('status', 1)->get();
         $product_count = Pickup::count('id');
         return view('pickup.index', compact('pickups', 'hubs', 'sub_title', 'status'));
-    }
-
-    public function getStatus($status) {
-        $sub_title = "";
-        $status_list = [];
-        if ($status == 0) {
-            $status_list = [0,2];
-            $sub_title = 'For Pick-up';
-        }
-        else if ($status == 1) {
-            $sub_title = 'Picked-up';
-            array_push($status_list, $status);
-        }
-        else if ($status == 3) {
-            $sub_title = 'Returned';
-            array_push($status_list, $status);
-        }
-        return json_decode(json_encode([
-            'status_text' => $sub_title,
-            'status_list' => $status_list
-        ]));
     }
 
     public function getLineItems($orderId, LineItem $lineItem) 
@@ -144,14 +126,20 @@ class PickupController extends Controller
                 if ($hub_inv->ignoreOtherSKU($item->partNumber)) { 
                     continue; 
                 }
-                if ($hub_inv->hasStock($sku, $item->quantity))   {
+                if ($hub_inv->hasStock($item->partNumber, $item->quantity, $hub_id) && $item->status == 0)   {
                     $hub_inv->decrementStock($item->partNumber, $item->quantity, $hub_id);
+                    LineItem::where('orderId', $item->orderId)
+                        ->where('partNumber', $item->partNumber)
+                        ->update([ 'status' => 1 ]);
                 }
                 else {
                     return response()->json([
                         'success' =>  false,
                         'message' => 'not_enough_stock',
-                        'sku_list' => $isAllStockEnough->sku
+                        'sku_list' => [
+                            'sku' => $item->partNumber,
+                            'description' => $item->description
+                        ]
                     ], 200);
                 }
             }
@@ -162,7 +150,7 @@ class PickupController extends Controller
               return response()->json([
                 'success' =>  false,
                 'message' => 'not_enough_stock',
-                'sku_list' => $isAllStockEnough->sku
+                'sku_list' => $isAllStockEnough->sku_list
             ], 200);
         }
 
@@ -171,24 +159,67 @@ class PickupController extends Controller
         ], 200);
     }
 
-    public function tagAsOverDue($shipmentId, Pickup $pickup)
+    public function tagOneAsPickedUp() {
+        $sku = request()->sku;
+        $orderId = request()->orderId;
+        $qty = request()->qty;
+        $hub_id = request()->hub_id;
+
+        $hub_inv = new HubInventory;
+
+        if ($sku && $orderId && $hub_id && $qty) {
+            if ($hub_inv->hasStock($sku, $qty, $hub_id))   {
+                $hub_inv->decrementStock($sku, $qty, $hub_id);
+                LineItem::where('orderId', $orderId)
+                    ->where('partNumber', $sku)
+                    ->update([ 'status' => 1 ]);
+
+                LineItem::where('orderId', $orderId)
+                    ->where('partNumber', $sku)
+                    ->update([ 'status' => 1 ]);
+
+                return response()->json(['success' => true], 200);
+            }
+            else {
+                return response()->json([
+                        'success' =>  false,
+                        'message' => 'not_enough_stock',
+                    ], 200); 
+                    
+            }
+        }
+        return response()->json(['success' => false], 200);
+
+    }
+
+    public function tagAsReturned() {
+        $sku = request()->sku;
+        $orderId = request()->orderId;
+        $qty = request()->qty;
+        $reason = request()->reason;
+
+        if ($sku && $orderId && $qty && $reason) {
+            LineItem::where('orderId', $orderId)
+            ->where('partNumber', $sku)
+            ->update([ 
+                'qty_returned' => $qty,
+                'return_reason' => $reason,
+                'status' => 2 
+            ]);
+
+            return response()->json(['success' => true], 200);
+        }
+        
+        return response()->json(['success' => false], 200);
+    }
+
+
+    public function changeStatus($shipmentId, $status, Pickup $pickup)
     {
-        $status = 2;
         $pickup->changeStatus($shipmentId, $status);
 
         return response()->json([
-            'message' => 'success'
-        ], 200);
-    }
-
-    public function tagAsReturned($shipmentId, Pickup $pickup)
-    { 
-        $status = 3;
-        $reason = request()->reason;
-        $pickup->changeStatus($shipmentId, $status, $reason);
-
-        return response()->json([
-            'message' => 'success'
+            'success' => true
         ], 200);
     }
 }

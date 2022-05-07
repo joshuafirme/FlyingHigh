@@ -55,9 +55,9 @@ class Pickup extends Model
         return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
             ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
             ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
-            ->orderBy('pickups.created_at', 'desc')
+            ->orderBy('pickups.updated_at', 'desc')
             ->where('pickups.status', $status)
-            ->whereDate('pickups.created_at', date('Y-m-d'))
+            ->whereDate('pickups.updated_at', date('Y-m-d'))
             ->paginate($per_page);
     }
 
@@ -65,9 +65,9 @@ class Pickup extends Model
         return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
             ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
             ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
-            ->orderBy('pickups.created_at', 'desc')
+            ->orderBy('pickups.updated_at', 'desc')
             ->where('pickups.status', $status)
-            ->whereBetween(DB::raw('DATE(pickups.created_at)'), [request()->date_from, request()->date_to])
+            ->whereBetween(DB::raw('DATE(pickups.updated_at)'), [request()->date_from, request()->date_to])
             ->paginate($per_page);
     }
 
@@ -77,19 +77,19 @@ class Pickup extends Model
         return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
             ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
             ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
-            ->orderBy('pickups.created_at', 'desc')
+            ->orderBy('pickups.updated_at', 'desc')
             ->where('pickups.status', $status)
-            ->whereBetween(DB::raw('DATE(pickups.created_at)'), [$date_from, $date_to])
+            ->whereBetween(DB::raw('DATE(pickups.updated_at)'), [$date_from, $date_to])
             ->get();
     }
 
-    public function getPickup($status_list, $per_page) {
-        return self::whereIn('pickups.status', $status_list)
-            ->select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
+    public function getPickup($per_page) {
+        return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
             ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
             ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
             ->paginate($per_page);
     }
+    
 
     public function searchPickup($key, $status_list, $per_page) {
         return self::whereIn('pickups.status', $status_list)

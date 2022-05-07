@@ -16,7 +16,7 @@ $status = request()->status;
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Orders</a></li>
-                            <li class="breadcrumb-item active">Pickups</li>
+                            <li class="breadcrumb-item active">Returned List</li>
                         </ol>
                     </div>
                 </div>
@@ -46,43 +46,25 @@ $status = request()->status;
                                 <table class="table table-borderless table-hover">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Shipment Id</th>
                                             <th scope="col">OrderID</th>
-                                            <th scope="col">BatchID</th>
-                                            <th scope="col">Customer</th>
-                                            <th scope="col">Date time submitted</th>
-                                            @if ($status == 0 || $status == 2)
-                                                <th>Status</th>
-                                            @elseif ($status == 3)
-                                                <th>Reason</th>
-                                            @endif
+                                            <th scope="col">SKU</th>
+                                            <th scope="col">Qty Returned</th>
+                                            <th scope="col">Return reason</th>
+                                            <th scope="col">Date time returned</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($pickups))
-                                            @foreach ($pickups as $item)
+                                        @if (count($returned_list))
+                                            @foreach ($returned_list as $item)
                                                 <tr>
-                                                    <td>{{ $item->shipmentId }}</td>
                                                     <td>{{ $item->orderId }}</td>
-                                                    <td>{{ $item->batchId }}</td>
-                                                    <td>
-                                                        {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
-                                                    </td>
-                                                    <td>{{ $item->dateTimeSubmittedIso }}</td>
-                                                    @php
-                                                        $status = json_decode(Utils::getStatusTextClass($item->status));
-                                                    @endphp
-                                                    <td><span
-                                                            class="badge badge-pill badge-{{ $status->class }}">{{ $status->text }}</span>
-                                                    </td>
-                                                    <td>
-                                                        <a class="btn btn-sm btn-primary btn-pickup-details"
-                                                            data-target="#pickupModal" data-toggle="modal"
-                                                            data-orderId="{{ $item->orderId }}"
-                                                            data-order-details="{{ json_encode($item) }}"><i
-                                                                class="fa fa-eye"></i> Order details</a>
-                                                    </td>
+                                                    <td>{{ $item->partNumber }}</td>
+                                                    <td>{{ $item->qty_returned }}</td>
+                                                    <td>{{ $item->reason }}</td>
+                                                    <td>{{ $item->updated_at }}</td>
+                                                    <td></td>
+                                                   
                                                 </tr>
                                             @endforeach
                                         @else
@@ -104,7 +86,7 @@ $status = request()->status;
                                 </table>
                             </div>
                             @php
-                                echo $pickups->links('pagination::bootstrap-4');
+                                echo $returned_list->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>
@@ -115,10 +97,8 @@ $status = request()->status;
     </div>
 </div>
 
-@include('pickup.modals')
 
 @include('layouts.footer')
 
 @include('scripts._global_scripts')
 
-@include('pickup.script')

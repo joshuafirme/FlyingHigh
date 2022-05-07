@@ -50,7 +50,7 @@
                     <a href="#" class=""><img
                             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABVklEQVRIid3TP0scURQF8J+yWyyooE3wC2hnKUFsRVCSRpBAahURhVR+gSBYWNgJYmlhIyim18LKysZPENEtjCsYCG6hxdyBddmZnciQgAcO3Hvee/e8f5f3gp4Saw3jU8THuG03WcZAlyIP2MkYG8cRfkQ+i8+4aDV5xmYXk3XZJz/HFg4jn8M3TLabpPEChiL+hd0Oc9rxGx/wGHk/btAHvR0W1DAYrGUUbccVplvy6dBe4blAobw5E2hgL9jAx3Sw00n+FlWs4B5PwUZo1aK77DZnAydeX21N8tO+l2VyjZEO+ih+lmWS9et60jWVEO4KGN3lmEzhUvIWJD9zrEDNwljCGer4E6zjFIt5C9ewWtYuKhn6UIaehyr2I/6KZjpQRp+kBgeYCR5o6ZGyTOYlTbgdfAqtVJN9fJFcUTPi9OpKM8nFPzHJwqqkkd7Clf+w3/eEF1NQVOD4fG8qAAAAAElFTkSuQmCC"
                             alt=""><span>
-                            Pick-up
+                            Orders
                             <span class="float-right menu-arrow">
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -63,14 +63,10 @@
                         </span></a>
                     <ul class="submenu">
                         <li class="">
-                            <a href="{{ url('pickup/0') }}">For
-                                Pick-up</a>
+                            <a href="{{ url('pickup') }}">Pickups</a>
                         </li>
                         <li>
-                            <a href="{{ url('pickup/1') }}">Picked-up</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('pickup/3') }}">Returned</a>
+                            <a href="{{ url('pickup/returned') }}">Returned List</a>
                         </li>
                     </ul>
                 </li>
@@ -140,9 +136,6 @@
                     <li>
                         <a href="{{ url('/reports/inventory') }}">Warehouse Inventory</a>
                     </li>   
-                    <li>
-                        <a href="{{ url('/') }}">Hub Inventory</a>
-                    </li>
                     <li>
                         <a href="{{ url('/reports/inbound-transfer') }}">Inbound Transfers</a>
                     </li>

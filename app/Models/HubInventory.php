@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
 use App\Models\LotCode;
+use App\Models\LineItem;
 use DB;
 
 class HubInventory extends Model
@@ -39,7 +40,7 @@ class HubInventory extends Model
         return self::select('P.*', $this->table . '.stock', $this->table . '.lot_code', 'hub_id', $this->table . '.updated_at')
             ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
             ->where($this->table . '.hub_id', $hub_id)
-            ->orderBy($this->table . '.updated_at', 'desc')
+            ->orderBy($this->table . '.sku', 'desc')
             ->paginate($per_page);
     }
 
@@ -80,75 +81,102 @@ class HubInventory extends Model
             if ($this->ignoreOtherSKU($item->partNumber)) {
                 continue;
             }
-            /*$bundles = $product->getBundlesBySKU($item->partNumber);
-            if ($this->isAllBundleStockEnough($bundles, $item->quantity, $hub_id)) {}
-            else {
-                array_push($sku_list, $item->partNumber);
-                $has_enough_stock = false;
-            }*/
 
             if ($this->hasStock($item->partNumber, $item->quantity, $hub_id)) {
                 // enough stock, do nothing...
             }
             else {
-                array_push($sku_list, $item->partNumber);
+                array_push($sku_list, [
+                    'sku' => $item->partNumber,
+                    'description' => $item->partNumber . ' - ' . $item->description
+                ]);
                 $has_enough_stock = false;
             }
         }
         return json_encode([
             'result' => $has_enough_stock,
-            'sku' => $sku_list
+            'sku_list' => $sku_list
         ]);
     }
 
-     public function isAllBundleStockEnough($all_sku, $qty, $hub_id) {
-        $has_enough_stock = true;
-        foreach ($all_sku as $key => $sku) {  
-            if ($this->hasStock($sku, $qty, $hub_id)) {
-                // enough stock, do nothing...
-            }
-            else {
-                $has_enough_stock = false;
-            }
-        }
-        return $has_enough_stock;
-    }
-
-    public function incrementBundleSKU($bundles, $qty, $hub_id) {
-        if (count($bundles) > 0) {
-            foreach ($bundles as $sku) {
-                if ($this->isSkuExistsInHub($sku, $hub_id)) {
-                    $this->incrementStock($sku, $qty, $hub_id);
-                }
-                else {
-                    self::create([
-                        'sku' => $sku,
-                        'stock' => $qty,
-                        'hub_id' => $hub_id
-                    ]);
-                }
-            }
-        }
-    }
-
     public function incrementStock($lot_code, $qty, $hub_id) {
+
         self::where('lot_code', $lot_code)
         ->where('hub_id', $hub_id)->update([
             'stock' => DB::raw('stock + ' . $qty)
         ]);
     }
 
-    public function decrementStock($sku, $lot_code, $qty, $hub_id) {
-        self::where('sku', $sku)
-        ->where('lot_code', $lot_code)
-        ->where('hub_id', $hub_id)->update([
-            'stock' => DB::raw('stock - ' . $qty)
-        ]);
+    public function decrementStock($sku, $qty, $hub_id) 
+    {
+        $lot_codes = $this->getLotCodes($sku);
+       
+        if (count($lot_codes) < 2) {
+            self::where('sku', $sku)
+                ->where('hub_id', $hub_id)
+                ->where('lot_code', $lot_codes[0]['lot_code'])
+                ->update([
+                    'stock' => DB::raw('stock - ' . $qty)
+                ]);  
+        }
+        else {
+            usort($lot_codes, function($a, $b) {
+                return strtotime($a['expiration']) - strtotime($b['expiration']);
+            });
+
+            $lot_code_ctr = 0;
+            for ($key = 0; $key < $qty; $key++) {
+
+                if ($key == 0) {
+                    $stock_temp = $lot_codes[$lot_code_ctr]['stock'];
+                }
+              
+                if ($stock_temp != 0) {
+
+                    self::where('sku', $sku)
+                        ->where('hub_id', $hub_id)
+                        ->where('lot_code', $lot_codes[$lot_code_ctr]['lot_code'])
+                        ->update([
+                            'stock' => DB::raw('stock - 1')
+                    ]);
+                    
+
+                    $stock_temp--;
+                }
+                else {
+                    $lot_code_ctr++;
+                    $stock_temp = $lot_codes[$lot_code_ctr]['stock'];
+                    $key--;
+                }
+            }
+        }
+    }
+
+    public function getLotCodes($sku) {
+        $data = self::select('sku', 'lot_code', 'stock')->where('sku', $sku)->get();
+        $data_arr = [];
+        foreach ($data as $item) {
+            array_push($data_arr, [
+                'sku' => $item->sku,
+                'lot_code' => $item->lot_code,
+                'stock' => $item->stock,
+                'expiration' => $this->getExpiration($item->lot_code)
+            ]);
+        }
+        return $data_arr;
+    }
+
+    public function isLotCodeHasStock($lot_code, $hub_id) {
+        $current_qty = self::where('lot_code', $lot_code)->where('hub_id', $hub_id)->value('stock');
+        if ($current_qty >= $qty) {
+            return true;
+        }
+        return false;
     }
 
     public function hasStock($sku, $qty, $hub_id) 
     {
-        $current_qty = self::where('sku', $sku)->where('hub_id', $hub_id)->value('stock');
+        $current_qty = self::where('sku', $sku)->where('hub_id', $hub_id)->sum('stock');
         if ($current_qty >= $qty) {
             return true;
         }

@@ -17,6 +17,25 @@ class Utils
         return json_decode(json_encode($data), true);
     }
 
+    public static function getStatusTextClass($status) {
+            $status_text = 'Unclaimed';
+            $status_class = 'primary';
+            if ($status == 1) {
+                $status_text = 'Completed';
+                $status_class = 'success';
+            } else if ($status == 2) {
+                $status_text = 'Overdue';
+                $status_class = 'danger';
+            } else if ($status == 3) {
+                $status_text = 'Partially Completed';
+                $status_class = 'warning';
+            }
+            return json_encode([
+                'text' => $status_text,
+                'class' => $status_class
+            ]);
+        }
+
     public static function getPickupStatusBySlug($slug) 
     {
         switch ($slug) {

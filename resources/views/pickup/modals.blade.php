@@ -4,18 +4,35 @@
         <div class="modal-content">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title">Pick Up Details</h5>
+                <h5 class="modal-title">Order Details</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body row g-3">
-                <div class="col-12">
-                    <a href="#" class="btn btn-sm btn-primary section-print-btn float-right m-1"><i
-                            class="fa fa-print"></i>
-                        <span>Print</span></a>
-                    <a href="#" class="btn btn-sm btn-success float-right m-1"><i class="fa fa-download"></i>
-                        <span>Download</span></a>
+                <div class="col-12 mb-3">
+                    <div class="dropdown float-right">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-print"></i> Print
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#">Sales Invoice</a>
+                            <a class="dropdown-item" href="#">Collection Receipt</a>
+                            <a class="dropdown-item" href="#">Delivery Receipt</a>
+                        </div>
+                    </div>
+                    <div class="dropdown float-right mr-2">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-edit"></i> Mark As
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item btn-mark-as-overdue" href="#">Overdue</a>
+                            <a class="dropdown-item btn-mark-as-partially-completed" href="#">Partially Completed</a>
+                            <a class="dropdown-item btn-mark-as-completed" href="#">Completed</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-sm-6">
                     <!--   <div class="mb-4 pull-left">
@@ -27,15 +44,24 @@
                         </ul>
                     </div>-->
                 </div>
-                <div class="col-sm-6">
-                    <div class="mb-4 ">
-                        <div class="text-sm-right">
-                            <h4 class="invoice-color mb-2 mt-md-2">Shipment ID: <span id="shipmentId"></span></h4>
-                            <h5 class="invoice-color mb-2 mt-md-2">Order ID: <span id="orderId"></span></h5>
-                            <ul class="list list-unstyled mb-0">
-                                <li>Date: <span class="font-weight-semibold" id="dateTimeSubmittedIso"></span></li>
-                                <li>Due date: <span class="font-weight-semibold" id="contractDate"></span>
+
+                <div class="col-12 d-md-flex flex-md-wrap">
+                    <div class="mb-4 ml-auto"> <span class="text-muted">Order Details:</span>
+                        <div class="d-flex flex-wrap wmin-md-400">
+                            <ul class="list list-unstyled mb-0 text-left">
+                                <li>Shipment ID:</li>
+                                <li>Order ID:</li>
+                                <li>Order type:</li>
+                                <li>Date:</li>
+                                <li>Status:</li>
+                            </ul>
+                            <ul class="list list-unstyled text-right mb-0 ml-auto">
+                                <li><span class="font-weight-semibold" id="shipmentId"></span></li>
+                                <li><span class="font-weight-semibold" id="orderId"></span>
+                                <li id="orderSource"></li>
                                 </li>
+                                <li><span id="dateTimeSubmittedIso"></span></li>
+                                <li><span class="font-weight-semibold" id="status"></span></li>
                             </ul>
                         </div>
                     </div>
@@ -83,7 +109,8 @@
                                 <th scope="col">SKU</th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Qty</th>
-                                <th scope="col">Action</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" style="width: 100px;">Action</th>
                             </tr>
                         </thead>
                         <tbody id="tbl-pickup-details">
@@ -100,7 +127,7 @@
                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                     @endforeach
                 </select>
-                <button class="btn btn-sm btn-primary" id="btn-pickedup" type="submit">Tag as
+                <button class="btn btn-sm btn-primary" id="btn-pickedup" type="submit">Tag All as
                     Picked Up</button>
             </form>
         </div>
@@ -132,7 +159,7 @@
 <!-- Return modal -->
 <div class="modal fade" id="returnModal" tabindex="-1">
     <div class="modal-dialog modal-md">
-        <form id="return-form" class="modal-content" action="#">
+        <form id="return-form" class="modal-content" action="#" autocomplete="off">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title">Return</h5>
@@ -141,6 +168,19 @@
                 </button>
             </div>
             <div class="modal-body row g-3">
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Order ID</label>
+                    <input type="number" class="form-control" name="orderId" readonly>
+                </div>
+                
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">SKU</label>
+                    <input type="number" class="form-control" name="sku" readonly>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Quantity</label>
+                    <input type="number" class="form-control" name="qty" required>
+                </div>
                 <div class="col-md-12 mb-2">
                     <label class="col-form-label">Reason</label>
                     <select class="form-control" name="reason" id="reason" required>

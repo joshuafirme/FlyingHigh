@@ -43,6 +43,6 @@ class HubInventoryController extends Controller
         }
 
         $hub_name = $hub->getHubName($hub_id);
-        return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id'));
+        return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id', 'hub_inv'));
     }
 }

@@ -27,41 +27,4 @@ class PickupReportController extends Controller
         $status_title = '';
         return view('reports.pickup.index', compact('pickups','status_title','status'));
     }
-
-    public function previewReport($date_from, $date_to, $status, Pickup $pickup){
-        
-        $items = Utils::objectToArray($pickup->filter($date_from, $date_to, $status));
-        $title = Utils::getPickupStatusText($status) . " Report";
-        $headers = $pickup->getHeaders();
-        $columns = $pickup->getColumns();
-        
-        $output = Utils::renderReport($items, $title, $headers, $columns, $date_from, $date_to);
-       
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->loadHTML($output);
-        $pdf->setPaper('A4', 'landscape');
-    
-        return $pdf->stream($date_from.'-to-'.$date_to.'.pdf');
-    }
-    
-    public function downloadReport($date_from, $date_to, Pickup $pickup){
-        
-        $items = Utils::objectToArray($pickup->filter($date_from, $date_to));
-        $title = "Pickup Report";
-        $headers = $pickup->getHeaders();
-        $columns = $pickup->getColumns();
-        
-        $output = Utils::renderReport($items, $title, $headers, $columns, $date_from, $date_to);
-       
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->loadHTML($output);
-        $pdf->setPaper('A4', 'landscape');
-    
-        return $pdf->download('pickup-report-'.$date_from.'-to-'.$date_to.'.pdf');
-    }
-
-    public function exportReport()
-    {
-         return Excel::download(new PickupExport, 'pickup-report.xlsx');
-    }
 }

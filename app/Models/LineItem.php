@@ -25,11 +25,24 @@ class LineItem extends Model
         "itemExtendedPrice",
         "salesPrice",
         "taxableAmount",
-        "lineItemTotal"
+        "lineItemTotal",
+        "status",
+        "return_reason",
+        "qty_returned"
     ];
 
     public function getLineItems($orderId) {
-        return self::leftJoin('products', 'products.sku', '=', 'line_items.partNumber')
+        return self::select('P.sku', 'P.description', 'quantity', 'line_items.status', 'orderId','partNumber', 'qty_returned')
+        ->leftJoin('products as P', 'P.sku', '=', 'line_items.partNumber')
         ->where('orderId', $orderId)->get();
+    }
+
+    
+    public function getReturnedList($per_page) {
+        return self::select('P.sku', 'P.description', 'quantity', 'line_items.status', 'orderId','partNumber', 
+        'qty_returned','orderId','return_reason',$this->table . '.updated_at', 'R.reason')
+        ->leftJoin('products as P', 'P.sku', '=', $this->table . '.partNumber')
+        ->leftJoin('return_reasons as R', 'R.id', '=', $this->table . '.return_reason')
+        ->where($this->table . '.status', 2)->paginate($per_page);
     }
 }

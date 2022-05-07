@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\AdjustmentRemarks;
 use DB;
 use Auth;
 
@@ -52,26 +53,34 @@ class StockAdjustment extends Model
     }
 
    public function filterPaginate($per_page) {
+        $remarks = [request()->remarks_id];
+        if (!request()->remarks_id) {
+            $remarks = AdjustmentRemarks::select('id')->where('status', 1)->get();
+        }
         return self::select('stock_adjustment.*', 'P.description', 'AR.name as remarks', 'U.name as adjusted_by')
             ->leftJoin('users as U', 'U.id', '=', 'stock_adjustment.user_id')
             ->leftJoin('products as P', 'P.sku', '=', 'stock_adjustment.sku')
             ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
             ->orderBy('stock_adjustment.created_at', 'desc')
             ->whereBetween(DB::raw('DATE(stock_adjustment.created_at)'), [request()->date_from, request()->date_to])
-            ->where('remarks_id', request()->remarks_id)
+            ->whereIn('remarks_id', $remarks)
             ->paginate($per_page);
     }
 
     public function filter($date_from, $date_to) {
         $date_from = $date_from ? $date_from : date('Y-m-d');
         $date_to = $date_to ? $date_to : date('Y-m-d');
+        $remarks = [request()->remarks_id];
+        if (!request()->remarks_id) {
+            $remarks = AdjustmentRemarks::select('id')->where('status', 1)->get();
+        }
         return self::select('P.sku', 'P.description', 'action', 'qty_adjusted', 'AR.name as remarks', 'stock_adjustment.created_at', 'U.name as adjusted_by', 'stock_adjustment.lot_code')
             ->leftJoin('users as U', 'U.id', '=', 'stock_adjustment.user_id')
             ->leftJoin('products as P', 'P.sku', '=', 'stock_adjustment.sku')
             ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
             ->orderBy('stock_adjustment.created_at', 'desc')
             ->whereBetween(DB::raw('DATE(stock_adjustment.created_at)'), [$date_from, $date_to])
-            ->where('remarks_id', request()->remarks_id)
+            ->whereIn('remarks_id', $remarks)
             ->get();
     }
     

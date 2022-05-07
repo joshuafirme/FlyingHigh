@@ -62,8 +62,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/pickup/{status}/search', [PickupController::class, 'search'])->name('searchPickup');
     Route::post('/pickup/tag-as-overdue/{shipmentId}', [PickupController::class, 'tagAsOverdue']);
     Route::post('/pickup/tag-as-picked-up/{shipmentId}', [PickupController::class, 'tagAsPickedUp']);
-    Route::post('/pickup/return/{shipmentId}', [PickupController::class, 'tagAsReturned']);
-    Route::get('/pickup/{status}', [PickupController::class, 'index']);
+    Route::post('/pickup/tag-one-as-picked-up', [PickupController::class, 'tagOneAsPickedUp']);
+    Route::post('/pickup/return', [PickupController::class, 'tagAsReturned']);
+    Route::post('/pickup/change-status/{shipmentId}/{status}', [PickupController::class, 'changeStatus']);
+    Route::get('/pickup', [PickupController::class, 'index']);
+    Route::get('/pickup/returned', [PickupController::class, 'getReturnedList']);
     Route::get('/get-line-items/{orderId}', [PickupController::class, 'getLineItems']);
 
     //Route::get('/pickedup-list', [PickupController::class, 'pickedUpList']);

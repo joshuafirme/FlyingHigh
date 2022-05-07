@@ -279,12 +279,12 @@ class ProductController extends Controller
         $lot_codes = [];
         $lot_code_count = 0;
         $ctr = 0;
+        $current_lot_code_count = 0;
         if ($action == 'update') {
             $current_lot_code_count = count($lc->getLotCode($request->sku));
         }
         foreach ($request['lot_code'] as $key => $lot_code) {
             if ($current_lot_code_count > 0 && $current_lot_code_count <= $key) {
-                
                 if ($lc->isLotCodeExists($lot_code)) {
                     array_push($lot_codes, $lot_code);
                 }
@@ -293,6 +293,15 @@ class ProductController extends Controller
                     $lc->createLotCode($request->sku, $lot_code, $expiration, $request->stock[$ctr]);
                 }
                 $ctr++;
+            }
+            else {
+                if ($lc->isLotCodeExists($lot_code)) {
+                    array_push($lot_codes, $lot_code);
+                }
+                else {
+                    $expiration = $request->expiration[$key];
+                    $lc->createLotCode($request->sku, $lot_code, $expiration, $request->stock[$key]);
+                }
             }
         }
         if (count($lot_codes) > 0) {

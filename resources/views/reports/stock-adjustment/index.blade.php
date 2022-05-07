@@ -28,7 +28,7 @@
                                 @php
                                     $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d');
                                     $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
-                                    $remarks_id = request()->remarks_id;
+                                    $remarks_id = request()->remarks_id ? request()->remarks_id : 0;
                                 @endphp
                                 <form class="form-inline" action="{{ route('filterStockAdjustment') }}"
                                     method="get">
