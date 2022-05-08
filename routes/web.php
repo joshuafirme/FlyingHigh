@@ -67,6 +67,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/pickup/change-status/{shipmentId}/{status}', [PickupController::class, 'changeStatus']);
     Route::get('/pickup', [PickupController::class, 'index']);
     Route::get('/pickup/returned', [PickupController::class, 'getReturnedList']);
+    Route::get('/pickup/generate-sales-invoice/', [PickupController::class, 'generateSalesInvoice']);
+    Route::get('/pickup/generate-collection-receipt/{shipmentId}/{orderId}', [PickupController::class, 'generateCollectionReceipt']);
+    Route::get('/pickup/generate-delivery-receipt/{shipmentId}/{orderId}', [PickupController::class, 'generateDeliveryReceipt']);
     Route::get('/get-line-items/{orderId}', [PickupController::class, 'getLineItems']);
 
     //Route::get('/pickedup-list', [PickupController::class, 'pickedUpList']);

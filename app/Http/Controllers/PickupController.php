@@ -231,4 +231,131 @@ class PickupController extends Controller
             'success' => true
         ], 200);
     }
+
+    public function generateSalesInvoice() 
+    {
+        $output = $this->renderInvoice();
+       
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($output);
+        $pdf->setPaper('A4', 'portrait');
+    
+        return $pdf->stream('test.pdf');
+    }
+
+    public function renderInvoice() 
+    {
+        $output = '
+        <style>
+            * { font-family: Calibri, sans-serif; }
+            .text-left { text-align:left; }
+            .text-center { text-align: center; }
+            .head-3 { font-size: 14px; }
+            .head-2 { font-size: 16px; font-style:bold; }
+            .head-1 { font-size: 21px; font-style:bold; }
+            .logo { float:right; }
+            .text-info { 
+                line-height: 20px; 
+                margin-top: 3px; 
+                font-size: 14px;
+            }
+            .ml-1 { margin-left:10px; }
+            .ml-2 { margin-left:20px; }
+            .mr-2 { margin-right:20px; }
+            .mr-100 { margin-right:100px; }
+            .mt-2 { margin-top:20px; }
+            .mt-3 { margin-top:30px; }
+            .float-right { float:right; }
+            table { font-size: 12px; }
+            td, th { padding: 5px; }
+            th { border: 1px solid; }
+            .border-solid { border: 1px solid; }
+        </style>
+
+        <div class="text-left">
+            <img class="logo" src="https://gmalcilk.sirv.com/yl_logo.png" width="173" height="55" alt="" />
+            <div class="head-2">SALES INVOICE</div>
+            <div class="head-1">YOUNG LIVING PHILIPPINES LLC</div>
+            <div class="head-3">YOUNG LIVING PHILIPPINES LLC - PHILIPPINE BRANCH</div>
+            <div class="text-info ml-1">
+                Unit G07, G08, G09 & 12th Floor, <br>
+                Twenty-Five Seven McKinley Building, <br>
+                25th Street corner 7th Avenue, Bonifacio Global City, <br>
+                Taguig City, Metro Manila <br>
+                VAR REG TIN: 009-915-795-000 <br>
+                <small>Business Name/Style: Other Wholesaling</small>
+            </div>
+            <hr class="ml-2 mr-2">
+            <div class="text-info float-right mr-100">
+                Sold to: <span>JUAN DELA CRUZ</span> <br>
+                Address: <span>NASUGBU, BATANGAS</span> <br>
+                TIN: <span>000-111-1111</span> <br>
+            </div>
+            <div class="text-info ml-1">
+                Order Number: <span>1323242</span> <br>
+                Order Date: <span>03-Aug-2020</span> <br>
+                Member ID: <span>35124</span> <br>
+            </div>
+            <table width="100%" style="border-collapse:collapse;" class="mt-2">
+                <thead>
+                    <th>Qty</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Unit PV</th>
+                    <th>Unit Price</th>
+                    <th>VAT/Item</th>
+                    <th>With VAT</th>
+                    <th>Total Cost</th>
+                </thead>
+                <tbody>
+                    <td class="text-center">512412</td>
+                    <td>Collagen</td>
+                    <td>Lorep efe hukaig</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tbody>
+            </table>
+            <table width="100%" style="border-collapse:collapse;" class="mt-3">
+                <thead>
+                    <th></th>
+                    <th class="text-left">Total<span class="float-right">Php 7.12</span></th>
+                </thead>  
+                <tbody>
+                    <tr>
+                        <td class="text-left">Order Subtotal</td>
+                        <td><span class="float-right">Php 7.12</span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Shipping</td>
+                        <td><span class="float-right">Php 7.12</span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Vatable Sales</td>
+                        <td><span class="float-right">Php 7.12</span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">VAT Exempt Sales</td>
+                        <td><span class="float-right">Php 7.12</span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Zero-rated sales</td>
+                        <td><span class="float-right">Php 7.12</span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">12% VAT</td>
+                        <td><span class="float-right">Php 7.12</span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">&shy;</td>
+                        <th><span class="float-right">Php 7.12</span></th>
+                    </tr>
+                </tbody>  
+            </table>
+        </div>';
+    
+        return $output;
+    }
 }
