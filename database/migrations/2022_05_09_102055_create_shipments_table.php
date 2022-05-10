@@ -23,6 +23,8 @@ class CreateShipmentsTable extends Migration
             $table->string("qtyPackages");
             $table->string("weightUoM");
             $table->string("currCode");
+            $table->string("sender");
+            $table->string("receiver");
             $table->tinyInteger("status")->default(0);
             $table->timestamps();
         });

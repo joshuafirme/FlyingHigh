@@ -19,7 +19,10 @@ class Shipment extends Model
         "qtyPackages",
         "weightUoM",
         "currCode",
-        "status"
+        "status",
+        "sender",
+        "receiver",
+        "hub_id"
     ];
 
     public function getShipment($per_page) {
