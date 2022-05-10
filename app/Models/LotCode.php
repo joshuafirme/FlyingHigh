@@ -127,6 +127,34 @@ class LotCode extends Model
         ]);
     }
 
+    public function validateStock($line_items) {
+        $has_enough_stock = true;
+        $sku_list = [];
+        foreach ($line_items as $key => $item) {  
+
+            if ($this->validateLotCode($item->partNumber, $item->lotNumber, $qty[$key])) {
+                // enough stock, do nothing...
+            }
+            else {
+                array_push($sku_list, $item->lotNumber);
+                $has_enough_stock = false;
+            }
+        }
+        return json_encode([
+            'result' => $has_enough_stock,
+            'lot_codes' => $sku_list
+        ]);
+    }
+
+    public function validateLotCode($sku, $lot_code, $qty) 
+    {
+        $stock = self::where('sku', $sku)->where('lot_code', $lot_code)->value('stock');
+        if ($stock >= $qty) {
+            return true;
+        }
+        return false;
+    }
+
     public function hasStock($lot_code, $qty) 
     {
         $stock = $this->getOneLotCode($lot_code);

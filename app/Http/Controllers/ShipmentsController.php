@@ -26,13 +26,30 @@ class ShipmentsController extends Controller
         return $lineItem->getLineItems($shipmentId);
     }
 
-    public function changeStatus($shipmentId, $status, Shipment $shipment)
+    public function changeStatus($shipmentId, $status, Shipment $shipment, LotCode $lc)
     {
-        $shipment->changeStatus($shipmentId, $status);
+        $line_items = $this->getLineItems($shipmentId);
 
-        return response()->json([
-            'success' => true
-        ], 200);
+        $validate_stock = json_decode($lc->validateStock($line_items));
+
+        if ($validate_stock->result) {
+
+            foreach ($line_items as $item) {
+                $lc->decrementStock($item->partNumber, $item->lotNumber, $item->qtyShipped);
+            }
+
+            $shipment->changeStatus($shipmentId, $status);
+
+            return response()->json([
+                'success' => true
+            ], 200);
+        }
+        else {
+            return response()->json([
+                'success' => false,
+                'lot_codes' => $validate_stock->lot_codes
+            ], 200);
+        }
     }
 
     public function fetchShipments() 
@@ -64,6 +81,10 @@ class ShipmentsController extends Controller
                         $lineItem->lotNumber = $item->lotNumber;
                         $lineItem->save();
                     }
+
+                    $shipment->sender = $data->sender;
+                    $shipment->receiver = $data->receiver;
+
                     $shipment->shipmentId =  $sd->shipmentId;
                     $shipment->shipCarrier =  $sd->shipCarrier;
                     $shipment->shipMethod =  $sd->shipMethod;
