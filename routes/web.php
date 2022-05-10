@@ -9,6 +9,7 @@ use App\Http\Controllers\HubInventoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PickupController;
+use App\Http\Controllers\ShipmentsController;
 use App\Http\Controllers\AdjustmentRemarksController;
 use App\Http\Controllers\ReturnReasonController;
 use App\Http\Controllers\Reports\StockAdjustmentController;
@@ -72,6 +73,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/pickup/generate-delivery-receipt/{shipmentId}/{orderId}', [PickupController::class, 'generateDeliveryReceipt']);
     Route::get('/get-line-items/{orderId}', [PickupController::class, 'getLineItems']);
 
+    Route::get('/shipments', [ShipmentsController::class, 'index']);
+    Route::get('/shipment/line-items/{shipmentId}', [ShipmentsController::class, 'getLineItems']);
+    Route::post('/shipment/change-status/{shipmentId}/{status}', [ShipmentsController::class, 'changeStatus']);
+
     //Route::get('/pickedup-list', [PickupController::class, 'pickedUpList']);
     
     Route::post('/client/update/{id}', [ClientController::class, 'update']);
@@ -124,6 +129,7 @@ Route::middleware('auth')->group(function () {
 
 
 Route::get('/fetch-pickup', [PickupController::class, 'fetchPickupData']);
+Route::get('/fetch-shipments', [ShipmentsController::class, 'fetchShipments']);
 
 
 Auth::routes(['register' => false]);

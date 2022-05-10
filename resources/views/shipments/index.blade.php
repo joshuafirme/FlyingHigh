@@ -11,7 +11,7 @@ $status = request()->status;
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="text-dark">Orders</h4>
+                <h4 class="text-dark">Shipment</h4>
             </div>
 
             <div class="row">
@@ -23,7 +23,7 @@ $status = request()->status;
                                     <form action="{{ url('/pickup/' . $status . '/search') }}" method="get">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="key" style="width: 280px;"
-                                                placeholder="Search by Shipment ID or Order ID"
+                                                placeholder="Search by Shipment ID"
                                                 value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">
@@ -39,39 +39,32 @@ $status = request()->status;
                                     <thead>
                                         <tr>
                                             <th scope="col">Shipment Id</th>
-                                            <th scope="col">OrderID</th>
-                                            <th scope="col">Customer</th>
-                                            <th scope="col">Date time submitted</th>
-                                            @if ($status == 0 || $status == 2)
-                                                <th>Status</th>
-                                            @elseif ($status == 3)
-                                                <th>Reason</th>
-                                            @endif
+                                            <th scope="col">Ship Carrier</th>
+                                            <th scope="col">Ship Method</th>
+                                            <th scope="col">Total Weight</th>
+                                            <th scope="col">Freight Charges</th>
+                                            <th scope="col">Qty Packages</th>
+                                            <th scope="col">CurrCode</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($pickups))
-                                            @foreach ($pickups as $item)
+                                        @if (count($shipments))
+                                            @foreach ($shipments as $item)
                                                 <tr>
                                                     <td>{{ $item->shipmentId }}</td>
-                                                    <td>{{ $item->orderId }}</td>
-                                                    <td>
-                                                        {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
-                                                    </td>
-                                                    <td>{{ $item->dateTimeSubmittedIso }}</td>
-                                                    @php
-                                                        $status = json_decode(Utils::getStatusTextClass($item->status));
-                                                    @endphp
-                                                    <td><span
-                                                            class="badge badge-pill badge-{{ $status->class }}">{{ $status->text }}</span>
-                                                    </td>
+                                                    <td>{{ $item->shipCarrier }}</td>
+                                                    <td>{{ $item->shipMethod }}</td>
+                                                    <td>{{ $item->totalWeight . " " . $item->weightUoM }}</td>
+                                                    <td>{{ $item->freightCharges }}</td>
+                                                    <td>{{ $item->qtyPackages }}</td>
+                                                    <td>{{ $item->currCode }}</td>
                                                     <td>
                                                         <a class="btn btn-sm btn-primary btn-pickup-details"
                                                             data-target="#pickupModal" data-toggle="modal"
-                                                            data-orderId="{{ $item->orderId }}"
+                                                            data-shipmentId="{{ $item->shipmentId }}"
                                                             data-order-details="{{ json_encode($item) }}"><i
-                                                                class="fa fa-eye"></i> Order details</a>
+                                                                class="fa fa-eye"></i> Shipment details</a>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -94,7 +87,7 @@ $status = request()->status;
                                 </table>
                             </div>
                             @php
-                                echo $pickups->links('pagination::bootstrap-4');
+                                echo $shipments->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>
@@ -105,10 +98,10 @@ $status = request()->status;
     </div>
 </div>
 
-@include('pickup.modals')
+@include('shipments.modals')
 
 @include('layouts.footer')
 
 @include('scripts._global_scripts')
 
-@include('pickup.script')
+@include('shipments.script')

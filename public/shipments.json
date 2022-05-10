@@ -1,0 +1,306 @@
+{
+    "msg_Date_Time": "2022-03-31T13:42:46",
+    "sender": 4803,
+    "receiver": 1001,
+    "shipmentDetails": [
+        {
+            "shipmentId": 24685838033022,
+            "shipCarrier": "FHE",
+            "shipMethod": "PHSDFH",
+            "totalWeight": 2.943,
+            "freightCharges": 0,
+            "qtyPackages": 1,
+            "weightUoM": "KG",
+            "currCode": "PHP",
+            "itemDetails": [
+                {
+                    "orderId": 178167894,
+                    "trackingNo": "0023369395",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "orderLineNumber": 1,
+                    "partNumber": "339837",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "lotNumber": "119520"
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 10,
+                    "partNumber": "27013",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": ""
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 11,
+                    "partNumber": "358037",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "109347"
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 12,
+                    "partNumber": "26958",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": ""
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 13,
+                    "partNumber": "308537",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "114686"
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 14,
+                    "partNumber": "312537",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "108439A"
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 2,
+                    "partNumber": "530537",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "115500"
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 3,
+                    "partNumber": "338937",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "108134"
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 4,
+                    "partNumber": "33637",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "20117905"
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 5,
+                    "partNumber": "35626",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "A1123"
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 6,
+                    "partNumber": "342337",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "111946"
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 7,
+                    "partNumber": "40212",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": ""
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 8,
+                    "partNumber": "466337",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "114726"
+                },
+                {
+                    "orderId": 178167894,
+                    "orderLineNumber": 9,
+                    "partNumber": "340537",
+                    "trackingNo": "0023369395",
+                    "qtyOrdered": 2,
+                    "qtyShipped": 2,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "112918"
+                }
+            ]
+        },
+        {
+            "shipmentId": 24685168033022,
+            "shipCarrier": "FHE",
+            "shipMethod": "PHSDFH",
+            "totalWeight": 1.859,
+            "freightCharges": 0,
+            "qtyPackages": 1,
+            "weightUoM": "KG",
+            "currCode": "PHP",
+            "itemDetails": [
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 1,
+                    "partNumber": "356337",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 3,
+                    "qtyShipped": 3,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "108499"
+                },
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 10,
+                    "partNumber": "39726",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "133233"
+                },
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 11,
+                    "partNumber": "355237",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 2,
+                    "qtyShipped": 2,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "126986"
+                },
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 2,
+                    "partNumber": "330637",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "101931"
+                },
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 3,
+                    "partNumber": "352937",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "118772"
+                },
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 4,
+                    "partNumber": "33637",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "20117905"
+                },
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 5,
+                    "partNumber": "35626",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "A1123"
+                },
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 6,
+                    "partNumber": "354837",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 2,
+                    "qtyShipped": 2,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "109560"
+                },
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 7,
+                    "partNumber": "40212",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": ""
+                },
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 8,
+                    "partNumber": "458137",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "114764"
+                },
+                {
+                    "orderId": 178167014,
+                    "orderLineNumber": 9,
+                    "partNumber": "353437",
+                    "trackingNo": "0023369359",
+                    "qtyOrdered": 3,
+                    "qtyShipped": 3,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-03-31T13:42:38",
+                    "lotNumber": "135064"
+                }
+            ]
+        }
+    ]
+}

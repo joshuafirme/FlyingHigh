@@ -63,7 +63,7 @@
                         </span></a>
                     <ul class="submenu">
                         <li class="">
-                            <a href="{{ url('pickup') }}">Pickups</a>
+                            <a href="{{ url('pickup') }}">Order List</a>
                         </li>
                         <li>
                             <a href="{{ url('pickup/returned') }}">Returned List</a>
@@ -71,7 +71,13 @@
                     </ul>
                 </li>
 
-
+                <li>
+                    <a href="{{ url('shipments') }}">
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABeElEQVRIie3Uv2sUURAH8M8eSQpRwhEIEizsLLTMD1ILhzYKSQj+Efa2KYxYJIHUwTJaWcRKbMTCdEYDpggp0iUSETtJqrO4eXFd9m6XuxQG/MLwHt/ZN9+ZN7OP//gX0e7TDnGrjkADWZ/2BvN1RIYiqypkJdxPjNQVKQtQF7N4UuB+4CV+JaKh970vVYjcQDPseayLeI/RAZI/x1IhiXTtGTbwOjl6VdIv2niMm7EO3JNuOMMjfMSHskqq+lAXBxFr+SIr2cc6jnJcE3dTJReB+/juz7Q1g79iAJHidHVDe6iL4x5uYw9va4pO4EHst3CcHI3ChxleYTkOPdP5e6v6NoMvmAzbxXT+gzOMxb6FTzqjLdad4IvIX9c25nK+eZ3xHccpPA2hNMIrhWCrej89ya7mzlwL7lRJ31qReapkGJ+7VJLHtr+f/YWopBSZTg92sBYCm6p7MoUTvAg7Ce48aBlauIOveFchkHAdD2O/hW81z10i/AZ/6msirpU6UAAAAABJRU5ErkJggg=="/><span>
+                        Shipment </span>
+                    </a>
+                </li>
+                
                 <li>
                     <a href="#" class=""><img
                             src="https://img.icons8.com/ios/25/000000/warehouse-1.png" /><span>

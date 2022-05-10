@@ -45,69 +45,75 @@ class PickupController extends Controller
         return $lineItem->getLineItems($orderId);
     }
 
-    public function fetchPickupData(Pickup $pickup) 
+    public function fetchPickupData() 
     {
         $path = public_path() . '/pickup.json';
         $data = json_decode(file_get_contents($path));
-        if ($pickup->isOrderExists($data->orderId)) {
-            return response()->json([
-                'status' =>  'success',
-                'message' => 'OrderID is already exists.'
-            ], 200);
-        }
-        else {
-            foreach ($data->lineItems as $item) {
-                $lineItem = new LineItem;
-                $lineItem->lineNumber = $item->lineNumber;
-                $lineItem->orderId = $item->orderId;
-                $lineItem->partNumber = $item->partNumber;
-                $lineItem->quantity = $item->quantity;
-                $lineItem->name = $item->name;
-                $lineItem->lineType = $item->lineType;
-                $lineItem->parentKitItem = $item->parentKitItem;
-                $lineItem->remarks = $item->remarks;
-                $lineItem->pv = $item->pv;
-                $lineItem->itemUnitPrice = $item->itemUnitPrice;
-                $lineItem->itemExtendedPrice = $item->itemExtendedPrice;
-                $lineItem->salesPrice = $item->salesPrice;
-                $lineItem->taxableAmount = $item->taxableAmount;
-                $lineItem->lineItemTotal = $item->lineItemTotal;
-                $lineItem->save();
+
+        if ($data->shipmentsToShip) {
+            foreach ($data->shipmentsToShip as $shipment) {
+                $pickup = new Pickup;
+                if ($pickup->isOrderExists($shipment->orderId)) {
+                    return response()->json([
+                        'status' =>  'success',
+                        'message' => 'OrderID is already exists.'
+                    ], 200);
+                }
+                else {
+                    foreach ($shipment->lineItems as $item) {
+                        $lineItem = new LineItem;
+                        $lineItem->lineNumber = $item->lineNumber;
+                        $lineItem->orderId = $item->orderId;
+                        $lineItem->partNumber = $item->partNumber;
+                        $lineItem->quantity = $item->quantity;
+                        $lineItem->name = $item->name;
+                        $lineItem->lineType = $item->lineType;
+                        $lineItem->parentKitItem = $item->parentKitItem;
+                        $lineItem->remarks = $item->remarks;
+                        $lineItem->pv = $item->pv;
+                        $lineItem->itemUnitPrice = $item->itemUnitPrice;
+                        $lineItem->itemExtendedPrice = $item->itemExtendedPrice;
+                        $lineItem->salesPrice = $item->salesPrice;
+                        $lineItem->taxableAmount = $item->taxableAmount;
+                        $lineItem->lineItemTotal = $item->lineItemTotal;
+                        $lineItem->save();
+                    }
+                    $pickup->shipmentId = $shipment->shipmentId;
+                    $pickup->customerEmail = $shipment->customerEmail;
+                    $pickup->custId = $shipment->custId;
+                    $pickup->custName = $shipment->custName;
+                    $pickup->shipPhone = $shipment->shipPhone;
+                    $pickup->shipName = $shipment->shipName;
+                    $pickup->shipAddr1 = $shipment->shipAddr1;
+                    $pickup->shipAddr2 = $shipment->shipAddr2;
+                    $pickup->shipAddr3 = $shipment->shipAddr3;
+                    $pickup->shipAddr4 = $shipment->shipAddr4;
+                    $pickup->shipCity = $shipment->shipCity;
+                    $pickup->shipState = $shipment->shipState;
+                    $pickup->shipZip = $shipment->shipZip;
+                    $pickup->shipCountryIso = $shipment->shipCountryIso;
+                    $pickup->shipMethod = $shipment->shipMethod;
+                    $pickup->shipCarrier = $shipment->shipCarrier;
+                    $pickup->batchId = $shipment->batchId;
+                    $pickup->contractDate = $shipment->contractDate;
+                    $pickup->orderId = $shipment->orderId;
+                    $pickup->govInvoiceNumber = $shipment->govInvoiceNumber;
+                    $pickup->dateTimeSubmittedIso = $shipment->dateTimeSubmittedIso;
+                    $pickup->shippingChargeAmount = $shipment->shippingChargeAmount;
+                    $pickup->customerTIN = $shipment->customerTIN ;
+                    $pickup->salesTaxAmount = $shipment->salesTaxAmount;
+                    $pickup->shippingTaxTotalAmount = $shipment->shippingTaxTotalAmount;
+                    $pickup->packageTotal = $shipment->packageTotal;
+                    $pickup->orderSource = $shipment->orderSource;
+
+                    $pickup->save();
+                }
+
             }
-            $pickup->shipmentId = $data->shipmentId;
-            $pickup->customerEmail = $data->customerEmail;
-            $pickup->custId = $data->custId;
-            $pickup->custName = $data->custName;
-            $pickup->shipPhone = $data->shipPhone;
-            $pickup->shipName = $data->shipName;
-            $pickup->shipAddr1 = $data->shipAddr1;
-            $pickup->shipAddr2 = $data->shipAddr2;
-            $pickup->shipAddr3 = $data->shipAddr3;
-            $pickup->shipAddr4 = $data->shipAddr4;
-            $pickup->shipCity = $data->shipCity;
-            $pickup->shipState = $data->shipState;
-            $pickup->shipZip = $data->shipZip;
-            $pickup->shipCountryIso = $data->shipCountryIso;
-            $pickup->shipMethod = $data->shipMethod;
-            $pickup->shipCarrier = $data->shipCarrier;
-            $pickup->batchId = $data->batchId;
-            $pickup->contractDate = $data->contractDate;
-            $pickup->orderId = $data->orderId;
-            $pickup->govInvoiceNumber = $data->govInvoiceNumber;
-            $pickup->dateTimeSubmittedIso = $data->dateTimeSubmittedIso;
-            $pickup->shippingChargeAmount = $data->shippingChargeAmount;
-            $pickup->customerTIN = $data->customerTIN ;
-            $pickup->salesTaxAmount = $data->salesTaxAmount;
-            $pickup->shippingTaxTotalAmount = $data->shippingTaxTotalAmount;
-            $pickup->packageTotal = $data->packageTotal;
-            $pickup->orderSource = $data->orderSource;
-
-            $pickup->save();
-
-            return response()->json([
-                'status' =>  'success',
-                'message' => 'Data was saved.'
-            ], 200);
+                return response()->json([
+                    'status' =>  'success',
+                    'message' => 'Data was saved.'
+                ], 200);
         }
     }
 
@@ -350,7 +356,7 @@ class PickupController extends Controller
                     </tr>
                     <tr>
                         <td class="text-left">&shy;</td>
-                        <th><span class="float-right">Php 7.12</span></th>
+                        <th><span class="float-right">Php 7.22</span></th>
                     </tr>
                 </tbody>  
             </table>
