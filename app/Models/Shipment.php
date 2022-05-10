@@ -22,7 +22,6 @@ class Shipment extends Model
         "status",
         "sender",
         "receiver",
-        "hub_id"
     ];
 
     public function getShipment($per_page) {
