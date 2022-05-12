@@ -35,7 +35,9 @@ class Shipment extends Model
     }
 
     public function search($key, $per_page) {
-        return self::where('shipmentId', 'LIKE', '%' . $key . '%')
+        return self::select('shipments.*', 'hubs.name as hub')
+            ->leftJoin('hubs', 'hubs.receiver', '=', 'shipments.receiver')
+            ->where('shipmentId', 'LIKE', '%' . $key . '%')
             ->paginate($per_page);
     }
 
