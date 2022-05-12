@@ -10,6 +10,8 @@ use App\Models\HubInventory;
 use App\Models\Hub;
 use App\Models\ReturnReason;
 use App\Models\LotCode;
+use App\Models\Shipment;
+use App\Models\ShipmentLineItem;
 use Utils;
 
 class PickupController extends Controller
@@ -28,16 +30,13 @@ class PickupController extends Controller
         return view('pickup.returned', compact('returned_list'));
     }
 
-    public function search($status, Pickup $pickup)
+    public function search(Pickup $pickup)
     {
-        $stat = $this->getStatus($status);
-        $sub_title =  $stat->status_text;
-        $status_list =  $stat->status_list;
         $key = isset(request()->key) ? request()->key : "";
-        $pickups = $pickup->searchPickup($key, $status_list, 10);
+        $pickups = $pickup->searchPickup($key, 10);
         $hubs = Hub::where('status', 1)->get();
-        $product_count = Pickup::count('id');
-        return view('pickup.index', compact('pickups', 'hubs', 'sub_title', 'status'));
+        $reasons = ReturnReason::where('status', 1)->get();
+        return view('pickup.index', compact('pickups', 'hubs','reasons'));
     }
 
     public function getLineItems($orderId, LineItem $lineItem) 
@@ -238,9 +237,79 @@ class PickupController extends Controller
         ], 200);
     }
 
-    public function generateSalesInvoice() 
+    public function doShip(Request $request, Pickup $pickup, LineItem $line_item, LotCode $lc)
     {
-        $output = $this->renderInvoice();
+        $status = 1;
+        $line_items = $line_item->getLineItems($request->orderId);
+      
+        if (count($line_items) > 0) {
+                $shipment = new Shipment;
+                if ($shipment->isShipmentExists($request->shipmentId)) {
+                    return response()->json([
+                        'success' =>  false,
+                        'message' => 'Shipment ID is already exists.'
+                    ], 200);
+                }
+                else {
+                    
+                    $pickup_details = $pickup->getOrderDetails($request->shipmentId);
+                    $shipment->sender = "4803";
+                    $shipment->receiver = $request->receiver;
+                    $shipment->shipmentId =  $request->shipmentId;
+                    $shipment->shipCarrier =  $pickup_details->shipCarrier ? $pickup_details->shipCarrier : "N/A";
+                    $shipment->shipMethod =  $pickup_details->shipMethod;
+                    $shipment->totalWeight =  $request->totalWeight;
+                    $shipment->freightCharges =  $request->freightCharges;
+                    $shipment->qtyPackages =  $request->qtyPackages;
+                    $shipment->weightUoM =  $request->weightUoM;
+                    // shipped
+                    $shipment->status =  1;
+                    $shipment->currCode =  "PHP";
+                    $shipment->save();
+
+                    
+                    foreach ($line_items as $ctr => $item) {
+                        if ($item->lineType == "PN" || $item->lineType == "N") {
+                            continue;
+                        }
+                        $lineItem = new ShipmentLineItem;
+                        $lineItem->orderId = $item->orderId;
+                        $lineItem->shipmentId = $request->shipmentId;
+                        $lineItem->orderLineNumber = $item->lineNumber;
+                        $lineItem->partNumber = $item->partNumber;
+                        $lineItem->trackingNo = $request->trackingNo;
+                        $lineItem->qtyOrdered = $item->quantity;
+                        $lineItem->qtyShipped = $item->quantity;
+                        $lineItem->reasonCode = "";
+                        $lineItem->shipDateTime = date('Y-m-d') . 'T' . date('h:m:s');
+                        $lineItem->lotNumber = $request->lot_code[$ctr];
+                        $lineItem->save();
+
+                        $lc->decrementStock($item->partNumber,$request->lot_code[$ctr],$item->quantity);
+                    }
+                }
+        }
+
+        $pickup->changeStatus($request->shipmentId, $status);
+
+        return response()->json([
+            'success' => true
+        ], 200);
+    }
+
+    public function generateSalesInvoice($shipmentId, $orderId) 
+    {
+        $order = new Pickup;
+        $line_item = new LineItem;
+
+        $order_details = $order->getOrderDetails($shipmentId);
+        $line_items = $line_item->getLineItems($orderId);
+        if (request()->type == "invoice") {
+            $output = $this->renderInvoice($order_details, $line_items, $orderId);
+        }
+        else if (request()->type == "delivery_receipt"){
+            $output = $this->renderDelivery($order_details, $line_items, $orderId);
+        }
        
         $pdf = \App::make('dompdf.wrapper');
         $pdf->loadHTML($output);
@@ -249,13 +318,203 @@ class PickupController extends Controller
         return $pdf->stream('test.pdf');
     }
 
-    public function renderInvoice() 
+    public function renderInvoice($order_details, $line_items, $orderId) 
     {
-        $output = '
-        <style>
+        $output = $this->invoiceStyle();
+        $output .= 
+        '<div class="text-left">
+            ';
+            $output .= $this->getInvoiceHeader();
+            $output .= '
+            <hr class="ml-2 mr-2">
+            <div class="text-info float-right mr-100">
+                Sold to: <span>' . $order_details->custName . '</span> <br>
+                Address: <span>' . $order_details->shipAddr1 . '</span> <br>
+                TIN: <span>' . $order_details->customerTIN . '</span> <br>
+            </div>
+            <div class="text-info ml-1">
+                Order Number: <span>' . $orderId . '</span> <br>
+                Order Date: <span>' . date('d-M-Y', strtotime($order_details->dateTimeSubmittedIso)) . '</span> <br>
+                Member ID: <span>' . $order_details->custId . '</span> <br>
+            </div>
+            <table width="100%" style="border-collapse:collapse;" class="mt-2">
+                <thead>
+                    <th>Qty</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Unit PV</th>
+                    <th>Unit Price</th>
+                    <th>VAT/Item</th>
+                    <th>With VAT</th>
+                    <th>Total Cost</th>
+                </thead>
+                <tbody>
+                    ';
+                $total_amount = 0;
+                $order_subtotal = 0;
+                foreach ($line_items as $item) {
+
+                    if ($item->lineType == "PN" || $item->lineType == "N") {
+                        continue;
+                    }
+
+                    $with_vat = Utils::getWithVAT($item->itemUnitPrice, $item->pv);
+                    $total_cost = Utils::getTotalCost($with_vat, $item->quantity);
+
+                    $total_amount += $total_cost;
+                    $order_subtotal += $item->itemUnitPrice * $item->quantity;
+                    $output .= '
+                    <tr>
+                        <td class="text-center">' . $item->quantity . '</td>
+                        <td class="text-center">' . $item->partNumber . '</td>
+                        <td class="text-center">' . $item->name . '</td>
+                        <td class="text-center">' . Utils::toFixed($item->pv) . '</td>
+                        <td class="text-center">Php ' . Utils::toFixed($item->itemUnitPrice) . '</td>
+                        <td class="text-center">Php ' . Utils::getTaxPerItem($item->itemUnitPrice) . '</td>
+                        <td class="text-center">Php ' . $with_vat . '</td>
+                        <td class="text-right">Php ' . $total_cost . '</td>
+                    </tr>';
+                }
+                $vatable_sales = $order_subtotal + $order_details->shippingChargeAmount;
+                $vat = Utils::toFixed($vatable_sales * 0.12);
+                $total_amount_due = $vatable_sales + $vat;
+                $output .= '
+                </tbody>
+            </table>
+            <table width="100%" style="border-collapse:collapse;" class="mt-3">
+                <thead>
+                    <th></th>
+                    <th class="text-left">Total<span class="float-right">Php ' . Utils::toFixed($total_amount) . '</span></th>
+                </thead>  
+                <tbody>
+                    <tr>
+                        <td class="text-left">Order Subtotal</td>
+                        <td><span class="float-right">' . Utils::toFixed($order_subtotal) . '</span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Package Shipping/Handling</td>
+                        <td><span class="float-right">Php ' . $order_details->shippingChargeAmount . '</span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Vatable Sales</td>
+                        <td><span class="float-right">Php ' . $vatable_sales . '</span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">VAT Exempt Sales</td>
+                        <td><span class="float-right"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Zero-rated sales</td>
+                        <td><span class="float-right"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">12% VAT</td>
+                        <td><span class="float-right">Php ' . $vat .'</span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">&shy;</td>
+                        <th><span class="float-right"><span class="mr-2">TOTAL AMOUNT DUE:</span> Php ' . $total_amount_due . '</span></th>
+                    </tr>
+                </tbody>  
+            </table>
+        </div>';
+
+        $output .= $this->getInvoiceFooter();
+    
+        return $output;
+    }
+
+    public function renderDelivery($order_details, $line_items, $orderId) 
+    {
+        $output = $this->invoiceStyle();
+        $output .= 
+        '<div class="text-left">
+            ';
+            $output .= $this->getInvoiceHeader();
+            $output .= '
+            <hr class="ml-2 mr-2">
+            <div class="text-info ml-1 float-right">
+                Order Number: <span>' . $orderId . '</span> <br>
+                Order Date: <span>' . date('d-M-Y', strtotime($order_details->dateTimeSubmittedIso)) . '</span> <br>
+                Member ID: <span>' . $order_details->custId . '</span> <br>
+            </div>
+            <div class="text-info mr-100">
+                Delivered to: <span>' . $order_details->custName . '</span> <br>
+                Address: <span>' . $order_details->shipAddr1 . '</span> <br>
+                TIN: <span>' . $order_details->customerTIN . '</span> <br>
+            </div>
+            <table width="100%" style="border-collapse:collapse;" class="mt-2">
+                <thead>
+                    <th>Qty</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                </thead>
+                <tbody>
+                    ';
+                foreach ($line_items as $item) {
+
+                    if ($item->lineType == "PN" || $item->lineType == "N") {
+                        continue;
+                    }
+                    $output .= '
+                    <tr>
+                        <td class="text-center">' . $item->quantity . '</td>
+                        <td class="text-center">' . $item->partNumber . '</td>
+                        <td class="text-center">' . $item->name . '</td>
+                    </tr>';
+                }
+                $output .= '
+                </tbody>
+            </table>
+        </div>';
+
+        $output .= $this->getInvoiceFooter();
+    
+        return $output;
+    }
+
+    function getInvoiceHeader() {
+        return '<img class="logo" src="' . public_path() . "/assets/yl_logo.png" . '" width="173" height="55" alt="" />
+            <div class="head-2">SALES INVOICE</div>
+            <div class="head-1">YOUNG LIVING PHILIPPINES LLC</div>
+            <div class="head-3"> YOUNG LIVING PHILIPPINES LLC - PHILIPPINE BRANCH</div>
+            <div class="text-info ml-1">
+                Unit G07, G08, G09 & 12th Floor, <br>
+                Twenty-Five Seven McKinley Building, <br>
+                25th Street corner 7th Avenue, Bonifacio Global City, <br>
+                Taguig City, Metro Manila <br>
+                VAR REG TIN: 009-915-795-000 <br>
+                <small>Business Name/Style: Other Wholesaling</small>
+            </div>';
+    }
+
+    function getInvoiceFooter() {
+        $output = 
+            '<table width="100%" style="border-collapse:collapse;" class="mt-3">
+                <th class="text-left">Powered by</th>
+                <th class="text-left">Received by</th> 
+            </table>
+
+            <div class="text-info mt-3">
+                BIR Accreditation number: <br>
+                Date of Accreditation:  <br>
+                Acknowledgement Certificate No.: <br>
+                <span class="mr-1">Date issued: mm/dd/yy </span> Valid Until: mm/dd/yy <br>
+                Approved Series No.: 
+            </div>
+        ';
+
+        $output .= '<div class="phrase mt-5 text-center">THIS INVOICE/RECEIPT SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF THE PERMIT TO USE.</div>';
+        return $output;
+    }
+
+    function invoiceStyle() {
+        return "<style>
             * { font-family: Calibri, sans-serif; }
             .text-left { text-align:left; }
             .text-center { text-align: center; }
+            .text-right { text-align: right; }
+            .phrase { font-size: 21px; }
             .head-3 { font-size: 14px; }
             .head-2 { font-size: 16px; font-style:bold; }
             .head-1 { font-size: 21px; font-style:bold; }
@@ -271,97 +530,12 @@ class PickupController extends Controller
             .mr-100 { margin-right:100px; }
             .mt-2 { margin-top:20px; }
             .mt-3 { margin-top:30px; }
+            .mt-5 { margin-top:50px; }
             .float-right { float:right; }
-            table { font-size: 12px; }
+            table { font-size: 11px; }
             td, th { padding: 5px; }
             th { border: 1px solid; }
             .border-solid { border: 1px solid; }
-        </style>
-
-        <div class="text-left">
-            <img class="logo" src="https://gmalcilk.sirv.com/yl_logo.png" width="173" height="55" alt="" />
-            <div class="head-2">SALES INVOICE</div>
-            <div class="head-1">YOUNG LIVING PHILIPPINES LLC</div>
-            <div class="head-3">YOUNG LIVING PHILIPPINES LLC - PHILIPPINE BRANCH</div>
-            <div class="text-info ml-1">
-                Unit G07, G08, G09 & 12th Floor, <br>
-                Twenty-Five Seven McKinley Building, <br>
-                25th Street corner 7th Avenue, Bonifacio Global City, <br>
-                Taguig City, Metro Manila <br>
-                VAR REG TIN: 009-915-795-000 <br>
-                <small>Business Name/Style: Other Wholesaling</small>
-            </div>
-            <hr class="ml-2 mr-2">
-            <div class="text-info float-right mr-100">
-                Sold to: <span>JUAN DELA CRUZ</span> <br>
-                Address: <span>NASUGBU, BATANGAS</span> <br>
-                TIN: <span>000-111-1111</span> <br>
-            </div>
-            <div class="text-info ml-1">
-                Order Number: <span>1323242</span> <br>
-                Order Date: <span>03-Aug-2020</span> <br>
-                Member ID: <span>35124</span> <br>
-            </div>
-            <table width="100%" style="border-collapse:collapse;" class="mt-2">
-                <thead>
-                    <th>Qty</th>
-                    <th>Code</th>
-                    <th>Description</th>
-                    <th>Unit PV</th>
-                    <th>Unit Price</th>
-                    <th>VAT/Item</th>
-                    <th>With VAT</th>
-                    <th>Total Cost</th>
-                </thead>
-                <tbody>
-                    <td class="text-center">512412</td>
-                    <td>Collagen</td>
-                    <td>Lorep efe hukaig</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tbody>
-            </table>
-            <table width="100%" style="border-collapse:collapse;" class="mt-3">
-                <thead>
-                    <th></th>
-                    <th class="text-left">Total<span class="float-right">Php 7.12</span></th>
-                </thead>  
-                <tbody>
-                    <tr>
-                        <td class="text-left">Order Subtotal</td>
-                        <td><span class="float-right">Php 7.12</span></td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">Shipping</td>
-                        <td><span class="float-right">Php 7.12</span></td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">Vatable Sales</td>
-                        <td><span class="float-right">Php 7.12</span></td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">VAT Exempt Sales</td>
-                        <td><span class="float-right">Php 7.12</span></td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">Zero-rated sales</td>
-                        <td><span class="float-right">Php 7.12</span></td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">12% VAT</td>
-                        <td><span class="float-right">Php 7.12</span></td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">&shy;</td>
-                        <th><span class="float-right">Php 7.22</span></th>
-                    </tr>
-                </tbody>  
-            </table>
-        </div>';
-    
-        return $output;
+        </style>";
     }
 }

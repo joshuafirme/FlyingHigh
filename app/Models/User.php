@@ -36,8 +36,11 @@ class User extends Authenticatable
             $permissions = Role::permissions();
 
             if ($page == 'Hub Inventory') {
-
-                $hub_name = $hub->getHubName(request()->hub_id);
+                
+                $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                
+                $receiver = substr($current_url, strpos($current_url, "hubs/")+5);
+                $hub_name = $hub->getHubName($receiver);
                 
                 if (in_array($hub_name, $permissions)) {
                     return true;

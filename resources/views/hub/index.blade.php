@@ -46,65 +46,69 @@
                                     </form>
                                 </div>
                             </div>
-                            <table class="table table-borderless table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Phone</th>
-                                        <th scope="col">Address</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Created at</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (count($hubs))
-                                        @foreach ($hubs as $item)
-                                            <tr id="record-id-{{ $item->id }}">
-                                                <td>{{ $item->name }}</td>
-                                                <td>{{ $item->email }}</td>
-                                                <td>{{ $item->phone }}</td>
-                                                <td>{{ $item->address }}</td>
-                                                <td>@php
-                                                    if ($item->status == 1) {
-                                                        echo '<span class="badge rounded-pill bg-success">Active</span>';
-                                                    } elseif ($item->status == 0) {
-                                                        echo '<span class="badge rounded-pill bg-danger">Inactive</span>';
-                                                    }
-                                                @endphp</td>
-                                                <td>{{ Utils::formatDate($item->created_at) }}</td>
-                                                <td>
-                                                    <a class="btn btn-edit open-modal" modal-type="update"
-                                                        data-info="{{ json_encode($item) }} "><i
-                                                            class="fa fa-edit"></i></a>
-                                                    @if ($item->role != 'Admin')
-                                                        <a class="btn delete-record" data-id="{{ $item->id }}"
-                                                            object="hubs" data-toggle="modal"
-                                                            data-target="#delete-record-modal">
-                                                            <i class="fa fa-trash" style="color: red;"></i>
-                                                        </a>
-                                                    @endif
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Receiver</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Phone</th>
+                                            <th scope="col">Address</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Created at</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (count($hubs))
+                                            @foreach ($hubs as $item)
+                                                <tr id="record-id-{{ $item->id }}">
+                                                    <td>{{ $item->receiver }}</td>
+                                                    <td>{{ $item->name }}</td>
+                                                    <td>{{ $item->email }}</td>
+                                                    <td>{{ $item->phone }}</td>
+                                                    <td>{{ $item->address }}</td>
+                                                    <td>@php
+                                                        if ($item->status == 1) {
+                                                            echo '<span class="badge rounded-pill bg-success">Active</span>';
+                                                        } elseif ($item->status == 0) {
+                                                            echo '<span class="badge rounded-pill bg-danger">Inactive</span>';
+                                                        }
+                                                    @endphp</td>
+                                                    <td>{{ Utils::formatDate($item->created_at) }}</td>
+                                                    <td>
+                                                        <a class="btn btn-edit open-modal" modal-type="update"
+                                                            data-info="{{ json_encode($item) }} "><i
+                                                                class="fa fa-edit"></i></a>
+                                                        @if ($item->role != 'Admin')
+                                                            <a class="btn delete-record" data-id="{{ $item->id }}"
+                                                                object="hubs" data-toggle="modal"
+                                                                data-target="#delete-record-modal">
+                                                                <i class="fa fa-trash" style="color: red;"></i>
+                                                            </a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="7">
+                                                    <div class="alert alert-danger alert-dismissible fade show"
+                                                        role="alert">
+                                                        No data found.
+                                                        <button type="button" class="close"
+                                                            data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="7">
-                                                <div class="alert alert-danger alert-dismissible fade show"
-                                                    role="alert">
-                                                    No data found.
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endif
+                                        @endif
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
                             @php
                                 echo $hubs->links('pagination::bootstrap-4');
                             @endphp

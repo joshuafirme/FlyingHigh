@@ -27,7 +27,7 @@
                             <div class="mb-4 mt-2 d-md-flex flex-md-wrap">
 
                                  <div class="ml-auto">
-                                        <form action="{{ url('/hubs/'.$hub_id.'/search') }}" method="get">
+                                        <form action="{{ url('/hubs/'.$receiver.'/search') }}" method="get">
                                             <div class="input-group mb-3">
                                                 <input type="text" class="form-control" name="key"
                                                     style="width: 280px;" placeholder="Search by SKU or Description"
@@ -45,41 +45,52 @@
                                 <table class="table table-borderless table-hover">
                                     <thead>
                                         <tr>
-                                            <th scope="col">SKU</th>
-                                            <th scope="col">Lot Code</th>
-                                            <th scope="col">Description</th>
-                                            <th scope="col">Expiration Date</th>
-                                            <th scope="col">Stock</th>
-                                            <th scope="col">Date time Last Transferred</th>
+                                            <th scope="col">Shipment Id</th>
+                                            <th scope="col">Ship Carrier</th>
+                                            <th scope="col">Ship Method</th>
+                                            <th scope="col">Total Weight</th>
+                                            <th scope="col">Freight Charges</th>
+                                            <th scope="col">Qty Packages</th>
+                                            <th scope="col">Status</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($products))
-                                            @foreach ($products as $item)
+                                        @if (count($deliveries))
+                                            @foreach ($deliveries as $item)
                                                 @php
                                                     $expiration = $hub_inv->getExpiration($item->lot_code);
                                                 @endphp
-                                                <tr id="record-id-{{ $item->id }}">
-                                                    <td>{{ $item->sku }}</td>
-                                                    <td>{{ $item->lot_code ? $item->lot_code : 'N/A' }}</td>
-                                                    <td>{{ $item->description }}</td>
-                                                    <td>{{ $expiration ? $expiration : 'N/A' }}</td>
-                                                    <td>{{ $item->stock }}</td>
-                                                    <td>{{ Utils::formatDate($item->updated_at) }}</td>
+                                                <tr>
                                                     <td>
-                                                        <div class="btn-group">
-                                                            <a href="#" class="btn btn-dark btn-sm"
-                                                                data-toggle="dropdown" role="button"
-                                                                aria-haspopup="true" aria-expanded="false"><i
-                                                                    class="fas fa-ellipsis-v"></i></a>
-                                                            <div class="dropdown-menu">
-                                                                <a class="btn dropdown-item btn-view-detail"
-                                                                    data-target="#detailModal" data-toggle="modal"
-                                                                    data-info="{{ json_encode($item) }}"><i
-                                                                        class="fa fa-eye"></i> View Details</a>
-                                                            </div>
-                                                        </div>
+                                                        <a href="#" class="btn-pickup-details"
+                                                            data-target="#pickupModal" data-toggle="modal"
+                                                            data-shipmentId="{{ $item->shipmentId }}"
+                                                            data-order-details="{{ json_encode($item) }}"><u>{{ $item->shipmentId }}</u></a>
+                                                    </td>
+                                                    <td>{{ $item->shipCarrier }}</td>
+                                                    <td>{{ $item->shipMethod }}</td>
+                                                    <td>{{ $item->totalWeight . ' ' . $item->weightUoM }}</td>
+                                                    <td>{{ $item->freightCharges . ' ' . $item->currCode }}</td>
+                                                    <td>{{ $item->qtyPackages }}</td>
+                                                    @php
+                                                        $status = json_decode(Utils::getStatusTextClass($item->status));
+                                                    @endphp
+                                                    <td><span
+                                                            class="badge badge-pill badge-{{ $status->class }}">{{ $status->text }}</span>
+                                                    </td>
+                                                    <td>
+                                                        @if ($item->status == 0)
+                                                            <a class="btn btn-sm btn-primary btn-ship"
+                                                                data-order-details="{{ json_encode($item) }}"><i
+                                                                    class="fas fa-shipping-fast"></i> Shipment</a>
+                                                        @elseif ($item->status == 1)
+                                                            <a class="btn btn-sm btn-primary btn-deliver"
+                                                                data-order-details="{{ json_encode($item) }}"
+                                                                data-shipmentId="{{ $item->shipmentId }}">
+                                                                <i class="fas fa-truck-loading"></i> Delivery</a>
+                                                        @elseif ($item->status == 2)
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -103,7 +114,7 @@
                             </div>
 
                             @php
-                                echo $products->links('pagination::bootstrap-4');
+                                echo $deliveries->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>

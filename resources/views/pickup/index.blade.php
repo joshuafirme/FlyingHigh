@@ -20,7 +20,7 @@ $status = request()->status;
                         <div class="card-body">
                             <div class="mt-3 mb-3">
                                 <div class="float-right">
-                                    <form action="{{ url('/pickup/' . $status . '/search') }}" method="get">
+                                    <form action="{{ url('/orders/search') }}" method="get">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="key" style="width: 280px;"
                                                 placeholder="Search by Shipment ID or Order ID"
@@ -54,7 +54,14 @@ $status = request()->status;
                                         @if (count($pickups))
                                             @foreach ($pickups as $item)
                                                 <tr>
-                                                    <td>{{ $item->shipmentId }}</td>
+                                                    <td>
+                                                        <a href="#" class="btn-pickup-details"
+                                                            data-target="#pickupModal" data-toggle="modal"
+                                                            data-orderId="{{ $item->orderId }}"
+                                                            data-order-details="{{ json_encode($item) }}">
+                                                            <u>{{ $item->shipmentId }}</u>
+                                                        </a>
+                                                    </td>
                                                     <td>{{ $item->orderId }}</td>
                                                     <td>
                                                         {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
@@ -67,11 +74,33 @@ $status = request()->status;
                                                             class="badge badge-pill badge-{{ $status->class }}">{{ $status->text }}</span>
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-sm btn-primary btn-pickup-details"
-                                                            data-target="#pickupModal" data-toggle="modal"
-                                                            data-orderId="{{ $item->orderId }}"
-                                                            data-order-details="{{ json_encode($item) }}"><i
-                                                                class="fa fa-eye"></i> Order details</a>
+                                                        <div class="dropdown float-right m-1">
+                                                            <button class="btn btn-sm btn-primary dropdown-toggle"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                                <i class="fa fa-print"></i> Print
+                                                            </button>
+                                                            <div class="dropdown-menu"
+                                                                aria-labelledby="dropdownMenuButton">
+                                                                <a class="dropdown-item" target="_blank"
+                                                                    href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=invoice') }}">Sales
+                                                                    Invoice</a>
+                                                                <a class="dropdown-item" href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=delivery_receipt') }}">Delivery Receipt</a>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=collection_receipt') }}">Collection
+                                                                    Receipt</a>
+                                                            </div>
+                                                        </div>
+                                                        @if ($item->status == 0)
+                                                            <a class="btn btn-sm btn-primary btn-ship float-right m-1"
+                                                                data-order-details="{{ json_encode($item) }}"><i
+                                                                    class="fas fa-shipping-fast"></i> Proccess
+                                                                Shipment</a>
+                                                        @endif
+                                                        <a class="btn btn-sm btn-primary btn-pickup-details float-right m-1"
+                                                            target="_blank"
+                                                            href="{{ url('/shipments/search?key=' . $item->shipmentId) }}"><i
+                                                                class="fas fa-eye"></i> Shipment Details</a>
                                                     </td>
                                                 </tr>
                                             @endforeach

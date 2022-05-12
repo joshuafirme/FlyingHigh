@@ -72,8 +72,8 @@ class LotCode extends Model
             ->get();
     }
     
-    public function isLotCodeExists($lot_code) {
-        $res = self::where('lot_code', $lot_code)->get();
+    public function isLotCodeExists($sku,$lot_code) {
+        $res = self::where('sku', $sku)->where('lot_code', $lot_code)->get();
         return count($res) > 0 ? true : false;
     }
 
@@ -103,6 +103,7 @@ class LotCode extends Model
     }
 
     public function decrementStock($sku, $lot_code, $qty) {
+        $lot_code = $lot_code ? $lot_code : 0;
         self::where('sku', $sku)
             ->where('lot_code', $lot_code)
             ->update(['stock' => DB::raw('stock - ' . $qty)]);
@@ -132,22 +133,28 @@ class LotCode extends Model
         $sku_list = [];
         foreach ($line_items as $key => $item) {  
 
-            if ($this->validateLotCode($item->partNumber, $item->lotNumber, $qty[$key])) {
+            if ($this->validateLotCode($item->partNumber, $item->lotNumber, $item->qtyShipped)) {
                 // enough stock, do nothing...
             }
             else {
-                array_push($sku_list, $item->lotNumber);
+                array_push($sku_list, [
+                    'sku' => $item->partNumber,
+                    'lot_code' => $item->lotNumber
+                ]);
                 $has_enough_stock = false;
             }
         }
         return json_encode([
             'result' => $has_enough_stock,
-            'lot_codes' => $sku_list
+            'sku_list' => $sku_list
         ]);
     }
 
     public function validateLotCode($sku, $lot_code, $qty) 
     {
+        if (!$lot_code) {
+            $lot_code = 0;
+        }
         $stock = self::where('sku', $sku)->where('lot_code', $lot_code)->value('stock');
         if ($stock >= $qty) {
             return true;

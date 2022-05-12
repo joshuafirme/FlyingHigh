@@ -252,7 +252,7 @@
             $('#btn-add-lot-code').click(function() { 
                 let html = '<tr>';
                     html += '<td><input type="text" name="lot_code[]" class="form-control"></td>';
-                    html += '<td><input type="number" name="stock[]" class="form-control" required></td>';
+                    html += '<td></td>';
                     html += '<td><input type="date" name="expiration[]" class="form-control"></td>';
                 html += '</tr>'
                 $('.tbl-lot-codes').append(html);

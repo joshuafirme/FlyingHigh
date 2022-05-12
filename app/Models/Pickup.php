@@ -51,6 +51,10 @@ class Pickup extends Model
         return ['shipmentId', 'orderId', 'batchId', 'custName', 'dateTimeSubmittedIso'];
     }
 
+    public function getOrderDetails($shipmentId) {
+        return self::where('shipmentId', $shipmentId)->first();
+    }
+
     public function getAllPaginate($per_page, $status) {
         return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
             ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
@@ -91,9 +95,8 @@ class Pickup extends Model
     }
     
 
-    public function searchPickup($key, $status_list, $per_page) {
-        return self::whereIn('pickups.status', $status_list)
-            ->select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub')
+    public function searchPickup($key, $per_page) {
+        return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub')
             ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
             ->where('shipmentId', 'LIKE', '%' . $key . '%')
             ->orWhere('orderId', 'LIKE', '%' . $key . '%')

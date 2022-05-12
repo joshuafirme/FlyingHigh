@@ -18,9 +18,15 @@ class Hub extends Model
         'phone',
         'address',
         'status',
+        'receiver'
     ];
 
-    public function getHubName($hub_id) {
-        return self::where('id', $hub_id)->value('name');
+    public function getHubName($receiver) {
+        return self::where('receiver', $receiver)->value('name');
+    }
+
+    public function isReceiverExists($receiver) {
+        $res = self::where('receiver', $receiver)->get();
+        return $res && count($res) > 0 ? true : false;
     }
 }

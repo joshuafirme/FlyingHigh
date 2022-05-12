@@ -268,7 +268,7 @@ class ProductController extends Controller
         $add_lot_code = json_decode($this->addLotCode($request, $action = 'update'));
         
         if ($add_lot_code->success == false) {
-            return redirect()->back()->with('danger', $add_lot_code->lot_codes . ' lot code'.$add_lot_code->is_are.' already exists.');
+            //return redirect()->back()->with('danger', $add_lot_code->lot_codes . ' lot code'.$add_lot_code->is_are.' already exists.');
         }
 
         return redirect()->back()->with('success', 'Product was updated successfully.');
@@ -284,23 +284,24 @@ class ProductController extends Controller
             $current_lot_code_count = count($lc->getLotCode($request->sku));
         }
         foreach ($request['lot_code'] as $key => $lot_code) {
+            $lot_code = $lot_code ? $lot_code : 0;
             if ($current_lot_code_count > 0 && $current_lot_code_count <= $key) {
-                if ($lc->isLotCodeExists($lot_code)) {
+                if ($lc->isLotCodeExists($request->sku, $lot_code)) {
                     array_push($lot_codes, $lot_code);
                 }
                 else {
                     $expiration = $request->expiration[$key];
-                    $lc->createLotCode($request->sku, $lot_code, $expiration, $request->stock[$ctr]);
+                    $lc->createLotCode($request->sku, $lot_code, $expiration, 0);
                 }
                 $ctr++;
             }
             else {
-                if ($lc->isLotCodeExists($lot_code)) {
+                if ($lc->isLotCodeExists($request->sku, $lot_code)) {
                     array_push($lot_codes, $lot_code);
                 }
                 else {
                     $expiration = $request->expiration[$key];
-                    $lc->createLotCode($request->sku, $lot_code, $expiration, $request->stock[$key]);
+                    $lc->createLotCode($request->sku, $lot_code, $expiration, 0);
                 }
             }
         }

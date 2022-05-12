@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/role/update/{id}', [RoleController::class, 'update']);
 
     Route::get('/hubs/{hub_id}/search', [HubInventoryController::class, 'searchProduct'])->name('searchProductHub');
-    Route::get('/hubs/{hub_id}', [HubInventoryController::class, 'hubInventory']);
+    Route::get('/hubs/{receiver}', [HubInventoryController::class, 'hubInventory']);
     Route::get('/hub/bundle-qty-list/{sku}/{hub_id}', [HubInventoryController::class, 'getBundleQtyList']);
 
     Route::post('/hub/update/{id}', [HubController::class, 'update']);
@@ -66,16 +66,23 @@ Route::middleware('auth')->group(function () {
     Route::post('/pickup/tag-one-as-picked-up', [PickupController::class, 'tagOneAsPickedUp']);
     Route::post('/pickup/return', [PickupController::class, 'tagAsReturned']);
     Route::post('/pickup/change-status/{shipmentId}/{status}', [PickupController::class, 'changeStatus']);
-    Route::get('/pickup', [PickupController::class, 'index']);
     Route::get('/pickup/returned', [PickupController::class, 'getReturnedList']);
-    Route::get('/pickup/generate-sales-invoice/', [PickupController::class, 'generateSalesInvoice']);
     Route::get('/pickup/generate-collection-receipt/{shipmentId}/{orderId}', [PickupController::class, 'generateCollectionReceipt']);
     Route::get('/pickup/generate-delivery-receipt/{shipmentId}/{orderId}', [PickupController::class, 'generateDeliveryReceipt']);
     Route::get('/get-line-items/{orderId}', [PickupController::class, 'getLineItems']);
+    
+    Route::get('/orders', [PickupController::class, 'index']);
+    Route::get('/orders/search', [PickupController::class, 'search']);
+    Route::get('/order/generate/{shipmentId}/{orderId}', [PickupController::class, 'generateSalesInvoice']);
+
+    Route::post('/order/do-ship', [PickupController::class, 'doShip']);
 
     Route::get('/shipments', [ShipmentsController::class, 'index']);
+    Route::get('/shipments/search', [ShipmentsController::class, 'search']);
     Route::get('/shipment/line-items/{shipmentId}', [ShipmentsController::class, 'getLineItems']);
     Route::post('/shipment/change-status/{shipmentId}/{status}', [ShipmentsController::class, 'changeStatus']);
+    Route::post('/shipment/do-ship/{shipmentId}', [ShipmentsController::class, 'doShip']);
+    Route::post('/shipment/do-delivered/{shipmentId}', [ShipmentsController::class, 'doDelivered']);
 
     //Route::get('/pickedup-list', [PickupController::class, 'pickedUpList']);
     

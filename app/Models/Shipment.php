@@ -25,15 +25,17 @@ class Shipment extends Model
     ];
 
     public function getShipment($per_page) {
-        return self::paginate($per_page);
+        return self::select('shipments.*', 'hubs.name as hub')
+            ->leftJoin('hubs', 'hubs.receiver', '=', 'shipments.receiver')
+            ->paginate($per_page);
     }
 
-    public function searchPickup($key, $status_list, $per_page) {
-        return self::whereIn('pickups.status', $status_list)
-            ->select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub')
-            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
-            ->where('shipmentId', 'LIKE', '%' . $key . '%')
-            ->orWhere('orderId', 'LIKE', '%' . $key . '%')
+    public function getDeliveredByReceiver($receiver, $per_page) {
+        return self::where('receiver',$receiver)->where('status', 2)->paginate($per_page);
+    }
+
+    public function search($key, $per_page) {
+        return self::where('shipmentId', 'LIKE', '%' . $key . '%')
             ->paginate($per_page);
     }
 

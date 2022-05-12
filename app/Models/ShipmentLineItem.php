@@ -47,5 +47,9 @@ class ShipmentLineItem extends Model
         ->get();
             
     }
+
+    public function changeStatus($shipmentId, $partNumber, $status) {
+        self::where('shipmentId', $shipmentId)->where('partNumber', $partNumber)->update(['status' => $status]);
+    }
                 
 }

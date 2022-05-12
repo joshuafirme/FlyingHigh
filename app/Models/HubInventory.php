@@ -39,7 +39,7 @@ class HubInventory extends Model
     {
         return self::select('P.*', $this->table . '.stock', $this->table . '.lot_code', 'hub_id', $this->table . '.updated_at')
             ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
-            ->where($this->table . '.hub_id', $hub_id)
+            ->where($this->table . '.receiver', $receiver)
             ->orderBy($this->table . '.sku', 'desc')
             ->paginate($per_page);
     }

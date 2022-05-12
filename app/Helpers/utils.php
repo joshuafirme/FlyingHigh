@@ -17,18 +17,39 @@ class Utils
         return json_decode(json_encode($data), true);
     }
 
+    public static function getTaxPerItem($unit_price) 
+    {
+        $res =  $unit_price * 0.12;
+        return self::toFixed($res);
+    }
+    
+    public static function getWithVAT($itemUnitPrice, $pv)
+    {
+        $res = $itemUnitPrice + $pv;
+        return self::toFixed($res);
+    }
+
+    public static function getTotalCost($itemUnitPrice, $quantity) 
+    {
+        $res =  $itemUnitPrice * $quantity;
+        return self::toFixed($res);
+    }
+    
+
+    public static function toFixed($num, $dec_p = 2)
+    {
+        return number_format((float)$num, $dec_p, '.', '');
+    }
+
     public static function getStatusTextClass($status) {
-            $status_text = 'Unclaimed';
+            $status_text = 'Pending';
             $status_class = 'primary';
             if ($status == 1) {
-                $status_text = 'Completed';
-                $status_class = 'success';
-            } else if ($status == 2) {
-                $status_text = 'Overdue';
-                $status_class = 'danger';
-            } else if ($status == 3) {
-                $status_text = 'Partially Completed';
+                $status_text = 'Shipped';
                 $status_class = 'warning';
+            } else if ($status == 2) {
+                $status_text = 'Delivered';
+                $status_class = 'success';
             }
             return json_encode([
                 'text' => $status_text,

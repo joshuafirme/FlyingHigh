@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Hub;
 use App\Models\User;
 use App\Models\HubInventory;
+use App\Models\Shipment;
+use App\Models\ShipmentLineItem;
+use App\Models\LotCode;
+use App\Models\ReturnReason;
 use Utils;
 
 class HubInventoryController extends Controller
@@ -20,12 +24,14 @@ class HubInventoryController extends Controller
         });
     }
 
-    public function hubInventory($hub_id, HubInventory $hub_inv, Hub $hub)
+    public function hubInventory($receiver, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
     {
-        $products = $hub_inv->getByHub($hub_id, 10);
+        $deliveries = $shipment->getDeliveredByReceiver($receiver, 10);
+        $hubs = Hub::where('status', 1)->get();
+        $reasons = ReturnReason::where('status', 1)->get();
 
-        $hub_name = $hub->getHubName($hub_id);
-        return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id', 'hub_inv'));
+        $hub_name = $hub->getHubName($receiver);
+        return view('hubs-inventory.index', compact('deliveries', 'hub_name', 'receiver', 'hub_inv'));
     }
 
     public function getAllStock($sku, HubInventory $hub_inv) {

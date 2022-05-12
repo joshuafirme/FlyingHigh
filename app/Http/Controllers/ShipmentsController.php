@@ -9,6 +9,7 @@ use App\Models\LotCode;
 use App\Models\HubInventory;
 use App\Models\Hub;
 use App\Models\ReturnReason;
+use App\Models\Pickup;
 use Utils;
 
 class ShipmentsController extends Controller
@@ -21,35 +22,80 @@ class ShipmentsController extends Controller
         return view('shipments.index', compact('shipments', 'hubs', 'reasons'));
     }
 
+    public function search(Shipment $shipment)
+    {
+        $key = isset(request()->key) ? request()->key : "";
+        $shipments = $shipment->search($key, 10);
+        $hubs = Hub::where('status', 1)->get();
+        $reasons = ReturnReason::where('status', 1)->get();
+        return view('shipments.index', compact('shipments', 'hubs', 'reasons'));
+    }
+
     public function getLineItems($shipmentId) {
         $lineItem = new ShipmentLineItem;
         return $lineItem->getLineItems($shipmentId);
     }
 
-    public function changeStatus($shipmentId, $status, Shipment $shipment, LotCode $lc)
+    public function doShip($shipmentId)
     {
+        $shipment = new Shipment; 
+        $shipment_line_items = new ShipmentLineItem; 
+        $lc = new LotCode;
+        $pickup = new Pickup;
         $line_items = $this->getLineItems($shipmentId);
 
-        $validate_stock = json_decode($lc->validateStock($line_items));
+        $status = 1;
 
-        if ($validate_stock->result) {
+        // COMMENTED TEMPORARY
+        //$validate_stock = json_decode($lc->validateStock($line_items));
+
+       // if ($validate_stock->result) {
 
             foreach ($line_items as $item) {
+                if ($item->lineType == "PN" || $item->lineType == "N") {
+                    continue;
+                }
                 $lc->decrementStock($item->partNumber, $item->lotNumber, $item->qtyShipped);
+                $shipment_line_items->changeStatus($shipmentId, $item->partNumber, $status);
             }
 
             $shipment->changeStatus($shipmentId, $status);
+            $pickup->changeStatus($shipmentId, $status);
 
             return response()->json([
                 'success' => true
             ], 200);
-        }
-        else {
+      //  }
+      /*  else {
             return response()->json([
                 'success' => false,
-                'lot_codes' => $validate_stock->lot_codes
+                'sku_list' => $validate_stock->sku_list
             ], 200);
+        }*/
+    }
+
+    public function doDelivered($shipmentId) {
+        $shipment = new Shipment; 
+        $shipment_line_items = new ShipmentLineItem; 
+        $lc = new LotCode;
+        $pickup = new Pickup;
+        $line_items = $this->getLineItems($shipmentId);
+
+        $status = 2;
+
+        foreach ($line_items as $item) {
+            if ($item->lineType == "PN" || $item->lineType == "N") {
+                continue;
+            }
+            $shipment_line_items->changeStatus($shipmentId, $item->partNumber, $status);
         }
+
+        $shipment->changeStatus($shipmentId, $status);
+        $pickup->changeStatus($shipmentId, $status);
+
+        return response()->json([
+            'success' => true
+        ], 200);      
     }
 
     public function fetchShipments() 

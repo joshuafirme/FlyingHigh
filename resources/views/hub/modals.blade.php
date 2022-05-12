@@ -14,6 +14,10 @@
                     <input type="text" class="form-control" name="name" required>
                 </div>
                 <div class="col-md-12 mt-3">
+                    <label for="validationCustom01" class="form-label">Receiver</label>
+                    <input type="text" class="form-control" name="receiver" required>
+                </div>
+                <div class="col-md-12 mt-3">
                     <label for="validationCustom02" class="form-label">Email</label>
                     <input type="text" class="form-control" name="email" required>
                 </div>

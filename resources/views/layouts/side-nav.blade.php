@@ -45,30 +45,12 @@
                         </li>
                     </ul>
                 </li>-->
-
                 <li>
-                    <a href="#" class=""><img
-                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABVklEQVRIid3TP0scURQF8J+yWyyooE3wC2hnKUFsRVCSRpBAahURhVR+gSBYWNgJYmlhIyim18LKysZPENEtjCsYCG6hxdyBddmZnciQgAcO3Hvee/e8f5f3gp4Saw3jU8THuG03WcZAlyIP2MkYG8cRfkQ+i8+4aDV5xmYXk3XZJz/HFg4jn8M3TLabpPEChiL+hd0Oc9rxGx/wGHk/btAHvR0W1DAYrGUUbccVplvy6dBe4blAobw5E2hgL9jAx3Sw00n+FlWs4B5PwUZo1aK77DZnAydeX21N8tO+l2VyjZEO+ih+lmWS9et60jWVEO4KGN3lmEzhUvIWJD9zrEDNwljCGer4E6zjFIt5C9ewWtYuKhn6UIaehyr2I/6KZjpQRp+kBgeYCR5o6ZGyTOYlTbgdfAqtVJN9fJFcUTPi9OpKM8nFPzHJwqqkkd7Clf+w3/eEF1NQVOD4fG8qAAAAAElFTkSuQmCC"
-                            alt=""><span>
-                            Orders
-                            <span class="float-right menu-arrow">
-                                <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <polyline points="10 15 15 20 20 15"></polyline>
-                                    <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                                </svg>
-                            </span>
-                        </span></a>
-                    <ul class="submenu">
-                        <li class="">
-                            <a href="{{ url('pickup') }}">Order List</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('pickup/returned') }}">Returned List</a>
-                        </li>
-                    </ul>
+                    <a href="{{ url('orders') }}" class="">
+                        <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABVklEQVRIid3TP0scURQF8J+yWyyooE3wC2hnKUFsRVCSRpBAahURhVR+gSBYWNgJYmlhIyim18LKysZPENEtjCsYCG6hxdyBddmZnciQgAcO3Hvee/e8f5f3gp4Saw3jU8THuG03WcZAlyIP2MkYG8cRfkQ+i8+4aDV5xmYXk3XZJz/HFg4jn8M3TLabpPEChiL+hd0Oc9rxGx/wGHk/btAHvR0W1DAYrGUUbccVplvy6dBe4blAobw5E2hgL9jAx3Sw00n+FlWs4B5PwUZo1aK77DZnAydeX21N8tO+l2VyjZEO+ih+lmWS9et60jWVEO4KGN3lmEzhUvIWJD9zrEDNwljCGer4E6zjFIt5C9ewWtYuKhn6UIaehyr2I/6KZjpQRp+kBgeYCR5o6ZGyTOYlTbgdfAqtVJN9fJFcUTPi9OpKM8nFPzHJwqqkkd7Clf+w3/eEF1NQVOD4fG8qAAAAAElFTkSuQmCC" /><span>
+                            Orders </span>
+                    </a>
                 </li>
 
                 <li>
@@ -98,7 +80,7 @@
                         @endphp
                         @foreach ($hubs as $item)
                             <li class=""><a
-                                    href="{{ url('/hubs/' . $item->id . '?hub_id=' . $item->id) }}">{{ $item->name }}</a>
+                                    href="{{ url('/hubs/' . $item->receiver) }}">{{ $item->name }}</a>
                             </li>
                         @endforeach
                 </li>

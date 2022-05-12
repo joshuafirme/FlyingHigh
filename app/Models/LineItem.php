@@ -34,9 +34,7 @@ class LineItem extends Model
     ];
 
     public function getLineItems($orderId) {
-        return self::select('P.sku', 'P.description', 'quantity', 'line_items.status', 'orderId','partNumber', 'qty_returned')
-        ->leftJoin('products as P', 'P.sku', '=', 'line_items.partNumber', 'line_items.lot_number')
-        ->where('orderId', $orderId)->get();
+        return self::where('orderId', $orderId)->get();
     }
 
     

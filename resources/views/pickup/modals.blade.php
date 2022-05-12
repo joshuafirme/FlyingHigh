@@ -17,7 +17,7 @@
                             <i class="fa fa-print"></i> Print
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Sales Invoice</a>
+                            <a class="dropdown-item" target="_blank" href="/pickup/generate-sales-invoice/">Sales Invoice</a>
                             <a class="dropdown-item" href="#">Collection Receipt</a>
                             <a class="dropdown-item" href="#">Delivery Receipt</a>
                         </div>
@@ -49,19 +49,22 @@
                     <div class="mb-4 ml-auto"> <span class="text-muted">Order Details:</span>
                         <div class="d-flex flex-wrap wmin-md-400">
                             <ul class="list list-unstyled mb-0 text-left">
-                                <li>Shipment ID:</li>
-                                <li>Order ID:</li>
-                                <li>Order type:</li>
+                                <li>Shipment ID</li>
+                                <li>Order ID</li>
+                                <li>Order type</li>
+                                <li>Ship Method</li>
+                                <li>Ship Carrier</li>
                                 <li>Date:</li>
                                 <li>Status:</li>
                             </ul>
                             <ul class="list list-unstyled text-right mb-0 ml-auto">
-                                <li><span class="font-weight-semibold" id="shipmentId"></span></li>
-                                <li><span class="font-weight-semibold" id="orderId"></span>
-                                <li id="orderSource"></li>
-                                </li>
-                                <li><span id="dateTimeSubmittedIso"></span></li>
-                                <li><span class="font-weight-semibold" id="status"></span></li>
+                                <li><span class="font-weight-semibold shipmentId"></span></li>
+                                <li><span class="font-weight-semibold orderId"></span>
+                                <li class="orderSource"></li>
+                                <li><span class="font-weight-semibold shipMethod"></span></li>
+                                <li><span class="font-weight-semibold shipCarrier"></span></li>
+                                <li><span class="dateTimeSubmittedIso"></span></li>
+                                <li><span class="font-weight-semibold status"></span></li>
                             </ul>
                         </div>
                     </div>
@@ -70,32 +73,36 @@
                     <div class="mb-4 mb-md-2 text-left"> <span class="text-muted">Customer Info:</span>
                         <ul class="list list-unstyled mb-0">
                             <li>
-                                <h5 class="my-2" id="custName"></h5>
+                                <h5 class="my-2 custName"></h5>
                             </li>
-                            <li id="shipCity"></li>
-                            <li id="shipState"></li>
-                            <li id="shipZip"></li>
-                            <li id="shipPhone"></li>
-                            <li><a href="#" id="customerEmail"></a></li>
+                            <li>TIN: <span class="customerTIN"></span></li>
+                            <li>Ship Add 1: <span class="shipAddr1"></span></li>
+                            <li>Ship Add 2: <span class="shipAddr2"></span></li>
+
+                            <li class="shipCity"></li>
+                            <li class="shipState"></li>
+                            <li class="shipZip"></li>
+                            <li class="shipPhone"></li>
+                            <li><a href="# customerEmail"></a></li>
                         </ul>
                     </div>
                     <div class="mb-2 ml-auto"> <span class="text-muted">Payment Details:</span>
                         <div class="d-flex flex-wrap wmin-md-400">
                             <ul class="list list-unstyled mb-0 text-left">
                                 <li>Shipping Charge Amount:</li>
+                                <li>Sales Tax Amount:</li>
                                 <li>Shipping Tax Total Amount:</li>
-                                <li>Package Total:</li>
                                 <li>
-                                    <h5 class="my-2">Total Due:</h5>
+                                    <h5 class="my-2">Package Total:</h5>
                                 </li>
                             </ul>
                             <ul class="list list-unstyled text-right mb-0 ml-auto">
-                                <li><span class="font-weight-semibold" id="shippingChargeAmount"></span></li>
-                                <li><span class="font-weight-semibold" id="shippingTaxTotalAmount"></span>
-                                <li id="packageTotal"></li>
+                                <li><span class="font-weight-semibold shippingChargeAmount"></span></li>
+                                <li><span class="font-weight-semibold salesTaxAmount"></span>
+                                <li><span class="font-weight-semibold shippingTaxTotalAmount"></span>
                                 </li>
                                 <li>
-                                    <h5 class="font-weight-semibold my-2">₱<span id="salesTaxAmount"></span></h5>
+                                    <h5 class="font-weight-semibold my-2">₱<span class="packageTotal"></span></h5>
                                 </li>
                             </ul>
                         </div>
@@ -106,14 +113,18 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th scope="col">SKU</th>
-                                <th scope="col">Description</th>
-                                <th scope="col">Qty</th>
-                                <th scope="col">Status</th>
-                                <th scope="col" style="width: 100px;">Action</th>
+                                <th>
+                                    Item Details
+                                </th>
+                                <th>Pv</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th>Sales Price</th>
+                                <th>Taxable Amount</th>
+                                <th>Line Item Total</th>
                             </tr>
                         </thead>
-                        <tbody id="tbl-pickup-details">
+                        <tbody class="tbl-pickup-details">
 
                         </tbody>
                     </table>
@@ -133,6 +144,116 @@
         </div>
     </div>
 </div><!-- End Pickup modal -->
+
+<div class="modal fade" id="hubModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Ship</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row g-3">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-primary" type="submit">Tag as Picked Up</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ship modal -->
+<div class="modal fade" id="shipModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <form id="ship-form" class="modal-content" action="#" autocomplete="off">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Ship</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row g-3">
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Shiment ID</label>
+                    <input type="number" class="form-control" name="shipmentId" readonly>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Order ID</label>
+                    <input type="number" class="form-control" name="orderId" readonly>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Total Weight</label>
+                    <input type="number" step=".01" class="form-control" name="totalWeight">
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Weight Unit of measure</label>
+                    <select class="form-control" name="weightUoM" required>
+                        @php
+                            $weights = ["MG","CG","DG","G","DAG","HG","KG","T"];
+                        @endphp
+                        @foreach ($weights as $item)
+                            <option value="{{ $item }}">{{ $item }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Freight Charges</label>
+                    <input type="number" step=".01" class="form-control" name="freightCharges">
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Qty Packages</label>
+                    <input type="number" class="form-control" name="qtyPackages">
+                </div>
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Tracking #</label>
+                    <input type="number" class="form-control" name="trackingNo">
+                </div>
+
+                <div class="col-md-12 mb-2">
+                    <h4>Line Items</h4>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Item Details
+                                </th>
+                                <th>Pv</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th>Sales Price</th>
+                                <th>Taxable Amount</th>
+                                <th>Line Item Total</th>
+                              <!--  <th>Qty To Ship</th>-->
+                                <th>Lot Code</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbl-ship-items">
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-12 mb-2">
+                    <label class="col-form-label">Hub</label>
+                    <select class="form-control" name="receiver" required>
+                        <option value="" disabled selected>Choose hub</option>
+                        @foreach ($hubs as $item)
+                            <option value="{{ $item->receiver }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-primary" type="submit">Ship</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 
 <!-- Pickup modal -->
@@ -172,7 +293,7 @@
                     <label class="col-form-label">Order ID</label>
                     <input type="number" class="form-control" name="orderId" readonly>
                 </div>
-                
+
                 <div class="col-md-12 mb-2">
                     <label class="col-form-label">SKU</label>
                     <input type="number" class="form-control" name="sku" readonly>

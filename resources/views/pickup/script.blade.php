@@ -17,33 +17,25 @@
             fetch("/get-line-items/" + orderId)
                 .then(data => data.json())
                 .then(data => {
-                    $('#tbl-pickup-details').html('');
+                    $('.tbl-pickup-details').html('');
                     let html = "";
                     for (let item of data) {
-                        if (item.sku == null) {
+                        if (item.lineType == 'PN' || item.lineType == 'N') {
                             continue;
                         }
                         let html = '<tr>';
-                        html += '<td>' + item.sku + '</td>';
-                        html += '<td>' + item.description + '</td>';
+                        html += '<td>' +
+                            item.partNumber + '<br>' +
+                            item.name + '<br>' +
+                            'Parent Kit: ' + item.parentKitItem + '</td>';
+                        html += '<td>' + item.pv + '</td>';
                         html += '<td>' + item.quantity + '</td>';
-                        if (item.status == 1) {
-                            html += '<td>Picked-up</td>';
-                            html += '<td><a class="btn btn-sm btn-warning btn-return" data-sku="' +
-                                item.sku + '" data-orderId="' + item
-                                .orderId + '" data-qty="' + item.quantity + '">Return</a></td>';
-                        } else if (item.status == 2) {
-                            html += '<td>Returned <br> Qty: '+ item.qty_returned +'</td>';
-                            html += '<td></td>';
-                        } else if (item.status == 0) {
-                            html += '<td>Unclaimed</td>';
-                            html +=
-                                '<td><a class="btn btn-sm btn-primary btn-tag-one-picked-up" data-sku="' +
-                                item.sku + '" data-qty="' + item.quantity + '" data-orderId="' + item
-                                .orderId + '">Pick up</a></td>';
-                        }
+                        html += '<td>' + item.itemUnitPrice + '</td>';
+                        html += '<td>' + item.salesPrice + '</td>';
+                        html += '<td>' + item.taxableAmount + '</td>';
+                        html += '<td>' + item.lineItemTotal + '</td>';
                         html += '</tr>';
-                        $('#tbl-pickup-details').append(html)
+                        $('.tbl-pickup-details').append(html)
                     }
 
                 })
@@ -54,20 +46,19 @@
                 .then(data => data.json())
                 .then(data => {
                     console.log(data)
-                    mdl.find('[name=lot_code]').html('');
+                    mdl.find('.lot-code-'+sku).html('');
                     for (let item of data) {
-                        let html = `<option exp="${item.expiration}" value="${item.lot_code}">${item.lot_code == 0 ? 'N/A' : item.lot_code}</option>`
-                        mdl.find('[name=lot_code]').append(html);
+                        let html =
+                            `<option exp="${item.expiration}" value="${item.lot_code}">${item.lot_code == 0 ? 'N/A' : item.lot_code}</option>`
+                        mdl.find('.lot-code-'+sku).append(html);
                     }
-                    let exp = mdl.find("[name=lot_code] option:selected").attr('exp');
-                    mdl.find('[name=expiration]').val(exp);
-            });
+                });
         }
 
-        $('#lot_codes').change(function() { 
-                let mdl = $('#returnModal');
-                let exp = $('option:selected', this).attr('exp');
-                mdl.find('[name=expiration]').val(exp);
+        $('#lot_codes').change(function() {
+            let mdl = $('#returnModal');
+            let exp = $('option:selected', this).attr('exp');
+            mdl.find('[name=expiration]').val(exp);
         });
 
         function changeStatus(shipmentId, status) {
@@ -102,16 +93,16 @@
         }
 
         function getStatusTextClass(status) {
-            let status_text = 'Unclaimed';
+            let status_text = 'Pending';
             let status_class = 'text-primary';
             if (status == 1) {
-                status_text = 'Completed';
+                status_text = 'Shipped';
                 status_class = 'text-success';
             } else if (status == 2) {
-                status_text = 'Overdue';
+                status_text = 'Delivered';
                 status_class = 'text-danger';
             } else if (status == 3) {
-                status_text = 'Partially Completed';
+                status_text = 'Picked Up';
                 status_class = 'text-warning';
             }
             return {
@@ -121,25 +112,94 @@
         }
 
         function initLoader() {
-            $('#tbl-pickup-details').html(
+            $('.tbl-pickup-details').html(
                 '<tr><td colspan="5" class="text-center"><i class="fas fa-circle-notch fa-spin" style="font-size: 21px;"></i></td></tr>'
             );
         }
 
-        $(document).on('click', '.btn-return', function() {
-            let mdl = $('#returnModal');
+        $(document).on('click', '.btn-ship', function() {
+            let mdl = $('#shipModal');
             mdl.modal('show');
             let _this = $(this);
-            let sku = _this.attr('data-sku');
-            let orderId = _this.attr('data-orderId');
-            let qty = _this.attr('data-qty');
-            mdl.find('[name=sku]').val(sku);
-            mdl.find('[name=orderId]').val(orderId);
-            mdl.find('[name=qty]').attr('max', qty);
-            appendLotCodes(sku, mdl);
+            let order_details = _this.attr('data-order-details');
+            order_details = JSON.parse(order_details);
+            console.log(order_details)
+
+            for (var key of Object.keys(order_details)) {
+                mdl.find('[name=' + key + ']').val(order_details[key]);
+            }
+
+             fetch("/get-line-items/" + order_details.orderId)
+                .then(data => data.json())
+                .then(data => {
+                    $('.tbl-ship-items').html('');
+                    let html = "";
+                    for (let item of data) {
+                        if (item.lineType == 'PN' || item.lineType == 'N') {
+                            continue;
+                        }
+                        let html = '<tr>';
+                        html += '<td>' +
+                            item.partNumber + '<br>' +
+                            item.name + '<br>' +
+                            'Parent Kit: ' + item.parentKitItem + '</td>';
+                        html += '<td>' + item.pv + '</td>';
+                        html += '<td>' + item.quantity + '</td>';
+                        html += '<td>' + item.itemUnitPrice + '</td>';
+                        html += '<td>' + item.salesPrice + '</td>';
+                        html += '<td>' + item.taxableAmount + '</td>';
+                        html += '<td>' + item.lineItemTotal + '</td>';
+                     //   html += '<td><input name="qtyShipped[]" class="form-control" type="number" max="'+item.quantity+'" required></td>';  
+                            html += '<td><select name="lot_code[]" class="form-control lot-code-'+item.partNumber+'" required></select></td>';
+                        html += '</tr>';
+                        $('.tbl-ship-items').append(html)
+
+                        appendLotCodes(item.partNumber, mdl)
+                    }
+
+                })
         });
 
-        
+        $(document).on('submit', '#ship-form', function() {
+            let _this = $(this);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to tag this as Shipped?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                            type: 'POST',
+                            url: '/order/do-ship',
+                            data: $(this).serialize()
+                        })
+                        .done(function(data) {
+
+                            if (data.success) {
+                                swalSuccess('Order was successfully Shipped');
+                            } 
+                            else if (data.success == false) {
+                                swalError(data.message);
+                            }
+                            else {
+                                swalError('Error occured, please contact support!');
+                            }
+
+                            _this.find('button[type=submit]').prop('disabled', true);
+                        })
+                        .fail(function() {
+                            swalError('Error occured, please contact support!');
+                        });
+                }
+            })
+            return false;
+        });
+
+
 
         $('.btn-pickup-details').click(function() {
             let mdl = $('#pickupModal');
@@ -157,26 +217,18 @@
             $('#pickupModal').attr('shipmentId', order_details.shipmentId);
             $('#pickupModal').attr('orderId', order_details.orderId);
             $('#pickupModal').attr('status', order_details.status);
-            $('#shipmentId').text(order_details.shipmentId);
-            $('#orderId').text(order_details.orderId);
-            $('#orderSource').text(order_details.orderSource);
-            $('#dateTimeSubmittedIso').text(order_details.dateTimeSubmittedIso);
-            $('#customerEmail').text(order_details.customerEmail);
-            $('#customerEmail').attr('href', 'mailto:' + order_details.customerEmail);
-            $('#custName').text(order_details.custName);
-            $('#shipPhone').text(order_details.shipPhone);
-            $('#shipCity').text(order_details.shipCity);
-            $('#shipState').text(order_details.shipState);
-            $('#shipZip').text(order_details.shipZip);
-            $('#shippingChargeAmount').text(order_details.shippingChargeAmount);
-            $('#salesTaxAmount').text(order_details.salesTaxAmount);
-            $('#shippingTaxTotalAmount').text(order_details.shippingTaxTotalAmount);
-            $('#packageTotal').text(order_details.packageTotal);
+            for (var key of Object.keys(order_details)) {
+                console.log(key + ' ' + order_details[key])
+                if (order_details[key] == null || order_details[key] == "") {
+                    order_details[key] = "N/A";
+                }
+                mdl.find('.' + key).text(order_details[key]);
+            }
             let status = getStatusTextClass(order_details.status);
-            $('#status').addClass(status.class);
-            $('#status').text(status.text);
+            $('.status').addClass(status.class);
+            $('.status').text(status.text);
 
-            $('#tbl-pickup-details').html('');
+            $('.tbl-pickup-details').html('');
             initLoader();
             setTimeout(function() {
                 loadLineItems(orderId);
