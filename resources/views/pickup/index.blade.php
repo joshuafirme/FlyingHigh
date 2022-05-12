@@ -74,7 +74,7 @@ $status = request()->status;
                                                             class="badge badge-pill badge-{{ $status->class }}">{{ $status->text }}</span>
                                                     </td>
                                                     <td>
-                                                        <div class="dropdown float-right m-1">
+                                                        <div class="dropdown float-left m-1">
                                                             <button class="btn btn-sm btn-primary dropdown-toggle"
                                                                 data-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
@@ -85,19 +85,21 @@ $status = request()->status;
                                                                 <a class="dropdown-item" target="_blank"
                                                                     href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=invoice') }}">Sales
                                                                     Invoice</a>
-                                                                <a class="dropdown-item" href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=delivery_receipt') }}">Delivery Receipt</a>
-                                                                <a class="dropdown-item"
+                                                                <a class="dropdown-item" target="_blank"
+                                                                    href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=delivery_receipt') }}">Delivery
+                                                                    Receipt</a>
+                                                                <a class="dropdown-item" target="_blank"
                                                                     href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=collection_receipt') }}">Collection
                                                                     Receipt</a>
                                                             </div>
                                                         </div>
                                                         @if ($item->status == 0)
-                                                            <a class="btn btn-sm btn-primary btn-ship float-right m-1"
+                                                            <a class="btn btn-sm btn-primary btn-ship float-left m-1"
                                                                 data-order-details="{{ json_encode($item) }}"><i
                                                                     class="fas fa-shipping-fast"></i> Proccess
                                                                 Shipment</a>
                                                         @endif
-                                                        <a class="btn btn-sm btn-primary btn-pickup-details float-right m-1"
+                                                        <a class="btn btn-sm btn-primary btn-pickup-details float-left m-1"
                                                             target="_blank"
                                                             href="{{ url('/shipments/search?key=' . $item->shipmentId) }}"><i
                                                                 class="fas fa-eye"></i> Shipment Details</a>

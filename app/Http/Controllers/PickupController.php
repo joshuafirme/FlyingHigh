@@ -324,7 +324,7 @@ class PickupController extends Controller
         $output .= 
         '<div class="text-left">
             ';
-            $output .= $this->getInvoiceHeader();
+            $output .= $this->getInvoiceHeader("Sales Invoice");
             $output .= '
             <hr class="ml-2 mr-2">
             <div class="text-info float-right mr-100">
@@ -430,7 +430,7 @@ class PickupController extends Controller
         $output .= 
         '<div class="text-left">
             ';
-            $output .= $this->getInvoiceHeader();
+            $output .= $this->getInvoiceHeader("Delivery Receipt");
             $output .= '
             <hr class="ml-2 mr-2">
             <div class="text-info ml-1 float-right">
@@ -473,9 +473,9 @@ class PickupController extends Controller
         return $output;
     }
 
-    function getInvoiceHeader() {
+    function getInvoiceHeader($title) {
         return '<img class="logo" src="' . public_path() . "/assets/yl_logo.png" . '" width="173" height="55" alt="" />
-            <div class="head-2">SALES INVOICE</div>
+            <div class="head-2">' . $title . '</div>
             <div class="head-1">YOUNG LIVING PHILIPPINES LLC</div>
             <div class="head-3"> YOUNG LIVING PHILIPPINES LLC - PHILIPPINE BRANCH</div>
             <div class="text-info ml-1">
