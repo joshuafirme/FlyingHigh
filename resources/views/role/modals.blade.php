@@ -64,6 +64,38 @@
                             </div>
                         </div>
                     </div>
+                     <div class="ic_parent_permission">
+                        <div class="row my-2">
+                            <div class="col-8 pt-1">
+                                <div class="custom-control">
+                                    <label for="customCheck-1"><strong>Orders
+                                        </strong></label>
+                                </div>
+                            </div>
+                            <div class="col-4 pt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="permission[]" value="Orders"
+                                        class="ic-parent-permission" id="chkbx-Orders" ref="1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="ic_parent_permission">
+                        <div class="row my-2">
+                            <div class="col-8 pt-1">
+                                <div class="custom-control">
+                                    <label for="customCheck-1"><strong>Shipment
+                                        </strong></label>
+                                </div>
+                            </div>
+                            <div class="col-4 pt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="permission[]" value="Shipment"
+                                        class="ic-parent-permission" id="chkbx-Shipment" ref="1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="ic_parent_permission">
                         <div class="row my-2">
                             <div class="col-8 pt-1">

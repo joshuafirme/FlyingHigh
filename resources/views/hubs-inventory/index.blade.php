@@ -26,20 +26,20 @@
                         <div class="card-body">
                             <div class="mb-4 mt-2 d-md-flex flex-md-wrap">
 
-                                 <div class="ml-auto">
-                                        <form action="{{ url('/hubs/'.$receiver.'/search') }}" method="get">
-                                            <div class="input-group mb-3">
-                                                <input type="text" class="form-control" name="key"
-                                                    style="width: 280px;" placeholder="Search by SKU or Description"
-                                                    value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-primary" type="submit">
-                                                        <i class="fa fa-search"></i>
-                                                    </button>
-                                                </div>
+                                <div class="ml-auto">
+                                    <form action="{{ url('/hubs/' . $receiver . '/search') }}" method="get">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" name="key" style="width: 280px;"
+                                                placeholder="Search by SKU or Description"
+                                                value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
                                             </div>
-                                        </form>
-                                    </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-borderless table-hover">
@@ -80,16 +80,12 @@
                                                             class="badge badge-pill badge-{{ $status->class }}">{{ $status->text }}</span>
                                                     </td>
                                                     <td>
-                                                        @if ($item->status == 0)
-                                                            <a class="btn btn-sm btn-primary btn-ship"
-                                                                data-order-details="{{ json_encode($item) }}"><i
-                                                                    class="fas fa-shipping-fast"></i> Shipment</a>
-                                                        @elseif ($item->status == 1)
+                                                        @if ($item->status == 2)
                                                             <a class="btn btn-sm btn-primary btn-deliver"
                                                                 data-order-details="{{ json_encode($item) }}"
                                                                 data-shipmentId="{{ $item->shipmentId }}">
-                                                                <i class="fas fa-truck-loading"></i> Delivery</a>
-                                                        @elseif ($item->status == 2)
+                                                                <i class="fas fa-hand-receiving"></i> Pickup</a>
+                                                        @elseif ($item->status == 3)
                                                         @endif
                                                     </td>
                                                 </tr>

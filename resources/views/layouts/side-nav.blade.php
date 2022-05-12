@@ -63,7 +63,7 @@
                 <li>
                     <a href="#" class=""><img
                             src="https://img.icons8.com/ios/25/000000/warehouse-1.png" /><span>
-                            Hubs
+                            Hub
                             <span class="float-right menu-arrow">
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -76,37 +76,21 @@
                         </span></a>
                     <ul class="submenu">
                         @php
-                            $hubs = App\Models\Hub::where('status', 1)->get();
+                            $hubs = App\Models\Hub::where('status', 1)->get(); 
+                            $permissions = App\Models\Role::permissions();
+                            
                         @endphp
                         @foreach ($hubs as $item)
-                            <li class=""><a
-                                    href="{{ url('/hubs/' . $item->receiver) }}">{{ $item->name }}</a>
+                            <li class="">
+                                @if(in_array($item->name, $permissions)) 
+                                    <a href="{{ url('/hubs/' . $item->receiver) }}">{{ $item->name }}</a>
+                                @endif
                             </li>
                         @endforeach
                 </li>
             </ul>
             </li>
-
-            <!--<li class="">
-                    <a class="" href=" url('/client') }}" class="">
-                        <img
-                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAB7klEQVRIieXU32uPYRjH8de+23w3Q1lyMPlRDiS0UIwDORMa0+RIrSiFo53KgVLKivIXOHHoRCTJjzihWUtZtAPya2NoKCG0Objvpx73d893P5zxqfvgeXdd93Xd9/V5bv4V1UwzdiPW4jvOTzWxdopxbbiOdozhCEp4ii/TaLRQa/AWe3JsM85hGEtmsmkjTmAQn/EEhwtiu/Ecr/EDHaYwgjrcwUVswm6Mo6kgfhE+YSX2YgBXTTKGzlgk383PKkmN+Jr7LqHfn1erlCStjp2M59gANhQUWY/Hue8xXMaqakWG0ZKwxcLgJ9IoFiRsHr5VK9KA2Ql7r9hBK/AxYU34VRCP4I5+lHNsC16odE0tRgQ7ZyrH/I5qRWpwU3BVXgPYmrBteJCwnbg7QUMV6sT9hO1DX8L6JC7CLexPN0xnkiUvTNgg6hNWj2cJa8ajyYq04KTKa2jHy4S9ijyvezglGKJCy3EBH3AGcwSndaFXON3SJGdZ5L0xrgGzcBxvJP/LOsElxzA3soMYwhXsmODEmUrYHuOGcCDyMo7GfdvgtvB0Z+rBQ7QWbFyk1pjXk2Ndgtu8Ex650bhGMH+aBTI1x/zx3BquE+66IQZ1YxcOzbAIYR5ncToDdcI7k701l4ThzfQkcA03/iL/f9dvqKxlLVcWNcIAAAAASUVORK5CYII=" />
-                        <span>
-                            Clients </span>
-                    </a>
-                </li>-->
-
-         <!--   <li class="">
-                <a class="" href="https://clanvent-alpha.laravel-script.com/admin/invoices"
-                    class="">
-                    <img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABJklEQVRIie3VoUpEQRQG4E8RxCJcq5gFwSAaDILBpOALGFfFoMnsK9jU4gMYRbQoCAaDUVgwucGiQTFYjGu4s7J7uc7u3ruLZX8YzpmZn3PO/HOY4R9Qwzneg30taGvNQYcySerYxT2WStjjnNgtSXqBljjDPQoaxUhkbxsTkf1LPGEG6/jEabdJxpDEa/xFgu8Ouf25kyJyNWRqYCAXBt2Vg351V13T2xV7VhpyZUceksCfxkVYO8NkHrmsXI/YxDj2cUtcrg1Ugz/bgV+VVn6FL5wIcsfkqnfpwxHuUAnzg3aBi2IN19LftZJH6GULz+EZi3nf75/fZhvsSe9op2ntEG9ZYpmTTEklWsEo5vGChSzxIyQqMrawjIcwv8FqiaLbokWRHxGtZ6DVMsbYAAAAAElFTkSuQmCC" />
-                    <span>
-                        Invoice Manage </span>
-                </a>
-            </li>-->
-
-
+            
             <li>
                 <a href="#" class=""><img
                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAAv0lEQVRIie2VQQrCQAxFnyLSrXSlV9ETWG+jB2hBBPVaehXP0HZTF0UYh7TppBRdzIcwMMnPnyQwgT/BASiBRrASyEITXoBKSJZ3xOdCbAWc3aC5RzoCa2DmWKE8rPDiN8Cpj9A4p7USN48q8kFG/0z2Cn+QSAhEvj+TSbBQ/DtgK9xfPf8TeFhFEmA1wJ8oeb4wyUxiu4L4sV1B/NiuIP7PP0hrNapIDaS0a9SKlHbPd4rcgRewHCFSA7cRfBvevSlTJctzIg0AAAAASUVORK5CYII=" /><span>
