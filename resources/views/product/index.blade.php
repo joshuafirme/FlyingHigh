@@ -56,12 +56,12 @@
                                             data-keyboard="false"><i class="fas fa-box-open"></i>
                                             Stock Transfer
                                         </button>
-                                        <button type="button"
+                                        <!--<button type="button"
                                             class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto"
                                             data-toggle="modal" data-target="#bulkTransferModal" data-backdrop="static"
                                             data-keyboard="false"><i class="fa fa-exchange-alt"></i>
                                             Hub Transfer
-                                        </button>
+                                        </button>-->
                                         <a href="{{ url('/product') }}"
                                             class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto">
                                             <i class="fa fa-sync"></i>
@@ -146,7 +146,7 @@
                                                                 aria-expanded="false"><i
                                                                     class="fas fa-ellipsis-v"></i></a>
                                                             <div class="dropdown-menu">
-                                                                <a class="btn dropdown-item btn-transfer"
+                                                               <!-- <a class="btn dropdown-item btn-transfer"
                                                                     data-backdrop="static" data-keyboard="false"
                                                                     data-target="#transferModal" data-toggle="modal"
                                                                     data-sku="{{ $item->sku }}"
@@ -158,7 +158,7 @@
                                                                     data-sku="{{ $item->sku }}"
                                                                     data-desc="{{ $item->description }}"><i
                                                                         class="fa fa-warehouse"></i> Hubs
-                                                                    Stock</a>
+                                                                    Stock</a>-->
                                                                 <a class="btn btn-stock-adjustment dropdown-item"
                                                                     data-target="#stockAdjustmentModal"
                                                                     data-toggle="modal" data-sku="{{ $item->sku }}"

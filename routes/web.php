@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\HubController;
 use App\Http\Controllers\HubInventoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductLotCodesController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PickupController;
 use App\Http\Controllers\ShipmentsController;
@@ -128,7 +129,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/inbound-transfer/export/{date_from}/{date_to}', [InboundTransferController::class, 'exportReport']);
     Route::get('/reports/inbound-transfer', [InboundTransferController::class, 'index']);
 
-    Route::get('/reports/inventory', [InventoryReportController::class, 'index']);
+    Route::get('/product-lot-codes', [ProductLotCodesController::class, 'index']);
 
 
     Route::post('increment-stock', [ProductController::class, 'incrementStock']);

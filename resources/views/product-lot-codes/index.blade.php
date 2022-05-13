@@ -1,4 +1,4 @@
-@section('title', 'Warehouse Inventory Report | Flying High')
+@section('title', 'Lot Code List | Flying High')
 @include('layouts.header')
 
 @include('layouts.top-nav')
@@ -9,15 +9,7 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="text-dark">Reports</h4>
-                <div class="row align-items-center">
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Reports</a></li>
-                            <li class="breadcrumb-item active">Warehouse Inventory</li>
-                        </ol>
-                    </div>
-                </div>
+                <h4 class="text-dark">Lot Code List</h4>
             </div>
 
             <div class="row">
@@ -43,7 +35,7 @@
                                     </div>
                                     <div class="form-group ml-1">
                                         <a class="btn btn-sm btn-primary"
-                                            href="{{ url('/reports/stock-adjustment') }}"><i class="fa fa-sync"
+                                            href="{{ url('/product-lot-codes') }}"><i class="fa fa-sync"
                                                 aria-hidden="true"></i> Refresh</a>
                                     </div>
                                 </form>

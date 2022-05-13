@@ -12,18 +12,16 @@
                             Dashboard </span>
                     </a>
                 </li>
-                <li class="">
+                <!--<li class="">
                     <a class="" href="{{ url('/product') }}" class="">
                         <img src="https://img.icons8.com/ios/25/000000/product--v1.png" />
                         <span>
                             Product </span>
                     </a>
-                </li>
-                <!--
+                </li>-->
                 <li>
-                    <a href="#" class=""><img
-                            src="https://img.icons8.com/ios/25/000000/inventory-flow.png" /><span>
-                            Transfer
+                    <a href="#" class=""><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABGUlEQVRIieXVoU/DQBQG8B8wgyEs/BlkYthNIFBYAoa/ALEENyQzBIsBDBKFRyEQIAGBQZJMoLEgQPQSStOu17WZgC95Se+7e9/3rq93ZQZYqLh+DTv4xFts0lyk8HaIL9xiPeRehXisWCxYxSFe8IoT9DNFxayZSrhW7j7GOEI3QnQSukFnHHS1wsQyLkI1dfEU4iPomm9AtBR5JgPJVzRtDGJMVjCSNK1qjEJ+qUnjmIlJq3wJ6GAzh7/Gc1MmW9jAXYrrY7FJE7jx+xxFn6n/0/g9LKEXxsPUXJp7x3mRSNlOTtHGQ4g2jnO4s0kiMY0/yIyHBVwh/mbje5JtZ5uc9yqKuF7m+Z6f32MHuzWKLcKliBuhEXwDB0lEZhWus9YAAAAASUVORK5CYII="/><span>
+                            Warehouse
                             <span class="float-right menu-arrow">
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -35,16 +33,13 @@
                             </span>
                         </span></a>
                     <ul class="submenu">
-                        <li class=""><a
-                                href="https://clanvent-alpha.laravel-script.com/admin/purchases">Purchases</a></li>
-                        <li><a href="https://clanvent-alpha.laravel-script.com/admin/purchases/receive/list">Purchase
-                                Receive List</a>
+                        <li>
+                            <a href="{{ url('/product') }}">Products</a>
                         </li>
-                        <li><a href="https://clanvent-alpha.laravel-script.com/admin/purchases/return/list">Purchase
-                                Return List</a>
+                        <li><a href="{{ url('/product-lot-codes') }}">Lot Code List</a>
                         </li>
                     </ul>
-                </li>-->
+                </li>
                 <li>
                     <a href="{{ url('orders') }}" class="">
                         <img
@@ -106,19 +101,10 @@
                     </span></a>
                 <ul class="submenu">
                     <li>
-                        <a href="{{ url('/reports/inventory') }}">Warehouse Inventory</a>
-                    </li>   
-                    <li>
                         <a href="{{ url('/reports/inbound-transfer') }}">Inbound Transfers</a>
                     </li>
                     <li>
-                        <a href="{{ url('/reports/hub-transfer') }}">Hub Transfers</a>
-                    </li>
-                    <li>
                         <a href="{{ url('/reports/stock-adjustment') }}">Stock Adjustment</a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/reports/pickup/for-pickup') }}">Pickup Report</a>
                     </li>
                 </ul>
             </li>
