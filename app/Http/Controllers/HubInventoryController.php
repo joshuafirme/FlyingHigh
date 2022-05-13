@@ -38,17 +38,16 @@ class HubInventoryController extends Controller
         return $hub_inv->getAllStock($sku);
     }
 
-    public function searchProduct($hub_id, HubInventory $hub_inv, Hub $hub)
+    public function searchProduct($receiver, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
     {
         $key = isset(request()->key) ? request()->key : "";
-        if ($key) {
-            $products = $hub_inv->searchByHub($hub_id, 10);
-        }
-        else {
-             $products = $hub_inv->getByHub($hub_id, 10);
-        }
 
-        $hub_name = $hub->getHubName($hub_id);
+        $deliveries = $shipment->searchDeliveredByReceiver($receiver, $key, 10);
+        $hubs = Hub::where('status', 1)->get();
+        $reasons = ReturnReason::where('status', 1)->get();
+
+        $hub_name = $hub->getHubName($receiver);
+        return view('hubs-inventory.index', compact('deliveries', 'hub_name', 'receiver', 'hub_inv'));
         return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id', 'hub_inv'));
     }
 }

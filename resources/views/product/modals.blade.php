@@ -146,28 +146,57 @@
         <form id="import-via-api-form" method="POST" class="modal-content">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title">Import Stock Via API</h5>
+                <h5 class="modal-title">Stock Transfer</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body row g-3">
-                <div class="col-md-12 mt-3">
-                    <label class="form-label">API Endpoint</label>
-                    <input type="text" class="form-control" name="api_endpoint" required
-                        value="{{ env('APP_URL') }}/purchase_order.json">
-                </div>
-                <div class="col-md-12 mt-3">
-                    <button class="btn btn-sm btn-primary" type="button" id="btn-fetch">Fetch</button>
+            <div class="modal-body g-3">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                            aria-controls="home" aria-selected="true">Excel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                            aria-controls="profile" aria-selected="false">API</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <form action="#" method="POST" enctype="multipart/form-data" class="row">
+                            <div class="col-12 mt-3">
+                                <div class="form-group mb-4" style="max-width: 500px;">
+                                    <div class="custom-file text-left">
+                                        <input type="file" name="file" class="custom-file-input" id="customFile"
+                                            required>
+                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt-3">
+                                <button class="btn btn-sm btn-primary" type="submit">Import</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade row" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <div class="col-md-12 mt-3">
+                            <label class="form-label">API Endpoint</label>
+                            <input type="text" class="form-control" name="api_endpoint" required
+                                value="{{ url('/purchase_order.json') }}">
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <button class="btn btn-sm btn-primary" type="button" id="btn-fetch">Fetch</button>
+                        </div>
+
+                        <button class="btn btn-sm btn-primary d-none" id="btn-api-import" type="submit">Import</button>
+                        <div class="col-12 mt-4">
+                            <h5><span id="transactionReferenceNumber"></span></h5>
+                            <div id="orders-container"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col-12 mt-4">
-                    <h5><span id="transactionReferenceNumber"></span></h5>
-                    <div id="orders-container"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-sm btn-primary" id="btn-api-import" type="submit">Import</button>
             </div>
         </form>
     </div>

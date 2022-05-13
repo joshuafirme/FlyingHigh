@@ -154,7 +154,7 @@
                         }
                         else {
                             let html = '<tr>';
-                            html += '<td colspan="3"><div class="alert alert-primary">No data found.</div></td>';
+                            html += '<td colspan="4"><div class="alert alert-primary">No data found.</div></td>';
                             html += '</tr>';
                             $('.tbl-lot-codes').append(html);
                         }

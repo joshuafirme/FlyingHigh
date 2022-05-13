@@ -283,27 +283,29 @@ class ProductController extends Controller
         if ($action == 'update') {
             $current_lot_code_count = count($lc->getLotCode($request->sku));
         }
-        foreach ($request['lot_code'] as $key => $lot_code) {
-            $lot_code = $lot_code ? $lot_code : 0;
-            if ($current_lot_code_count > 0 && $current_lot_code_count <= $key) {
-                if ($lc->isLotCodeExists($request->sku, $lot_code)) {
-                    array_push($lot_codes, $lot_code);
+        if (isset($request['lot_code']) && count($request['lot_code']) > 0) {
+            foreach ($request['lot_code'] as $key => $lot_code) {
+                $lot_code = $lot_code ? $lot_code : 0;
+                if ($current_lot_code_count > 0 && $current_lot_code_count <= $key) {
+                    if ($lc->isLotCodeExists($request->sku, $lot_code)) {
+                        array_push($lot_codes, $lot_code);
+                    }
+                    else {
+                        $expiration = $request->expiration[$key];
+                        $lc->createLotCode($request->sku, $lot_code, $expiration, 0);
+                    }
+                    $ctr++;
                 }
                 else {
-                    $expiration = $request->expiration[$key];
-                    $lc->createLotCode($request->sku, $lot_code, $expiration, 0);
+                    if ($lc->isLotCodeExists($request->sku, $lot_code)) {
+                        array_push($lot_codes, $lot_code);
+                    }
+                    else {
+                        $expiration = $request->expiration[$key];
+                        $lc->createLotCode($request->sku, $lot_code, $expiration, 0);
+                    }
                 }
-                $ctr++;
-            }
-            else {
-                if ($lc->isLotCodeExists($request->sku, $lot_code)) {
-                    array_push($lot_codes, $lot_code);
-                }
-                else {
-                    $expiration = $request->expiration[$key];
-                    $lc->createLotCode($request->sku, $lot_code, $expiration, 0);
-                }
-            }
+        }
         }
         if (count($lot_codes) > 0) {
             $is_are = count($lot_codes) > 1 ? 's are' : ' is';

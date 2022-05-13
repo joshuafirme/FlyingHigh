@@ -34,10 +34,18 @@ class Shipment extends Model
         return self::where('receiver',$receiver)->where('status', 2)->paginate($per_page);
     }
 
+    public function searchDeliveredByReceiver($receiver, $key, $per_page) {
+        return self::where('receiver',$receiver) 
+            ->where('status', 2)
+            ->where('shipmentId', 'LIKE', '%' . $key . '%')->paginate($per_page);
+    }
+
+
     public function search($key, $per_page) {
         return self::select('shipments.*', 'hubs.name as hub')
             ->leftJoin('hubs', 'hubs.receiver', '=', 'shipments.receiver')
             ->where('shipmentId', 'LIKE', '%' . $key . '%')
+            ->orderBy('shipments.created_at', 'desc')
             ->paginate($per_page);
     }
 

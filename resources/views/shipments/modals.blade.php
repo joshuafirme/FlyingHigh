@@ -4,7 +4,7 @@
         <div class="modal-content">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title">Shipment Details</h5>
+                <h5 class="modal-title">Delivery</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

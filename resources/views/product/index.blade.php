@@ -53,8 +53,8 @@
                                         <button type="button"
                                             class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
                                             data-toggle="modal" data-target="#apiModal" data-backdrop="static"
-                                            data-keyboard="false"><i class="fa fa-code"></i>
-                                            Import Stock via API
+                                            data-keyboard="false"><i class="fas fa-box-open"></i>
+                                            Stock Transfer
                                         </button>
                                         <button type="button"
                                             class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto"

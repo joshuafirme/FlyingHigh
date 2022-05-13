@@ -25,12 +25,37 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="mb-4 mt-2 d-md-flex flex-md-wrap">
-
+                                @php
+                                    $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d');
+                                    $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
+                                    $hub_id = request()->hub_id;
+                                @endphp
+                                <form class="form-inline" action="{{ route('filterHubTransfer') }}" method="get">
+                                    <div class="form-group col-12 col-md-auto">
+                                        <label>Transferred from</label>
+                                        <input type="date" class="form-control ml-0 ml-sm-2" name="date_from"
+                                            value="{{ $date_from }}" required>
+                                    </div>
+                                    <div class="form-group col-12 col-md-auto">
+                                        <label>-</label>
+                                    </div>
+                                    <div class="form-group mr-4 col-12 col-md-auto">
+                                        <input type="date" class="form-control ml-0 ml-sm-2" name="date_to"
+                                            value="{{ $date_to }}" required>
+                                    </div>
+                                    <div class="form-group ml-1">
+                                        <button class="btn btn-sm btn-primary" type="submit">Filter</button>
+                                    </div>
+                                    <div class="form-group ml-1">
+                                        <a class="btn btn-sm btn-primary" href="{{ url('/reports/hub-transfer') }}"><i
+                                                class="fa fa-sync" aria-hidden="true"></i> Refresh</a>
+                                    </div>
+                                </form>
                                 <div class="ml-auto">
                                     <form action="{{ url('/hubs/' . $receiver . '/search') }}" method="get">
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control" name="key" style="width: 280px;"
-                                                placeholder="Search by SKU or Description"
+                                                placeholder="Search"
                                                 value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">
@@ -73,11 +98,10 @@
                                                     <td>{{ $item->totalWeight . ' ' . $item->weightUoM }}</td>
                                                     <td>{{ $item->freightCharges . ' ' . $item->currCode }}</td>
                                                     <td>{{ $item->qtyPackages }}</td>
-                                                    @php
-                                                        $status = json_decode(Utils::getStatusTextClass($item->status));
-                                                    @endphp
-                                                    <td><span
-                                                            class="badge badge-pill badge-{{ $status->class }}">{{ $status->text }}</span>
+                                                    <td>
+                                                        @if ($item->status == 2)
+                                                            <span class="badge badge-pill badge-primary">Pending</span>
+                                                        @endif
                                                     </td>
                                                     <td>
                                                         @if ($item->status == 2)

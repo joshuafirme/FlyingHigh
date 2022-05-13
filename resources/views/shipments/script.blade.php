@@ -80,25 +80,7 @@
                 loadLineItems(shipmentId);
             }, 300)
         });
-
-        $(document).on('click', '.btn-mark-as-completed', function(event) {
-            let shipmentId = $('#pickupModal').attr('shipmentId');
-            let status = 1;
-            changeStatus(shipmentId, status)
-        });
-
-        $(document).on('click', '.btn-mark-as-overdue', function(event) {
-            let shipmentId = $('#pickupModal').attr('shipmentId');
-            let status = 2;
-            changeStatus(shipmentId, status)
-        });
-
-        $(document).on('click', '.btn-mark-as-partially-completed', function(event) {
-            let shipmentId = $('#pickupModal').attr('shipmentId');
-            let status = 3;
-            changeStatus(shipmentId, status)
-        });
-
+        
         $(document).on('submit', '#ship-form', function() {
             let _this = $(this);
             let mdl = $('#shipModal');
@@ -189,84 +171,6 @@
 
             return false;
         });
-
-        $(document).on('click', '.btn-tag-as-overdue', function(event) {
-            let shipmentId = $(this).attr('data-shipmentId');
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to tag this Pick Up as Overdue?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                            type: 'POST',
-                            url: '/pickup/tag-as-overdue/' + shipmentId,
-                            data: {
-                                _token: "{{ csrf_token() }}"
-                            },
-                        })
-
-                        .done(function(data) {
-
-                            if (data.message == 'success') {
-                                swalSuccess('Product was successfully Tags as Overdue');
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 1500);
-                            } else {
-                                swalError('Error occured, please contact support!');
-                            }
-                        })
-                        .fail(function() {
-                            swalError('Error occured, please contact support!');
-                        });
-                }
-            })
-
-            return false;
-        });
-
-        $('#return-form').submit(function(event) {
-
-            let orderId = $(this).find('[name=orderId]').val();
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to tag this as Returned?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                            type: 'POST',
-                            url: '/pickup/return',
-                            data: $(this).serialize()
-                        })
-                        .done(function(data) {
-
-                            if (data.success == true) {
-                                swalSuccess('Item was successfully tagged as Returned');
-                                setTimeout(() => {
-                                    loadLineItems(orderId);
-                                }, 500);
-                            } else {
-                                swalError('Error occured, please contact support!');
-                            }
-                        })
-                        .fail(function() {
-                            swalError('Error occured, please contact support!');
-                        });
-                }
-            })
-            return false;
-        });
-
 
 
         function swalSuccess(message) {

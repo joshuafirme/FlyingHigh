@@ -36,7 +36,7 @@ class HubController extends Controller
         $all_req = $request->all();
         $all_req['slug'] = Str::slug($all_req['name'], '-');
         if ($hub->isReceiverExists($request->receiver)) {
-        return redirect()->back()->with('danger', 'Receiver is already exists.');
+            return redirect()->back()->with('danger', 'Receiver is already exists.');
         }
         Hub::create($all_req);
         return redirect()->back()->with('success', 'Hub was successfully added.');
