@@ -21,11 +21,59 @@ class LotCode extends Model
         'status',
     ];
 
+    function getHeaders() {
+        return ["SKU","Lot Code","Description","Stock","Expiration"];
+    }
+
+    function getColumns() {
+        return ["sku","lot_code","description","stock","expiration"];
+    }
+
     public function getAllPaginate($per_page) {
         return self::select($this->table . '.*', 'P.description')
             ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
-            ->orderBy($this->table . '.updated_at', 'desc')
+            ->orderBy($this->table . '.created_at', 'desc')
             ->paginate($per_page);
+    }
+
+    public function getAll() {
+        return self::select($this->table . '.*', 'P.description')
+            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+            ->orderBy($this->table . '.created_at', 'desc')
+            ->get();
+    }
+    
+    public function getExpired($per_page) {
+        return self::select($this->table . '.*', 'P.description')
+            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+            ->whereDate($this->table . '.expiration', '=', date('Y-m-d'))
+            ->where('lot_code', '!=', 0)
+            ->orderBy($this->table . '.expiration', 'desc')
+            ->paginate($per_page);
+    }
+
+    public function getExpiredFilterPaginate($per_page) {
+        $date_from = request()->date_from ? request()->date_from : date('Y-m-d');
+        $date_to = request()->date_to ? request()->date_to : date('Y-m-d');
+        return self::select($this->table . '.*', 'P.description')
+            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+            ->whereDate($this->table . '.expiration', '<', date('Y-m-d'))
+            ->where('lot_code', '!=', 0)
+            ->orderBy($this->table . '.expiration', 'desc')
+            ->whereBetween(DB::raw('DATE(' . $this->table . '.expiration)'), [$date_from, $date_to])
+            ->paginate($per_page);
+    }
+
+    public function getExpiredFilter($date_from, $date_to) {
+        $date_from = $date_from ? $date_from : date('Y-m-d');
+        $date_to = $date_to ? $date_to : date('Y-m-d');
+        return self::select($this->table . '.*', 'P.description')
+            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+            ->whereDate($this->table . '.expiration', '<', date('Y-m-d'))
+            ->where('lot_code', '!=', 0)
+            ->orderBy($this->table . '.expiration', 'desc')
+            ->whereBetween(DB::raw('DATE(' . $this->table . '.expiration)'), [$date_from, $date_to])
+            ->get();
     }
 
     public function createLotCode($sku, $lot_code, $expiration, $qty) {

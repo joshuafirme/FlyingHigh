@@ -146,7 +146,7 @@
                                                                 aria-expanded="false"><i
                                                                     class="fas fa-ellipsis-v"></i></a>
                                                             <div class="dropdown-menu">
-                                                               <!-- <a class="btn dropdown-item btn-transfer"
+                                                                <!-- <a class="btn dropdown-item btn-transfer"
                                                                     data-backdrop="static" data-keyboard="false"
                                                                     data-target="#transferModal" data-toggle="modal"
                                                                     data-sku="{{ $item->sku }}"

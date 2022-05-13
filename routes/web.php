@@ -17,7 +17,7 @@ use App\Http\Controllers\Reports\StockAdjustmentController;
 use App\Http\Controllers\Reports\HubTransferController;
 use App\Http\Controllers\Reports\PickupReportController;
 use App\Http\Controllers\Reports\InboundTransferController;
-use App\Http\Controllers\Reports\InventoryReportController;
+use App\Http\Controllers\Reports\ExpiredController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -129,7 +129,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/inbound-transfer/export/{date_from}/{date_to}', [InboundTransferController::class, 'exportReport']);
     Route::get('/reports/inbound-transfer', [InboundTransferController::class, 'index']);
 
+    Route::get('/reports/expired', [ExpiredController::class, 'index']);
+    Route::get('/reports/expired/filter', [ExpiredController::class, 'filter']);
+    Route::get('/reports/expired/preview/{date_from}/{date_to}', [ExpiredController::class, 'previewReport']);
+    Route::get('/reports/expired/download/{date_from}/{date_to}', [ExpiredController::class, 'downloadReport']);
+    Route::get('/reports/expired/export/{date_from}/{date_to}', [ExpiredController::class, 'exportReport']);
+
     Route::get('/product-lot-codes', [ProductLotCodesController::class, 'index']);
+    Route::get('/product-lot-codes/preview', [ProductLotCodesController::class, 'previewReport']);
+    Route::get('/product-lot-codes/download', [ProductLotCodesController::class, 'downloadReport']);
+    Route::get('/product-lot-codes/export', [ProductLotCodesController::class, 'exportReport']);
 
 
     Route::post('increment-stock', [ProductController::class, 'incrementStock']);

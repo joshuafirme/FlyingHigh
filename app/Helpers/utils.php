@@ -98,18 +98,20 @@ class Utils
         return $expiration && strpos($expiration, '1970-01-01') === false ? $expiration : 'N/A';
     }
 
-    public static function renderReport($items, $title, $headers, $columns, $date_from, $date_to)
+    public static function renderReport($items, $title, $headers, $columns, $date_from = "", $date_to ="")
     {  
         if (strpos($title, 'For Pickup') !== false || strpos($title, 'Picked Up') !== false
             || strpos($title, 'Returned') !== false || strpos($title, 'Overdue') !== false
             || strpos($title, 'Inbound Transfer') !== false) { 
             return self::renderCustomReport($items, $title, $headers, $columns, $date_from, $date_to);
         }
-        else {      if($date_from == $date_to) {
-            $date = date("F j, Y", strtotime($date_from));
-        }else {
-            $date = date("F j, Y", strtotime($date_from)) .' - '. date("F j, Y", strtotime($date_to));
-        }
+        else {      
+            if($date_from == $date_to
+            || ($date_from == "" && $date_to =="")) {
+                $date = date("F j, Y", strtotime($date_from));
+            }else {
+                $date = date("F j, Y", strtotime($date_from)) .' - '. date("F j, Y", strtotime($date_to));
+            }
         
         $output = '
         <div style="width:100%">

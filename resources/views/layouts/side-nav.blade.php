@@ -56,8 +56,7 @@
                 </li>
                 
                 <li>
-                    <a href="#" class=""><img
-                            src="https://img.icons8.com/ios/25/000000/warehouse-1.png" /><span>
+                    <a href="#" class=""><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAA/klEQVRIie3UvUoDQRTF8Z/fiKQxvZWNhWBjaZHGJ4itpV1ImVJ7+4CvIHaWtoJ9qmAhgiCo8RlikTGwy26cWVdMkT8sA7N3zjl39+4yZzRxiY+wNmMPLkfUNHCOIbZwHNZh2G8khs2wjjO84hq7ufs7uMIbethMEV/DKZ5wh4Mf6vdCiBd0sTGreAkneMQ9jlKS4RC3eDZ5Aiv5gn0M8IBWonieVtAZBN0pF+j/UjxPP+hmpuu9ZpOpXtkIf2Jc4RoVia2WmGybDEIq46LNmI/xm7Zs6nbswbJOirhRrbuZJoWt123yL++kMguThcnf0xHxo4tglNPp1JJubvgCJ2g5VUtoVOIAAAAASUVORK5CYII="/><span>
                             Hub
                             <span class="float-right menu-arrow">
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
@@ -105,6 +104,9 @@
                     </li>
                     <li>
                         <a href="{{ url('/reports/stock-adjustment') }}">Stock Adjustment</a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/reports/expired') }}">Expired List</a>
                     </li>
                 </ul>
             </li>
