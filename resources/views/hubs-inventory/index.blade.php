@@ -101,16 +101,46 @@
                                                     <td>
                                                         @if ($item->status == 2)
                                                             <span class="badge badge-pill badge-primary">Pending</span>
+                                                        @elseif ($item->status == 3)
+                                                            <span class="badge badge-pill badge-warning">Partially Completed</span>
+                                                        @elseif ($item->status == 4)
+                                                            <span class="badge badge-pill badge-success">Completed</span>
                                                         @endif
                                                     </td>
                                                     <td>
                                                         @if ($item->status == 2)
-                                                            <a class="btn btn-sm btn-primary btn-deliver"
+                                                            <a class="btn btn-sm btn-primary btn-pickup"
                                                                 data-order-details="{{ json_encode($item) }}"
                                                                 data-shipmentId="{{ $item->shipmentId }}">
-                                                                <i class="fas fa-hand-receiving"></i> Pickup</a>
+                                                                Process Pickup
+                                                            </a>
+                                                            <a class="btn btn-sm btn-primary btn-mark-as-partial"
+                                                                data-shipmentId="{{ $item->shipmentId }}">
+                                                                Mark as Partially
+                                                                Completed
+                                                            </a>
+                                                            <a class="btn btn-sm btn-primary btn-mark-as-completed"
+                                                                data-shipmentId="{{ $item->shipmentId }}">
+                                                                 Mark as Completed
+                                                            </a>
                                                         @elseif ($item->status == 3)
+                                                            <a class="btn btn-sm btn-primary btn-pickup"
+                                                                data-order-details="{{ json_encode($item) }}"
+                                                                data-shipmentId="{{ $item->shipmentId }}">
+                                                                 Process Pickup
+                                                            </a>
+                                                            <a class="btn btn-sm btn-primary btn-mark-as-completed"
+                                                                data-shipmentId="{{ $item->shipmentId }}">
+                                                                 Mark as Completed
+                                                            </a>
+                                                        @elseif ($item->status == 4)
+                                                            <a class="btn btn-sm btn-primary btn-pickup"
+                                                                data-order-details="{{ json_encode($item) }}"
+                                                                data-shipmentId="{{ $item->shipmentId }}">
+                                                                 Process Pickup
+                                                            </a>
                                                         @endif
+
                                                     </td>
                                                 </tr>
                                             @endforeach

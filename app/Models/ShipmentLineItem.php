@@ -41,6 +41,7 @@ class ShipmentLineItem extends Model
                     "reasonCode",
                     "shipDateTime",
                     "lotNumber",
+                    $this->table.".status"
                 )
         ->leftJoin('products as P', 'P.sku', '=', $this->table.'.partNumber')
         ->where('shipmentId', $shipmentId)
@@ -51,5 +52,10 @@ class ShipmentLineItem extends Model
     public function changeStatus($shipmentId, $partNumber, $status) {
         self::where('shipmentId', $shipmentId)->where('partNumber', $partNumber)->update(['status' => $status]);
     }
+
+    public function doPickUp($request, $status) {
+        self::where('orderId', $request->orderId)->where('partNumber', $request->partNumber)->update(['status' => $status]);
+    }
+    
                 
 }

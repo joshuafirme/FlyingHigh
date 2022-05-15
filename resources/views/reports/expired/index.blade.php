@@ -56,7 +56,7 @@
                                             <th scope="col">SKU</th>
                                             <th scope="col">Lot Code</th>
                                             <th scope="col">Description</th>
-                                            <th scope="col">Stock</th>
+                                            <th scope="col">Qty</th>
                                             <th scope="col">Expiration</th>
                                             <th scope="col">Condition</th>
                                         </tr>

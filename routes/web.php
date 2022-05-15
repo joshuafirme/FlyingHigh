@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/shipment/change-status/{shipmentId}/{status}', [ShipmentsController::class, 'changeStatus']);
     Route::post('/shipment/do-ship/{shipmentId}', [ShipmentsController::class, 'doShip']);
     Route::post('/shipment/do-delivered/{shipmentId}', [ShipmentsController::class, 'doDelivered']);
+    Route::post('/shipment/do-pickup', [ShipmentsController::class, 'doPickup']);
 
     //Route::get('/pickedup-list', [PickupController::class, 'pickedUpList']);
     

@@ -67,7 +67,8 @@ class LotCode extends Model
     public function getExpiredFilter($date_from, $date_to) {
         $date_from = $date_from ? $date_from : date('Y-m-d');
         $date_to = $date_to ? $date_to : date('Y-m-d');
-        return self::select($this->table . '.*', 'P.description')
+        $tbl = $this->table;
+        return self::select($tbl . '.sku', $tbl . '.lot_code', 'P.description', $tbl . '.stock', $tbl . '.expiration')
             ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
             ->whereDate($this->table . '.expiration', '<', date('Y-m-d'))
             ->where('lot_code', '!=', 0)

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Reports;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\LotCode;
+use App\Exports\ExpiredExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Utils;
 
 class ExpiredController extends Controller
@@ -54,7 +56,7 @@ class ExpiredController extends Controller
     public function exportReport()
     {
         return Excel::download(
-            new InboundTransfer, 'inbound-transfer-'.request()->date_from.'-to-'.request()->date_to.'.xlsx'
+            new ExpiredExport, 'expired-list-'.request()->date_from.'-to-'.request()->date_to.'.xlsx'
         );
     }
 

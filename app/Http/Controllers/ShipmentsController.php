@@ -98,6 +98,36 @@ class ShipmentsController extends Controller
         ], 200);      
     }
 
+    public function doPickup() {
+        $shipment = new Shipment; 
+        $shipment_line_items = new ShipmentLineItem; 
+        $lc = new LotCode;
+        $pickup = new Pickup;
+
+        $shipmentId = request()->shipmentId;
+        $orderId = request()->orderId;
+        $qtyShipped = request()->qtyShipped;
+
+        $status = 3;
+
+        $shipment_line_items->doPickUp(request(), $status);
+
+        return response()->json([
+            'success' => true
+        ], 200);      
+    }
+
+    public function changeStatus($shipmentId, $status) {
+        $shipment = new Shipment; 
+        $pickup = new Pickup;
+        $shipment->changeStatus($shipmentId, $status);
+        $pickup->changeStatus($shipmentId, $status);
+
+        return response()->json([
+            'success' => true
+        ], 200);      
+    }
+
     public function fetchShipments() 
     {
         $path = public_path() . '/shipments.json';

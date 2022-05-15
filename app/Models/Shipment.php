@@ -31,7 +31,7 @@ class Shipment extends Model
     }
 
     public function getDeliveredByReceiver($receiver, $per_page) {
-        return self::where('receiver',$receiver)->where('status', 2)->paginate($per_page);
+        return self::where('receiver',$receiver)->whereIn('status', [2,3,4])->paginate($per_page);
     }
 
     public function searchDeliveredByReceiver($receiver, $key, $per_page) {

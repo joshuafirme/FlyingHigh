@@ -42,13 +42,19 @@ class Utils
     }
 
     public static function getStatusTextClass($status) {
-            $status_text = 'Pending';
+            $status_text = 'Shipment Status - Pending';
             $status_class = 'primary';
             if ($status == 1) {
                 $status_text = 'Shipped';
                 $status_class = 'warning';
             } else if ($status == 2) {
                 $status_text = 'Delivered';
+                $status_class = 'success';
+            } else if ($status == 3) {
+                $status_text = 'Pickup Status - Partially Completed';
+                $status_class = 'warning';
+            } else if ($status == 4) {
+                $status_text = 'Pickup Status - Completed';
                 $status_class = 'success';
             }
             return json_encode([
@@ -107,8 +113,8 @@ class Utils
         }
         else {      
             if($date_from == $date_to
-            || ($date_from == "" && $date_to =="")) {
-                $date = date("F j, Y", strtotime($date_from));
+            || ($date_from == "" && $date_to == "")) {
+                $date = date("F j, Y", strtotime(date('Y-m-d')));
             }else {
                 $date = date("F j, Y", strtotime($date_from)) .' - '. date("F j, Y", strtotime($date_to));
             }
