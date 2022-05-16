@@ -48,18 +48,48 @@
                             </div>
                         </div>
                     </div>
-                     <div class="ic_parent_permission">
+                    <div class="ic_parent_permission">
                         <div class="row my-2">
                             <div class="col-8 pt-1">
                                 <div class="custom-control">
-                                    <label for="customCheck-1"><strong>Product
+                                    <label><strong> Warehouse
                                         </strong></label>
                                 </div>
                             </div>
                             <div class="col-4 pt-1">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" name="permission[]" value="Product"
-                                        class="ic-parent-permission" id="chkbx-Product" ref="1">
+                                    <input type="checkbox" class="ic-parent-permission" value="warehouse"
+                                        id="chkbx-all-warehouse">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="row">
+                            <div class="col-8 pt-1">
+                                <div class="custom-control">
+                                    <label>Product</label>
+                                </div>
+                            </div>
+                            <div class="col-4 pt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="permission[]" id="chkbx-Product" value="Product"
+                                        class="parent-identy-warehouse">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="row">
+                            <div class="col-8 pt-1">
+                                <div class="custom-control">
+                                    <label>Lot Code List</label>
+                                </div>
+                            </div>
+                            <div class="col-4 pt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="permission[]" id="chkbx-LotCodeList" value="Lot Code List"
+                                        class="parent-identy-warehouse">
                                 </div>
                             </div>
                         </div>
@@ -146,67 +176,6 @@
                         <div class="row my-2">
                             <div class="col-8 pt-1">
                                 <div class="custom-control">
-                                    <label><strong>Pickup
-                                        </strong></label>
-                                </div>
-                            </div>
-                            <div class="col-4 pt-1">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="ic-parent-permission" value="pickup"
-                                        id="chkbx-all-pickup">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="row">
-                            <div class="col-8 pt-1">
-                                <div class="custom-control">
-                                    <label>For Pickup</label>
-                                </div>
-                            </div>
-                            <div class="col-4 pt-1">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" name="permission[]" id="chkbx-ForPickup" value="For Pickup"
-                                        class="parent-identy-pickup">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="row">
-                            <div class="col-8 pt-1">
-                                <div class="custom-control">
-                                    <label>Picked Up</label>
-                                </div>
-                            </div>
-                            <div class="col-4 pt-1">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" name="permission[]" id="chkbx-PickedUp" value="Picked Up"
-                                        class="parent-identy-pickup">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="row">
-                            <div class="col-8 pt-1">
-                                <div class="custom-control">
-                                    <label>Returned</label>
-                                </div>
-                            </div>
-                            <div class="col-4 pt-1">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" name="permission[]" id="chkbx-Returned" value="Returned"
-                                        class="parent-identy-pickup">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ic_parent_permission">
-                        <div class="row my-2">
-                            <div class="col-8 pt-1">
-                                <div class="custom-control">
                                     <label><strong>Hub
                                         </strong></label>
                                 </div>
@@ -236,6 +205,67 @@
                             </div>
                         </div>
                     @endforeach
+                                       <div class="ic_parent_permission">
+                        <div class="row my-2">
+                            <div class="col-8 pt-1">
+                                <div class="custom-control">
+                                    <label><strong> Catalog
+                                        </strong></label>
+                                </div>
+                            </div>
+                            <div class="col-4 pt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="ic-parent-permission" value="catalog"
+                                        id="chkbx-all-catalog">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="row">
+                            <div class="col-8 pt-1">
+                                <div class="custom-control">
+                                    <label>Hub List</label>
+                                </div>
+                            </div>
+                            <div class="col-4 pt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="permission[]" id="chkbx-HubList" value="Hub List"
+                                        class="parent-identy-catalog">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="row">
+                            <div class="col-8 pt-1">
+                                <div class="custom-control">
+                                    <label>Adjustment Remarks</label>
+                                </div>
+                            </div>
+                            <div class="col-4 pt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="permission[]" id="chkbx-AdjustmentRemarks" value="Adjustment Remarks"
+                                        class="parent-identy-catalog">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="row">
+                            <div class="col-8 pt-1">
+                                <div class="custom-control">
+                                    <label>Reason for Return</label>
+                                </div>
+                            </div>
+                            <div class="col-4 pt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="permission[]" id="chkbx-ReasonForReturn" value="Reason For Return"
+                                        class="parent-identy-catalog">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">

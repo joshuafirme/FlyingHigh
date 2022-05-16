@@ -54,7 +54,7 @@
                     $('#chkbx-' + permissions[i].replace(/\s/g, '')).prop('checked', true);
                 }
 
-                let parent_checkboxes = ['administration', 'pickup', 'hub'];
+                let parent_checkboxes = ['warehouse', 'administration', 'pickup', 'hub', 'catalog'];
                 let checked_counter = 0;
 
                 for (let el of parent_checkboxes) {

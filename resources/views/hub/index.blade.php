@@ -14,7 +14,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Catalog</a></li>
-                            <li class="breadcrumb-item active">Hub</li>
+                            <li class="breadcrumb-item active">Hub List</li>
                         </ol>
                     </div>
                 </div>

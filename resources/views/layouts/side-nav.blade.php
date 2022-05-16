@@ -148,7 +148,7 @@
                         </span>
                     </a>
                     <ul class="submenu">
-                        <li class=""><a href="{{ url('/hub') }}">Hub</a></li>
+                        <li class=""><a href="{{ url('/hub') }}">Hub List</a></li>
                         <li class=""><a href="{{ url('/adjustment-remarks') }}">Adjustment Remarks</a>
                         <li class=""><a href="{{ url('/return-reason') }}">Reason for Return</a>
                         </li>
