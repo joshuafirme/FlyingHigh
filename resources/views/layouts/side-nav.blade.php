@@ -40,7 +40,7 @@
                             <a href="{{ url('/product-lot-codes') }}">Lot Code List</a>
                         </li>
                         <li>
-                            <a href="{{ url('#') }}">Stock Transfer Order</a>
+                            <a href="{{ url('/transfer-request') }}">Transfer Request</a>
                         </li>
                     </ul>
                 </li>

@@ -13,6 +13,7 @@ use App\Http\Controllers\PickupController;
 use App\Http\Controllers\ShipmentsController;
 use App\Http\Controllers\AdjustmentRemarksController;
 use App\Http\Controllers\ReturnReasonController;
+use App\Http\Controllers\TransferRequestController;
 use App\Http\Controllers\Reports\StockAdjustmentController;
 use App\Http\Controllers\Reports\HubTransferController;
 use App\Http\Controllers\Reports\PickupReportController;
@@ -141,6 +142,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/product-lot-codes/download', [ProductLotCodesController::class, 'downloadReport']);
     Route::get('/product-lot-codes/export', [ProductLotCodesController::class, 'exportReport']);
 
+    Route::get('/transfer-request', [TransferRequestController::class, 'index']);
+    Route::post('/transfer-request/import', [TransferRequestController::class, 'import']);
 
     Route::post('increment-stock', [ProductController::class, 'incrementStock']);
 });
