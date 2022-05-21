@@ -34,7 +34,7 @@ class ProductController extends Controller
     
     public function index() 
     {
-        $products = Product::orderBy('created_at','desc')->paginate(10);
+        $products = Product::orderBy('created_at','desc')->paginate(50);
         $remarks = AdjustmentRemarks::where('status', 1)->get();
         $product_count = Product::count('id');
         $lot_code = new LotCode;
@@ -215,7 +215,7 @@ class ProductController extends Controller
         $key = isset(request()->key) ? request()->key : "";
         $products = Product::where('sku', 'LIKE', '%' . $key . '%')
                     ->orWhere('description', 'LIKE', '%' . $key . '%')
-                    ->paginate(10);
+                    ->paginate(50);
         $remarks = AdjustmentRemarks::where('status', 1)->get();
         $hubs = Hub::where('status', 1)->get();
         $product_count = Product::count('id');

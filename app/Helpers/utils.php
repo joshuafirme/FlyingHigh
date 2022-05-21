@@ -112,7 +112,7 @@ class Utils
             return self::renderCustomReport($items, $title, $headers, $columns, $date_from, $date_to);
         }
         else {      
-            if($date_from == $date_to
+            if(($date_from == $date_to)
             || ($date_from == "" && $date_to == "")) {
                 $date = date("F j, Y", strtotime(date('Y-m-d')));
             }else {
@@ -146,6 +146,17 @@ class Utils
                             }
                             if ($column == 'lot_code') {
                                 $data[$column] = $data[$column] ? $data[$column] : 'N/A';
+                            }
+                            if (strpos($title, 'Stock Transfer') !== false && $column == 'status') {
+                                    if ($data[$column] == 0) {
+                                        $data[$column] = "Pending";
+                                    }
+                                    if ($data[$column] == 1) {
+                                        $data[$column] = "Partially Transferred";
+                                    }
+                                    else if ($data[$column] == 2) {
+                                        $data[$column] = "Transferred";
+                                    }
                             }
                             $output .= '<td style="border: 1px solid; padding:10px;">'. $data[$column] .'</td>';
                         }                 

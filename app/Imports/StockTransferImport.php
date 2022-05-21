@@ -2,11 +2,11 @@
 
 namespace App\Imports;
 
-use App\Models\TransferRequest;
+use App\Models\StockTransfer;
 use Maatwebsite\Excel\Concerns\ToModel;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
-class TransferRequestImport implements ToModel
+class StockTransferImport implements ToModel
 {
     /**
     * @param array $row
@@ -15,12 +15,12 @@ class TransferRequestImport implements ToModel
     */
     public function model(array $row)
     {
-        $tr = new TransferRequest;
+        $tr = new StockTransfer;
         //if ($row[11] != 'SKU') {
             //dd($row);
             $order_date = ExcelDate::excelToDateTimeObject($row[9]);
             $delivery_date = ExcelDate::excelToDateTimeObject($row[1]);
-            return new TransferRequest([
+            return new StockTransfer([
                 'tracking_no' => request()->tracking_no,
                 'sku' => $row[11],
                 'description' => $row[14],

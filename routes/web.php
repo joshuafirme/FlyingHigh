@@ -13,7 +13,7 @@ use App\Http\Controllers\PickupController;
 use App\Http\Controllers\ShipmentsController;
 use App\Http\Controllers\AdjustmentRemarksController;
 use App\Http\Controllers\ReturnReasonController;
-use App\Http\Controllers\TransferRequestController;
+use App\Http\Controllers\StockTransferController;
 use App\Http\Controllers\Reports\StockAdjustmentController;
 use App\Http\Controllers\Reports\HubTransferController;
 use App\Http\Controllers\Reports\PickupReportController;
@@ -142,8 +142,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/product-lot-codes/download', [ProductLotCodesController::class, 'downloadReport']);
     Route::get('/product-lot-codes/export', [ProductLotCodesController::class, 'exportReport']);
 
-    Route::get('/transfer-request', [TransferRequestController::class, 'index']);
-    Route::post('/transfer-request/import', [TransferRequestController::class, 'import']);
+    Route::get('/stock-transfer', [StockTransferController::class, 'index']);
+    Route::get('/stock-transfer/search', [StockTransferController::class, 'search']);
+    Route::get('/stock-transfer/filter', [StockTransferController::class, 'filter']);
+    Route::post('/stock-transfer/transfer', [StockTransferController::class, 'transfer']);
+    Route::post('/stock-transfer/import', [StockTransferController::class, 'import']);
+    Route::get('/stock-transfer/preview/{date_from}/{date_to}', [StockTransferController::class, 'previewReport']);
+    Route::get('/stock-transfer/download/{date_from}/{date_to}', [StockTransferController::class, 'downloadReport']);
+    Route::get('/stock-transfer/export/{date_from}/{date_to}', [StockTransferController::class, 'export']);
 
     Route::post('increment-stock', [ProductController::class, 'incrementStock']);
 });

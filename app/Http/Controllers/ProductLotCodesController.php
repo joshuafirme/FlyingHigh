@@ -9,7 +9,7 @@ use Utils;
 class ProductLotCodesController extends Controller
 {
     public function index(LotCode $lc) {
-        $products = $lc->getAllPaginate(10);
+        $products = $lc->getAllPaginate(50);
         return view('product-lot-codes.index', compact('products'));
     }
 

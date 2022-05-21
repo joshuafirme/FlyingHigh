@@ -28,6 +28,15 @@ class Product extends Model
         'status',
     ];
 
+    public function createProduct($request) {
+        self::create([
+            'sku' => $request->sku,
+            'description' => $request->description,
+            'qty' => $request->qty_transfer,
+            'buffer_stock' => 0
+        ]);
+    }
+
     public function getAll() {
         $data = self::select('sku','description','buffer_stock')->where('status', 1)->get();
         $lc = new LotCode;
