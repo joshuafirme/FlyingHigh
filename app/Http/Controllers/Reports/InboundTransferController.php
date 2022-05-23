@@ -6,25 +6,26 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\TransactionLineItems;
-use App\Exports\InboundTransfer;
+use App\Exports\InboundTransferExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\InboundTransfer;
 use Utils;
 
 class InboundTransferController extends Controller
 {
-    public function index(Transaction $trans) 
+    public function index(InboundTransfer $trans) 
     {
-        $transactions = $trans->getAllPaginate(10);
-        return view('reports.inbound-transfer.index', compact('transactions'));
+        $transfers = $trans->getDataTodayPaginate(10);
+        return view('reports.inbound-transfer.index', compact('transfers'));
     }
 
-    public function filter(Transaction $trans) 
+    public function filter(InboundTransfer $trans) 
     {
-        $transactions = $trans->filterPaginate(10);
-        return view('reports.inbound-transfer.index', compact('transactions'));
+        $transfers = $trans->filterPaginate(10);
+        return view('reports.inbound-transfer.index', compact('transfers'));
     }
 
-    public function previewReport($date_from, $date_to, Transaction $trans){
+    public function previewReport($date_from, $date_to, InboundTransfer $trans){
         
         $items = Utils::objectToArray($trans->filter($date_from, $date_to));
         $title = "Inbound Transfer Report";
@@ -40,9 +41,9 @@ class InboundTransferController extends Controller
         return $pdf->stream($date_from.'-to-'.$date_to.'.pdf');
     }
     
-    public function downloadReport($date_from, $date_to, Transaction $trans)
+    public function downloadReport($date_from, $date_to, InboundTransfer $trans)
     {
-        $items = Utils::objectToArray($trans->filter($date_from, $date_to));
+      $items = Utils::objectToArray($trans->filter($date_from, $date_to));
         $title = "Inbound Transfer Report";
         $headers = $trans->getHeaders();
         $columns = $trans->getColumns();
@@ -59,7 +60,7 @@ class InboundTransferController extends Controller
     public function exportReport()
     {
         return Excel::download(
-            new InboundTransfer, 'inbound-transfer-'.request()->date_from.'-to-'.request()->date_to.'.xlsx'
+            new InboundTransferExport, 'inbound-transfer-'.request()->date_from.'-to-'.request()->date_to.'.xlsx'
         );
     }
 

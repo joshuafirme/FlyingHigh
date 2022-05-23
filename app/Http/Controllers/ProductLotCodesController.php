@@ -4,10 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LotCode;
+use App\Models\User;
 use Utils;
 
 class ProductLotCodesController extends Controller
 {
+    private $page = "Lot Code List";
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (User::isPermitted($this->page)) { return $next($request); }
+            return abort(401);
+        });
+    }
+
     public function index(LotCode $lc) {
         $products = $lc->getAllPaginate(50);
         return view('product-lot-codes.index', compact('products'));

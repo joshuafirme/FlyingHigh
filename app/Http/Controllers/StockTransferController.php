@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\StockTransferImport;
 use App\Exports\StockTransferExport;
 use App\Models\StockTransfer;
+use App\Models\InboundTransfer;
 use App\Models\LotCode;
 use App\Models\Product;
 use Utils;
@@ -31,7 +32,7 @@ class StockTransferController extends Controller
         return view('stock-transfer.index', compact('transfer_request'));
     }
 
-    public function transfer(StockTransfer $tr, Product $product, LotCode $lc) 
+    public function transfer(StockTransfer $tr, Product $product, LotCode $lc, InboundTransfer $inbound_transfer) 
     { 
         $sku = request()->sku;
         $expiration = request()->expiration;
@@ -53,6 +54,7 @@ class StockTransferController extends Controller
                     $lc->createLotCode($sku, $lot_code, $expiration, $qty_transfer);
                 }
                 $tr->changeStatus($id);
+                $inbound_transfer->record(request());
                 return response()->json([ 'success' => true ], 200);
             }
             return response()->json([ 'success' => false, 'message' => 'invalid_qty' ], 200);

@@ -35,7 +35,6 @@
                                         <label>Date </label>
                                         <input type="date" class="form-control ml-0 ml-sm-2" name="date_from"
                                             value="{{ $date_from }}" required>
-                                        <label> - </label>
                                         <input type="date" class="form-control ml-0 ml-sm-2" name="date_to"
                                             value="{{ $date_to }}" required>
                                     </div>
@@ -65,29 +64,29 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Transaction Reference Number</th>
-                                            <th scope="col">Transaction Type</th>
-                                            <th scope="col">Created at</th>
-                                            <th>Action</th>
+                                            <th scope="col">Tracking #</th>
+                                            <th scope="col">SKU</th>
+                                            <th scope="col">Lot Code</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Qty</th>
+                                            <th scope="col">Date time transferred</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($transactions))
-                                            @foreach ($transactions as $item)
+                                        @if (count($transfers))
+                                            @foreach ($transfers as $item)
                                                 <tr>
-                                                    <td>{{ $item->transactionReferenceNumber }}</td>
-                                                    <td>{{ $item->transactionType }}</td>
+                                                    <td>{{ $item->tracking_no }}</td>
+                                                    <td>{{ $item->sku }}</td>
+                                                    <td>{{ $item->lot_code }}</td>
+                                                    <td>{{ $item->description }}</td>
+                                                    <td>{{ $item->qty }}</td>
                                                     <td>{{ Utils::formatDate($item->created_at) }}</td>
-                                                    <td><a class="btn btn-outline-primary btn-details"
-                                                            data-target="#transactionModal" data-toggle="modal"
-                                                            data-orderId="{{ $item->orderId }}"
-                                                            data-order-details="{{ json_encode($item) }}"> View
-                                                            Details</a></td>
                                                 </tr>
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="10">
+                                                <td colspan="11">
                                                     <div class="alert alert-danger alert-dismissible fade show"
                                                         role="alert">
                                                         No data found.
@@ -105,7 +104,7 @@
                             </div>
 
                             @php
-                                echo $transactions->appends(request()->query())->links('pagination::bootstrap-4');
+                                echo $transfers->appends(request()->query())->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>

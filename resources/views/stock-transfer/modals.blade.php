@@ -45,6 +45,10 @@
             <div class="modal-body row g-3">
                 <input type="hidden" name="id">
                 <div class="col-md-12 mt-1">
+                    <label class="form-label">Tracking #</label>
+                    <input type="text" name="tracking_no" class="form-control" readonly>
+                </div>
+                <div class="col-md-12 mt-1">
                     <label class="form-label">SKU</label>
                     <input type="text" name="sku" class="form-control" readonly>
                 </div>
