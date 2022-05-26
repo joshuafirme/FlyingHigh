@@ -9,7 +9,7 @@ use App\Http\Controllers\HubInventoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductLotCodesController;
 use App\Http\Controllers\ClientController;
-use App\Http\Controllers\PickupController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShipmentsController;
 use App\Http\Controllers\AdjustmentRemarksController;
 use App\Http\Controllers\ReturnReasonController;
@@ -62,22 +62,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/adjustment-remarks/search', [AdjustmentRemarksController::class, 'search'])->name('searchRemarks');
     Route::resource('adjustment-remarks', AdjustmentRemarksController::class);
 
-    Route::get('/pickup/{status}/search', [PickupController::class, 'search'])->name('searchPickup');
-    Route::post('/pickup/tag-as-overdue/{shipmentId}', [PickupController::class, 'tagAsOverdue']);
-    Route::post('/pickup/tag-as-picked-up/{shipmentId}', [PickupController::class, 'tagAsPickedUp']);
-    Route::post('/pickup/tag-one-as-picked-up', [PickupController::class, 'tagOneAsPickedUp']);
-    Route::post('/pickup/return', [PickupController::class, 'tagAsReturned']);
-    Route::post('/pickup/change-status/{shipmentId}/{status}', [PickupController::class, 'changeStatus']);
-    Route::get('/pickup/returned', [PickupController::class, 'getReturnedList']);
-    Route::get('/pickup/generate-collection-receipt/{shipmentId}/{orderId}', [PickupController::class, 'generateCollectionReceipt']);
-    Route::get('/pickup/generate-delivery-receipt/{shipmentId}/{orderId}', [PickupController::class, 'generateDeliveryReceipt']);
-    Route::get('/get-line-items/{orderId}', [PickupController::class, 'getLineItems']);
+    Route::get('/orders/{status}/search', [OrderController::class, 'search'])->name('searchPickup');
+    Route::post('/orders/tag-as-overdue/{shipmentId}', [OrderController::class, 'tagAsOverdue']);
+    Route::post('/orders/tag-as-picked-up/{shipmentId}', [OrderController::class, 'tagAsPickedUp']);
+    Route::post('/orders/tag-one-as-picked-up', [OrderController::class, 'tagOneAsPickedUp']);
+    Route::post('/orders/return', [OrderController::class, 'tagAsReturned']);
+    Route::post('/orders/change-status/{shipmentId}/{status}', [OrderController::class, 'changeStatus']);
+    Route::get('/orders/returned', [OrderController::class, 'getReturnedList']);
+    Route::get('/orders/generate-collection-receipt/{shipmentId}/{orderId}', [OrderController::class, 'generateCollectionReceipt']);
+    Route::get('/orders/generate-delivery-receipt/{shipmentId}/{orderId}', [OrderController::class, 'generateDeliveryReceipt']);
+    Route::get('/get-line-items/{orderId}', [OrderController::class, 'getLineItems']);
     
-    Route::get('/orders', [PickupController::class, 'index']);
-    Route::get('/orders/search', [PickupController::class, 'search']);
-    Route::get('/order/generate/{shipmentId}/{orderId}', [PickupController::class, 'generateSalesInvoice']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/search', [OrderController::class, 'search']);
+    Route::get('/order/generate/{shipmentId}/{orderId}', [OrderController::class, 'generateSalesInvoice']);
 
-    Route::post('/order/do-ship', [PickupController::class, 'doShip']);
+    Route::post('/order/do-ship', [OrderController::class, 'doShip']);
 
     Route::get('/shipments', [ShipmentsController::class, 'index']);
     Route::get('/shipments/search', [ShipmentsController::class, 'search']);
@@ -87,7 +87,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/shipment/do-delivered/{shipmentId}', [ShipmentsController::class, 'doDelivered']);
     Route::post('/shipment/do-pickup', [ShipmentsController::class, 'doPickup']);
 
-    //Route::get('/pickedup-list', [PickupController::class, 'pickedUpList']);
+    //Route::get('/pickedup-list', [OrderController::class, 'pickedUpList']);
     
     Route::post('/client/update/{id}', [ClientController::class, 'update']);
     Route::get('/client/search', [ClientController::class, 'search'])->name('searchClient');
@@ -155,7 +155,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('/fetch-pickup', [PickupController::class, 'fetchPickupData']);
+Route::get('/fetch-orders', [OrderController::class, 'fetchOrdersData']);
 Route::get('/fetch-shipments', [ShipmentsController::class, 'fetchShipments']);
 
 

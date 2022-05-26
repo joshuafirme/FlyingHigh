@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
-class Pickup extends Model
+class Order extends Model
 {
     use HasFactory;
 
-    protected $table = 'pickups';
+    protected $table = 'orders';
 
     protected $fillable = [
         "shipmentId",
@@ -56,48 +56,48 @@ class Pickup extends Model
     }
 
     public function getAllPaginate($per_page, $status) {
-        return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
-            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
-            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
-            ->orderBy('pickups.updated_at', 'desc')
-            ->where('pickups.status', $status)
-            ->whereDate('pickups.updated_at', date('Y-m-d'))
+        return self::select('orders.*','orders.status','orders.updated_at','hubs.name as hub','return_reasons.reason')
+            ->leftJoin('hubs', 'hubs.id', '=', 'orders.hub_id')
+            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'orders.return_reason')
+            ->orderBy('orders.updated_at', 'desc')
+            ->where('orders.status', $status)
+            ->whereDate('orders.updated_at', date('Y-m-d'))
             ->paginate($per_page);
     }
 
     public function filterPaginate($per_page, $status) {
-        return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
-            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
-            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
-            ->orderBy('pickups.updated_at', 'desc')
-            ->where('pickups.status', $status)
-            ->whereBetween(DB::raw('DATE(pickups.updated_at)'), [request()->date_from, request()->date_to])
+        return self::select('orders.*','orders.status','orders.updated_at','hubs.name as hub','return_reasons.reason')
+            ->leftJoin('hubs', 'hubs.id', '=', 'orders.hub_id')
+            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'orders.return_reason')
+            ->orderBy('orders.updated_at', 'desc')
+            ->where('orders.status', $status)
+            ->whereBetween(DB::raw('DATE(orders.updated_at)'), [request()->date_from, request()->date_to])
             ->paginate($per_page);
     }
 
     public function filter($date_from, $date_to, $status) {
         $date_from = $date_from ? $date_from : date('Y-m-d');
         $date_to = $date_to ? $date_to : date('Y-m-d');
-        return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
-            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
-            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
-            ->orderBy('pickups.updated_at', 'desc')
-            ->where('pickups.status', $status)
-            ->whereBetween(DB::raw('DATE(pickups.updated_at)'), [$date_from, $date_to])
+        return self::select('orders.*','orders.status','orders.updated_at','hubs.name as hub','return_reasons.reason')
+            ->leftJoin('hubs', 'hubs.id', '=', 'orders.hub_id')
+            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'orders.return_reason')
+            ->orderBy('orders.updated_at', 'desc')
+            ->where('orders.status', $status)
+            ->whereBetween(DB::raw('DATE(orders.updated_at)'), [$date_from, $date_to])
             ->get();
     }
 
-    public function getPickup($per_page) {
-        return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub','return_reasons.reason')
-            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
-            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'pickups.return_reason')
+    public function getOrder($per_page) {
+        return self::select('orders.*','orders.status','orders.updated_at','hubs.name as hub','return_reasons.reason')
+            ->leftJoin('hubs', 'hubs.id', '=', 'orders.hub_id')
+            ->leftJoin('return_reasons', 'return_reasons.id', '=', 'orders.return_reason')
             ->paginate($per_page);
     }
     
 
-    public function searchPickup($key, $per_page) {
-        return self::select('pickups.*','pickups.status','pickups.updated_at','hubs.name as hub')
-            ->leftJoin('hubs', 'hubs.id', '=', 'pickups.hub_id')
+    public function searchOrder($key, $per_page) {
+        return self::select('orders.*','orders.status','orders.updated_at','hubs.name as hub')
+            ->leftJoin('hubs', 'hubs.id', '=', 'orders.hub_id')
             ->where('shipmentId', 'LIKE', '%' . $key . '%')
             ->orWhere('orderId', 'LIKE', '%' . $key . '%')
             ->paginate($per_page);

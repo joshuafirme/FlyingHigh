@@ -45,17 +45,10 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="{{ url('orders') }}" class="">
+                    <a href="{{ url('/orders') }}" class="">
                         <img
                             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABVklEQVRIid3TP0scURQF8J+yWyyooE3wC2hnKUFsRVCSRpBAahURhVR+gSBYWNgJYmlhIyim18LKysZPENEtjCsYCG6hxdyBddmZnciQgAcO3Hvee/e8f5f3gp4Saw3jU8THuG03WcZAlyIP2MkYG8cRfkQ+i8+4aDV5xmYXk3XZJz/HFg4jn8M3TLabpPEChiL+hd0Oc9rxGx/wGHk/btAHvR0W1DAYrGUUbccVplvy6dBe4blAobw5E2hgL9jAx3Sw00n+FlWs4B5PwUZo1aK77DZnAydeX21N8tO+l2VyjZEO+ih+lmWS9et60jWVEO4KGN3lmEzhUvIWJD9zrEDNwljCGer4E6zjFIt5C9ewWtYuKhn6UIaehyr2I/6KZjpQRp+kBgeYCR5o6ZGyTOYlTbgdfAqtVJN9fJFcUTPi9OpKM8nFPzHJwqqkkd7Clf+w3/eEF1NQVOD4fG8qAAAAAElFTkSuQmCC" /><span>
                             Orders </span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ url('shipments') }}">
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABeElEQVRIie3Uv2sUURAH8M8eSQpRwhEIEizsLLTMD1ILhzYKSQj+Efa2KYxYJIHUwTJaWcRKbMTCdEYDpggp0iUSETtJqrO4eXFd9m6XuxQG/MLwHt/ZN9+ZN7OP//gX0e7TDnGrjkADWZ/2BvN1RIYiqypkJdxPjNQVKQtQF7N4UuB+4CV+JaKh970vVYjcQDPseayLeI/RAZI/x1IhiXTtGTbwOjl6VdIv2niMm7EO3JNuOMMjfMSHskqq+lAXBxFr+SIr2cc6jnJcE3dTJReB+/juz7Q1g79iAJHidHVDe6iL4x5uYw9va4pO4EHst3CcHI3ChxleYTkOPdP5e6v6NoMvmAzbxXT+gzOMxb6FTzqjLdad4IvIX9c25nK+eZ3xHccpPA2hNMIrhWCrej89ya7mzlwL7lRJ31qReapkGJ+7VJLHtr+f/YWopBSZTg92sBYCm6p7MoUTvAg7Ce48aBlauIOveFchkHAdD2O/hW81z10i/AZ/6msirpU6UAAAAABJRU5ErkJggg=="/><span>
-                        Shipment </span>
                     </a>
                 </li>
                 

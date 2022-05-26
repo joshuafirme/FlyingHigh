@@ -17,7 +17,7 @@
             fetch("/get-line-items/" + orderId)
                 .then(data => data.json())
                 .then(data => {
-                    $('.tbl-pickup-details').html('');
+                    $('.tbl-orders-details').html('');
                     let html = "";
                     for (let item of data) {
                         if (item.lineType == 'PN' || item.lineType == 'N') {
@@ -35,7 +35,7 @@
                         html += '<td>' + item.taxableAmount + '</td>';
                         html += '<td>' + item.lineItemTotal + '</td>';
                         html += '</tr>';
-                        $('.tbl-pickup-details').append(html)
+                        $('.tbl-orders-details').append(html)
                     }
 
                 })
@@ -75,7 +75,7 @@
                     $.ajax({
                             type: 'POST',
                             _token: '{{ csrf_token() }}',
-                            url: '/pickup/change-status/' + shipmentId + '/' + status,
+                            url: '/orders/change-status/' + shipmentId + '/' + status,
                         })
                         .done(function(data) {
                             if (data.success == true) {
@@ -112,7 +112,7 @@
         }
 
         function initLoader() {
-            $('.tbl-pickup-details').html(
+            $('.tbl-orders-details').html(
                 '<tr><td colspan="5" class="text-center"><i class="fas fa-circle-notch fa-spin" style="font-size: 21px;"></i></td></tr>'
             );
         }
@@ -201,8 +201,8 @@
 
 
 
-        $('.btn-pickup-details').click(function() {
-            let mdl = $('#pickupModal');
+        $('.btn-orders-details').click(function() {
+            let mdl = $('#ordersModal');
             let v = $(this);
             let orderId = v.attr('data-orderId');
             let order_details = v.attr('data-order-details');
@@ -214,9 +214,9 @@
                 mdl.find('[name=hub_id]').remove();
             }
 
-            $('#pickupModal').attr('shipmentId', order_details.shipmentId);
-            $('#pickupModal').attr('orderId', order_details.orderId);
-            $('#pickupModal').attr('status', order_details.status);
+            $('#ordersModal').attr('shipmentId', order_details.shipmentId);
+            $('#ordersModal').attr('orderId', order_details.orderId);
+            $('#ordersModal').attr('status', order_details.status);
             for (var key of Object.keys(order_details)) {
                 console.log(key + ' ' + order_details[key])
                 if (order_details[key] == null || order_details[key] == "") {
@@ -228,7 +228,7 @@
             $('.status').addClass(status.class);
             $('.status').text(status.text);
 
-            $('.tbl-pickup-details').html('');
+            $('.tbl-orders-details').html('');
             initLoader();
             setTimeout(function() {
                 loadLineItems(orderId);
@@ -236,19 +236,19 @@
         });
 
         $(document).on('click', '.btn-mark-as-completed', function(event) {
-            let shipmentId = $('#pickupModal').attr('shipmentId');
+            let shipmentId = $('#ordersModal').attr('shipmentId');
             let status = 1;
             changeStatus(shipmentId, status)
         });
 
         $(document).on('click', '.btn-mark-as-overdue', function(event) {
-            let shipmentId = $('#pickupModal').attr('shipmentId');
+            let shipmentId = $('#ordersModal').attr('shipmentId');
             let status = 2;
             changeStatus(shipmentId, status)
         });
 
         $(document).on('click', '.btn-mark-as-partially-completed', function(event) {
-            let shipmentId = $('#pickupModal').attr('shipmentId');
+            let shipmentId = $('#ordersModal').attr('shipmentId');
             let status = 3;
             changeStatus(shipmentId, status)
         });
@@ -264,7 +264,7 @@
                 swalError('Please select a Hub');
                 return;
             }
-            let url = '/pickup/tag-one-as-picked-up';
+            let url = '/orders/tag-one-as-picked-up';
 
             Swal.fire({
                 title: 'Are you sure?',
@@ -315,13 +315,13 @@
 
 
 
-        $('#pickup-form').submit(function(event) {
+        $('#orders-form').submit(function(event) {
             let btn = $('#btn-pickedup');
-            let shipmentId = $('#pickupModal').attr('shipmentId');
-            let orderId = $('#pickupModal').attr('orderId');
+            let shipmentId = $('#ordersModal').attr('shipmentId');
+            let orderId = $('#ordersModal').attr('orderId');
             let hub_id = $('[name=hub_id]').find("option:selected").val();
-            let status = $('#pickupModal').attr('status');
-            let url = '/pickup/tag-as-picked-up/' + shipmentId;
+            let status = $('#ordersModal').attr('status');
+            let url = '/orders/tag-as-picked-up/' + shipmentId;
 
             Swal.fire({
                 title: 'Are you sure?',
@@ -387,7 +387,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                             type: 'POST',
-                            url: '/pickup/tag-as-overdue/' + shipmentId,
+                            url: '/orders/tag-as-overdue/' + shipmentId,
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
@@ -428,7 +428,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                             type: 'POST',
-                            url: '/pickup/return',
+                            url: '/orders/return',
                             data: $(this).serialize()
                         })
                         .done(function(data) {

@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Pickup;
+use App\Models\Order;
+use App\Models\Invoice;
 use App\Models\LineItem;
 use App\Models\HubInventory;
 use App\Models\Hub;
@@ -14,29 +15,30 @@ use App\Models\Shipment;
 use App\Models\ShipmentLineItem;
 use Utils;
 
-class PickupController extends Controller
+class OrderController extends Controller
 {
-    public function index(Pickup $pickup) 
+    public function index(Order $orders) 
     {
-        $pickups = $pickup->getPickup(10);
+        $orders = $orders->getOrder(10);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
-        return view('pickup.index', compact('pickups', 'hubs', 'reasons'));
+        $invoice = new Invoice;
+        return view('orders.index', compact('orders', 'hubs', 'reasons', 'invoice'));
     }
 
     public function getReturnedList(LineItem $line_item) 
     {
         $returned_list = $line_item->getReturnedList(10);
-        return view('pickup.returned', compact('returned_list'));
+        return view('orders.returned', compact('returned_list'));
     }
 
-    public function search(Pickup $pickup)
+    public function search(Order $orders)
     {
         $key = isset(request()->key) ? request()->key : "";
-        $pickups = $pickup->searchPickup($key, 10);
+        $orders = $orders->searchOrder($key, 10);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
-        return view('pickup.index', compact('pickups', 'hubs','reasons'));
+        return view('orders.index', compact('orders', 'hubs','reasons'));
     }
 
     public function getLineItems($orderId, LineItem $lineItem) 
@@ -44,15 +46,15 @@ class PickupController extends Controller
         return $lineItem->getLineItems($orderId);
     }
 
-    public function fetchPickupData() 
+    public function fetchOrdersData() 
     {
-        $path = public_path() . '/pickup.json';
+        $path = public_path() . '/to_ship_orders.json';
         $data = json_decode(file_get_contents($path));
 
         if ($data->shipmentsToShip) {
             foreach ($data->shipmentsToShip as $shipment) {
-                $pickup = new Pickup;
-                if ($pickup->isOrderExists($shipment->orderId)) {
+                $orders = new Order;
+                if ($orders->isOrderExists($shipment->orderId)) {
                     return response()->json([
                         'status' =>  'success',
                         'message' => 'OrderID is already exists.'
@@ -77,35 +79,43 @@ class PickupController extends Controller
                         $lineItem->lineItemTotal = $item->lineItemTotal;
                         $lineItem->save();
                     }
-                    $pickup->shipmentId = $shipment->shipmentId;
-                    $pickup->customerEmail = $shipment->customerEmail;
-                    $pickup->custId = $shipment->custId;
-                    $pickup->custName = $shipment->custName;
-                    $pickup->shipPhone = $shipment->shipPhone;
-                    $pickup->shipName = $shipment->shipName;
-                    $pickup->shipAddr1 = $shipment->shipAddr1;
-                    $pickup->shipAddr2 = $shipment->shipAddr2;
-                    $pickup->shipAddr3 = $shipment->shipAddr3;
-                    $pickup->shipAddr4 = $shipment->shipAddr4;
-                    $pickup->shipCity = $shipment->shipCity;
-                    $pickup->shipState = $shipment->shipState;
-                    $pickup->shipZip = $shipment->shipZip;
-                    $pickup->shipCountryIso = $shipment->shipCountryIso;
-                    $pickup->shipMethod = $shipment->shipMethod;
-                    $pickup->shipCarrier = $shipment->shipCarrier;
-                    $pickup->batchId = $shipment->batchId;
-                    $pickup->contractDate = $shipment->contractDate;
-                    $pickup->orderId = $shipment->orderId;
-                    $pickup->govInvoiceNumber = $shipment->govInvoiceNumber;
-                    $pickup->dateTimeSubmittedIso = $shipment->dateTimeSubmittedIso;
-                    $pickup->shippingChargeAmount = $shipment->shippingChargeAmount;
-                    $pickup->customerTIN = $shipment->customerTIN ;
-                    $pickup->salesTaxAmount = $shipment->salesTaxAmount;
-                    $pickup->shippingTaxTotalAmount = $shipment->shippingTaxTotalAmount;
-                    $pickup->packageTotal = $shipment->packageTotal;
-                    $pickup->orderSource = $shipment->orderSource;
+                    $orders->shipmentId = $shipment->shipmentId;
+                    $orders->customerEmail = $shipment->customerEmail;
+                    $orders->custId = $shipment->custId;
+                    $orders->custName = $shipment->custName;
+                    $orders->shipPhone = $shipment->shipPhone;
+                    $orders->shipName = $shipment->shipName;
+                    $orders->shipAddr1 = $shipment->shipAddr1;
+                    $orders->shipAddr2 = $shipment->shipAddr2;
+                    $orders->shipAddr3 = $shipment->shipAddr3;
+                    $orders->shipAddr4 = $shipment->shipAddr4;
+                    $orders->shipCity = $shipment->shipCity;
+                    $orders->shipState = $shipment->shipState;
+                    $orders->shipZip = $shipment->shipZip;
+                    $orders->shipCountryIso = $shipment->shipCountryIso;
+                    $orders->shipMethod = $shipment->shipMethod;
+                    $orders->shipCarrier = $shipment->shipCarrier;
+                    $orders->batchId = $shipment->batchId;
+                    $orders->contractDate = $shipment->contractDate;
+                    $orders->orderId = $shipment->orderId;
+                    $orders->govInvoiceNumber = $shipment->govInvoiceNumber;
+                    $orders->dateTimeSubmittedIso = $shipment->dateTimeSubmittedIso;
+                    $orders->shippingChargeAmount = $shipment->shippingChargeAmount;
+                    $orders->customerTIN = $shipment->customerTIN ;
+                    $orders->salesTaxAmount = $shipment->salesTaxAmount;
+                    $orders->shippingTaxTotalAmount = $shipment->shippingTaxTotalAmount;
+                    $orders->packageTotal = $shipment->packageTotal;
+                    $orders->orderSource = $shipment->orderSource;
+                    $orders->save();
 
-                    $pickup->save();
+                    foreach ($shipment->invoices as $invoice_item) {
+                        $invoice = new Invoice;
+                        $invoice->invoiceType = $invoice_item->invoiceType;
+                        $invoice->invoiceDetail = $invoice_item->invoiceDetail;
+                        $invoice->shipmentId = $shipment->shipmentId;
+                        $invoice->orderId = $shipment->orderId;
+                        $invoice->save();
+                    }
                 }
 
             }
@@ -116,11 +126,11 @@ class PickupController extends Controller
         }
     }
 
-    public function tagAsPickedUp($shipmentId, Pickup $pickup, LineItem $line_item, HubInventory $hub_inv)
+    public function tagAsPickedUp($shipmentId, Order $orders, LineItem $line_item, HubInventory $hub_inv)
     {
         $hub_id = request()->hub_id;
 
-        $orderId = $pickup->getOrderIdByShipmentId($shipmentId);
+        $orderId = $orders->getOrderIdByShipmentId($shipmentId);
 
         $line_items = $line_item->getLineItems($orderId);
 
@@ -150,7 +160,7 @@ class PickupController extends Controller
                 }
             }
             $status = 1;
-            $pickup->changeStatus($shipmentId, $status, $hub_id);
+            $orders->changeStatus($shipmentId, $status, $hub_id);
         }
         else {
               return response()->json([
@@ -228,16 +238,16 @@ class PickupController extends Controller
     }
 
 
-    public function changeStatus($shipmentId, $status, Pickup $pickup)
+    public function changeStatus($shipmentId, $status, Order $orders)
     {
-        $pickup->changeStatus($shipmentId, $status);
+        $orders->changeStatus($shipmentId, $status);
 
         return response()->json([
             'success' => true
         ], 200);
     }
 
-    public function doShip(Request $request, Pickup $pickup, LineItem $line_item, LotCode $lc)
+    public function doShip(Request $request, Order $orders, LineItem $line_item, LotCode $lc)
     {
         $status = 1;
         $line_items = $line_item->getLineItems($request->orderId);
@@ -252,12 +262,12 @@ class PickupController extends Controller
                 }
                 else {
                     
-                    $pickup_details = $pickup->getOrderDetails($request->shipmentId);
+                    $orders_details = $orders->getOrderDetails($request->shipmentId);
                     $shipment->sender = "4803";
                     $shipment->receiver = $request->receiver;
                     $shipment->shipmentId =  $request->shipmentId;
-                    $shipment->shipCarrier =  $pickup_details->shipCarrier ? $pickup_details->shipCarrier : "N/A";
-                    $shipment->shipMethod =  $pickup_details->shipMethod;
+                    $shipment->shipCarrier =  $orders_details->shipCarrier ? $orders_details->shipCarrier : "N/A";
+                    $shipment->shipMethod =  $orders_details->shipMethod;
                     $shipment->totalWeight =  $request->totalWeight;
                     $shipment->freightCharges =  $request->freightCharges;
                     $shipment->qtyPackages =  $request->qtyPackages;
@@ -290,7 +300,7 @@ class PickupController extends Controller
                 }
         }
 
-        $pickup->changeStatus($request->shipmentId, $status);
+        $orders->changeStatus($request->shipmentId, $status);
 
         return response()->json([
             'success' => true
@@ -299,16 +309,19 @@ class PickupController extends Controller
 
     public function generateSalesInvoice($shipmentId, $orderId) 
     {
-        $order = new Pickup;
+        $order = new Order;
         $line_item = new LineItem;
 
         $order_details = $order->getOrderDetails($shipmentId);
         $line_items = $line_item->getLineItems($orderId);
-        if (request()->type == "invoice") {
+        if (request()->type == 2) {
             $output = $this->renderInvoice($order_details, $line_items, $orderId);
         }
-        else if (request()->type == "delivery_receipt"){
+        else if (request()->type == 3){
             $output = $this->renderDelivery($order_details, $line_items, $orderId);
+        }
+        else if (request()->type == 4){
+            $output = $this->renderCollection($order_details, $line_items, $orderId);
         }
        
         $pdf = \App::make('dompdf.wrapper');
@@ -473,11 +486,73 @@ class PickupController extends Controller
         return $output;
     }
 
+    public function renderCollection($order_details, $line_items, $orderId) 
+    {
+        $total_amount = 0;
+        $order_subtotal = 0;
+
+        foreach ($line_items as $item) {
+
+            if ($item->lineType == "PN" || $item->lineType == "N") {
+                continue;
+            }
+
+            $with_vat = Utils::getWithVAT($item->itemUnitPrice, $item->pv);
+            $total_cost = Utils::getTotalCost($with_vat, $item->quantity);
+
+            $total_amount += $total_cost;
+            $order_subtotal += $item->itemUnitPrice * $item->quantity;
+        }
+        
+        $currency  = $total_amount > 0 ? "pesos" : "peso"; 
+
+        $output = $this->invoiceStyle();
+        $output .= 
+        '<div class="text-left">
+            ';
+            $output .= $this->getInvoiceHeader("Collection Receipt");
+            $output .= '
+            <hr class="ml-2 mr-2">
+            <div class="text-info ml-1 float-right">
+                Order Number: <span>' . $orderId . '</span> <br>
+                Order Date: <span>' . date('d-M-Y', strtotime($order_details->dateTimeSubmittedIso)) . '</span> <br>
+                Member ID: <span>' . $order_details->custId . '</span> <br>
+            </div>
+            <div class="text-info mr-100">
+                Delivered to: <span>' . $order_details->custName . '</span> <br>
+                Address: <span>' . $order_details->shipAddr1 . '</span> <br>
+                TIN: <span>' . $order_details->customerTIN . '</span> <br>
+            </div>
+            <div class="text-info " style="margin-top:80px">
+            The sum of  <u>' . Utils::convertNumberToWord(number_format((float)$total_amount, 2, '.', ''), $currency) . '</u>
+            </div>
+            <div class="text-info  text-right">(P '.$total_amount.')</div>
+            <div class="head-2 mb-1"><u>IN PAYMENT OF THE FOLLOWING</u></div>
+            <table width="100%" style="border-collapse:collapse;">
+                <thead>
+                    <th class="head-2">SALES INVOICE NO.</th>
+                    <th class="head-2">SALES ORDER NO.</th>
+                    <th class="head-2">AMOUNT</th>
+                </thead>
+                <tbody>
+                    <td class="text-info">'.request()->invoice_no.'</td>
+                    <td class="text-info">12312321</td>
+                    <td class="text-info">'.$total_amount.'</td>
+                </tbody>
+            </table>
+        </div>';
+
+        $output .= $this->getInvoiceFooter();
+    
+        return $output;
+    }
+
     function getInvoiceHeader($title) {
         return '<img class="logo" src="' . public_path() . "/assets/yl_logo.png" . '" width="173" height="55" alt="" />
             <div class="head-2">' . $title . '</div>
             <div class="head-1">YOUNG LIVING PHILIPPINES LLC</div>
             <div class="head-3"> YOUNG LIVING PHILIPPINES LLC - PHILIPPINE BRANCH</div>
+            <div class="serial-number mr-3">No. ' . request()->invoice_no . '</div>
             <div class="text-info ml-1">
                 Unit G07, G08, G09 & 12th Floor, <br>
                 Twenty-Five Seven McKinley Building, <br>
@@ -519,18 +594,26 @@ class PickupController extends Controller
             .head-2 { font-size: 16px; font-style:bold; }
             .head-1 { font-size: 21px; font-style:bold; }
             .logo { float:right; }
+            .serial-number { 
+                font-size: 22px;
+                float:right;
+                color: #DC3545; 
+            }
             .text-info { 
                 line-height: 20px; 
                 margin-top: 3px; 
                 font-size: 14px;
             }
+            .mb-1 { margin-bottom:10px; }
             .ml-1 { margin-left:10px; }
             .ml-2 { margin-left:20px; }
             .mr-2 { margin-right:20px; }
+            .mr-3 { margin-right:30px; }
             .mr-100 { margin-right:100px; }
             .mt-2 { margin-top:20px; }
             .mt-3 { margin-top:30px; }
             .mt-5 { margin-top:50px; }
+            .mt-100 { margin-top:100px; }
             .float-right { float:right; }
             table { font-size: 11px; }
             td, th { padding: 5px; }

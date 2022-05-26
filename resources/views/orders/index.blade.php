@@ -42,21 +42,16 @@ $status = request()->status;
                                             <th scope="col">OrderID</th>
                                             <th scope="col">Customer</th>
                                             <th scope="col">Date time submitted</th>
-                                            @if ($status == 0 || $status == 2)
-                                                <th>Status</th>
-                                            @elseif ($status == 3)
-                                                <th>Reason</th>
-                                            @endif
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($pickups))
-                                            @foreach ($pickups as $item)
+                                        @if (count($orders))
+                                            @foreach ($orders as $item)
                                                 <tr>
                                                     <td>
-                                                        <a href="#" class="btn-pickup-details"
-                                                            data-target="#pickupModal" data-toggle="modal"
+                                                        <a href="#" class="btn-orders-details"
+                                                            data-target="#ordersModal" data-toggle="modal"
                                                             data-orderId="{{ $item->orderId }}"
                                                             data-order-details="{{ json_encode($item) }}">
                                                             <u>{{ $item->shipmentId }}</u>
@@ -67,12 +62,6 @@ $status = request()->status;
                                                         {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
                                                     </td>
                                                     <td>{{ $item->dateTimeSubmittedIso }}</td>
-                                                    @php
-                                                        $status = json_decode(Utils::getStatusTextClass($item->status));
-                                                    @endphp
-                                                    <td><span
-                                                            class="badge badge-pill badge-{{ $status->class }}">{{ $status->text }}</span>
-                                                    </td>
                                                     <td>
                                                         <div class="dropdown float-left m-1">
                                                             <button class="btn btn-sm btn-primary dropdown-toggle"
@@ -82,27 +71,20 @@ $status = request()->status;
                                                             </button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="dropdownMenuButton">
-                                                                <a class="dropdown-item" target="_blank"
-                                                                    href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=invoice') }}">Sales
-                                                                    Invoice</a>
-                                                                <a class="dropdown-item" target="_blank"
-                                                                    href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=delivery_receipt') }}">Delivery
-                                                                    Receipt</a>
-                                                                <a class="dropdown-item" target="_blank"
-                                                                    href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=collection_receipt') }}">Collection
-                                                                    Receipt</a>
+                                                                @foreach ($invoice->getInvoiceDetails($item->shipmentId) as $item)
+                                                                    @php
+                                                                        $invoice_name = 'Sales Invoice';
+                                                                        if ($item->invoiceType == 3) {
+                                                                            $invoice_name = 'Delivery Receipt';
+                                                                        } elseif ($item->invoiceType == 4) {
+                                                                            $invoice_name = 'Collection Receipt';
+                                                                        }
+                                                                    @endphp
+                                                                    <a class="dropdown-item" target="_blank"
+                                                                        href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=' . $item->invoiceType . '&invoice_no=' . $item->invoiceDetail) }}">{{ $invoice_name }}</a>
+                                                                @endforeach
                                                             </div>
                                                         </div>
-                                                        @if ($item->status == 0)
-                                                            <a class="btn btn-sm btn-primary btn-ship float-left m-1"
-                                                                data-order-details="{{ json_encode($item) }}"><i
-                                                                    class="fas fa-shipping-fast"></i> Proccess
-                                                                Shipment</a>
-                                                        @endif
-                                                        <a class="btn btn-sm btn-primary btn-pickup-details float-left m-1"
-                                                            target="_blank"
-                                                            href="{{ url('/shipments/search?key=' . $item->shipmentId) }}"><i
-                                                                class="fas fa-eye"></i> Shipment Details</a>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -125,7 +107,7 @@ $status = request()->status;
                                 </table>
                             </div>
                             @php
-                                echo $pickups->links('pagination::bootstrap-4');
+                                echo $orders->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>
@@ -136,10 +118,10 @@ $status = request()->status;
     </div>
 </div>
 
-@include('pickup.modals')
+@include('orders.modals')
 
 @include('layouts.footer')
 
 @include('scripts._global_scripts')
 
-@include('pickup.script')
+@include('orders.script')
