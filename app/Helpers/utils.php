@@ -488,6 +488,9 @@ class Utils
                 $cent_text = $centavo > 0 ? " centavos" : "centavo";
                 $centavo = " and " . self::convertNumberToWord($centavo) . $cent_text;
             }
+            else {
+                $centavo = "";
+            }
         }
 
         return implode(' ', $words) . $currency . $centavo;

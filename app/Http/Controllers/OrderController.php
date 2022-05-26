@@ -488,23 +488,10 @@ class OrderController extends Controller
 
     public function renderCollection($order_details, $line_items, $orderId) 
     {
-        $total_amount = 0;
-        $order_subtotal = 0;
 
-        foreach ($line_items as $item) {
-
-            if ($item->lineType == "PN" || $item->lineType == "N") {
-                continue;
-            }
-
-            $with_vat = Utils::getWithVAT($item->itemUnitPrice, $item->pv);
-            $total_cost = Utils::getTotalCost($with_vat, $item->quantity);
-
-            $total_amount += $total_cost;
-            $order_subtotal += $item->itemUnitPrice * $item->quantity;
-        }
+        $total_amount_due = self::getTotalAmountDue($line_items, $order_details);
         
-        $currency  = $total_amount > 0 ? "pesos" : "peso"; 
+        $currency  = $total_amount_due > 0 ? "pesos" : "peso"; 
 
         $output = $this->invoiceStyle();
         $output .= 
@@ -524,9 +511,9 @@ class OrderController extends Controller
                 TIN: <span>' . $order_details->customerTIN . '</span> <br>
             </div>
             <div class="text-info " style="margin-top:80px">
-            The sum of  <u>' . Utils::convertNumberToWord(number_format((float)$total_amount, 2, '.', ''), $currency) . '</u>
+            The sum of  <u>' . Utils::convertNumberToWord(number_format((float)$total_amount_due, 2, '.', ''), $currency) . '</u>
             </div>
-            <div class="text-info  text-right">(P '.$total_amount.')</div>
+            <div class="text-info  text-right">(P '.number_format((float)$total_amount_due, 2, '.', ',').')</div>
             <div class="head-2 mb-1"><u>IN PAYMENT OF THE FOLLOWING</u></div>
             <table width="100%" style="border-collapse:collapse;">
                 <thead>
@@ -535,9 +522,42 @@ class OrderController extends Controller
                     <th class="head-2">AMOUNT</th>
                 </thead>
                 <tbody>
-                    <td class="text-info">'.request()->invoice_no.'</td>
-                    <td class="text-info">12312321</td>
-                    <td class="text-info">'.$total_amount.'</td>
+                <tr>
+                    <td class="text-info border-l">'.request()->invoice_no.'</td>
+                    <td class="text-info">'.$order_details->orderId.'</td>
+                    <td class="text-info border-r text-right">P '.number_format((float)$total_amount_due, 2, '.', ',').'</td>
+                </tr>
+                <tr><td colspan="3" class="border-lr"></td></tr>
+                <tr><td colspan="3" class="border-lr"></td></tr>
+                <tr><td colspan="3" class="border-lr"></td></tr>
+                <tr><td colspan="3" class="border-lr"></td></tr>
+                <tr><td colspan="3" class="border-lr"></td></tr>
+                <tr><td colspan="3" class="border-lr"></td></tr>
+                <tr><td colspan="3" class="border-lr"></td></tr>
+                <tr><td colspan="3" class="border-lr border-b"></td></tr>
+                <tr>
+                    <td class="text-info border-bl text-bold">Payment Method</td>
+                    <td class="text-info border-b"></td>
+                    <td class="text-info border-br text-bold">Payment Amount</td>
+                </tr>';
+
+                foreach ($line_items as $item) {
+                    if ($item->lineType == "PN") {
+                        $total_amount_due = $total_amount_due + $item->itemUnitPrice;
+                        $output .= '<tr style="background:#F0F0F0;">
+                            <td>'.$item->name.'</td>
+                            <td></td>
+                            <td class="text-right">Php '.number_format((float)str_replace('-','',$item->itemUnitPrice), 2, '.', ',').'</td>
+                        </tr>';
+                    }
+                }
+
+                $output .= '
+                <tr>
+                    <td></td>
+                    <td class="text-info text-right"><span class="text-bold">BALANCE:</span></td>
+                    <td class="text-info border-solid text-right text-bold">Php '.number_format((float)$total_amount_due, 2, '.', ',').'</td>
+                </tr>
                 </tbody>
             </table>
         </div>';
@@ -545,6 +565,22 @@ class OrderController extends Controller
         $output .= $this->getInvoiceFooter();
     
         return $output;
+    }
+
+    static function getTotalAmountDue($line_items, $order_details) {
+        $order_subtotal = 0;
+        foreach ($line_items as $item) {
+            if ($item->lineType == "PN" || $item->lineType == "N") {
+                continue;
+            }
+            $with_vat = Utils::getWithVAT($item->itemUnitPrice, $item->pv);
+            $total_cost = Utils::getTotalCost($with_vat, $item->quantity);
+
+            $order_subtotal += $item->itemUnitPrice * $item->quantity;
+        }
+        $vatable_sales = $order_subtotal + $order_details->shippingChargeAmount;
+        $vat = Utils::toFixed($vatable_sales * 0.12);
+        return ($vatable_sales + $vat);
     }
 
     function getInvoiceHeader($title) {
@@ -566,7 +602,7 @@ class OrderController extends Controller
     function getInvoiceFooter() {
         $output = 
             '<table width="100%" style="border-collapse:collapse;" class="mt-3">
-                <th class="text-left">Powered by</th>
+                <th class="text-left">Prepared by</th>
                 <th class="text-left">Received by</th> 
             </table>
 
@@ -589,6 +625,7 @@ class OrderController extends Controller
             .text-left { text-align:left; }
             .text-center { text-align: center; }
             .text-right { text-align: right; }
+            .text-bold { font-style: bold; }
             .phrase { font-size: 21px; }
             .head-3 { font-size: 14px; }
             .head-2 { font-size: 16px; font-style:bold; }
@@ -619,6 +656,12 @@ class OrderController extends Controller
             td, th { padding: 5px; }
             th { border: 1px solid; }
             .border-solid { border: 1px solid; }
+            .border-bl { border-bottom: 1px solid black; border-left: 1px solid black; }
+            .border-br { border-bottom: 1px solid black; border-right: 1px solid black; }
+            .border-b { border-bottom: 1px solid black; }
+            .border-lr { border-left: 1px solid black; border-right: 1px solid black; }
+            .border-l { border-left: 1px solid black; }
+            .border-r { border-right: 1px solid black; }
         </style>";
     }
 }
