@@ -10,6 +10,7 @@ use App\Models\Shipment;
 use App\Models\ShipmentLineItem;
 use App\Models\LotCode;
 use App\Models\ReturnReason;
+use App\Models\Order;
 use Utils;
 
 class HubInventoryController extends Controller
@@ -36,12 +37,19 @@ class HubInventoryController extends Controller
 
     public function pickup($receiver, $shipmentId, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
     {
+        $order_details = $this->getOrderDetails($shipmentId);
         $line_items = $this->getLineItems($shipmentId);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
 
         $hub_name = $hub->getHubName($receiver);
-        return view('hubs-inventory.pickup', compact('line_items', 'hub_name', 'receiver', 'hub_inv'));
+        return view('hubs-inventory.pickup', compact('line_items', 'hub_name', 'receiver', 'order_details'));
+    }
+
+    public function getOrderDetails($shipmentId)
+    {
+        $order = new Order;
+        return $order->getOrderDetails($shipmentId);
     }
     
     public function getLineItems($shipmentId) {

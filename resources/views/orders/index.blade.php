@@ -50,10 +50,7 @@ $status = request()->status;
                                             @foreach ($orders as $item)
                                                 <tr>
                                                     <td>
-                                                        <a href="#" class="btn-orders-details"
-                                                            data-target="#ordersModal" data-toggle="modal"
-                                                            data-orderId="{{ $item->orderId }}"
-                                                            data-order-details="{{ json_encode($item) }}">
+                                                        <a href="#">
                                                             <u>{{ $item->shipmentId }}</u>
                                                         </a>
                                                     </td>
