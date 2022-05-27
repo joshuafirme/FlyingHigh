@@ -25,6 +25,10 @@ class Shipment extends Model
         "receiver",
     ];
 
+    public function readOne($shipmentId) {
+        return self::where('shipmentId', $shipmentId)->first();
+    }
+
     public function getShipment($per_page) {
         return self::select('shipments.*', 'hubs.name as hub')
             ->leftJoin('hubs', 'hubs.receiver', '=', 'shipments.receiver')

@@ -11,6 +11,8 @@ use App\Models\ShipmentLineItem;
 use App\Models\LotCode;
 use App\Models\ReturnReason;
 use App\Models\Order;
+use App\Models\LineItem;
+use App\Models\Invoice;
 use Utils;
 
 class HubInventoryController extends Controller
@@ -35,15 +37,28 @@ class HubInventoryController extends Controller
         return view('hubs-inventory.index', compact('deliveries', 'hub_name', 'receiver', 'hub_inv'));
     }
 
-    public function pickup($receiver, $shipmentId, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
+    public function pickup($receiver, $shipmentId, HubInventory $hub_inv, Hub $hub, Shipment $shipment, LineItem $line_item)
     {
         $order_details = $this->getOrderDetails($shipmentId);
+        $order_line_items = $line_item->getLineItems($order_details->orderId);
         $line_items = $this->getLineItems($shipmentId);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
+        $invoice = new Invoice;
+        $package_details = $shipment->readOne($shipmentId);
 
         $hub_name = $hub->getHubName($receiver);
-        return view('hubs-inventory.pickup', compact('line_items', 'hub_name', 'receiver', 'order_details'));
+        return view('hubs-inventory.pickup', 
+            compact(
+                'order_line_items',
+                'line_items',
+                'hub_name', 
+                'receiver',
+                'order_details',
+                'package_details', 
+                'invoice'
+            )
+        );
     }
 
     public function getOrderDetails($shipmentId)
