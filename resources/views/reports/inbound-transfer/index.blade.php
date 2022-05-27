@@ -9,7 +9,7 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="text-dark">Reports</h4>
+                <h4 class="page-title">Reports</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">

@@ -143,20 +143,6 @@ class ShipmentsController extends Controller
                     ], 200);
                 }
                 else {
-                    foreach ($sd->itemDetails as $item) {
-                        $lineItem = new ShipmentLineItem;
-                        $lineItem->orderId = $item->orderId;
-                        $lineItem->shipmentId = $sd->shipmentId;
-                        $lineItem->orderLineNumber = $item->orderLineNumber;
-                        $lineItem->partNumber = $item->partNumber;
-                        $lineItem->trackingNo = $item->trackingNo;
-                        $lineItem->qtyOrdered = $item->qtyOrdered;
-                        $lineItem->qtyShipped = $item->qtyShipped;
-                        $lineItem->reasonCode = $item->reasonCode;
-                        $lineItem->shipDateTime = $item->shipDateTime;
-                        $lineItem->lotNumber = $item->lotNumber;
-                        $lineItem->save();
-                    }
 
                     $shipment->sender = $data->sender;
                     $shipment->receiver = $data->receiver;
@@ -171,6 +157,27 @@ class ShipmentsController extends Controller
                     $shipment->currCode =  $sd->currCode;
 
                     $shipment->save();
+
+                    
+                    foreach ($sd->itemDetails as $key => $item) {
+                        $lineItem = new ShipmentLineItem;
+                        $lineItem->orderId = $item->orderId;
+                        $lineItem->shipmentId = $sd->shipmentId;
+                        $lineItem->orderLineNumber = $item->orderLineNumber;
+                        $lineItem->partNumber = $item->partNumber;
+                        $lineItem->trackingNo = $item->trackingNo;
+                        $lineItem->qtyOrdered = $item->qtyOrdered;
+                        $lineItem->qtyShipped = $item->qtyShipped;
+                        $lineItem->reasonCode = $item->reasonCode;
+                        $lineItem->shipDateTime = $item->shipDateTime;
+                        $lineItem->lotNumber = $item->lotNumber;
+                        $lineItem->save();
+
+                        if ($key == count($sd->itemDetails) - 1) {
+                            $shipment->trackingNo =  $item->trackingNo;
+                            $shipment->save();
+                        }
+                    }
                 }
 
             }

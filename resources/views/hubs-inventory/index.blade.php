@@ -9,7 +9,7 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4>Hub</h4>
+                <h4 class="page-title">Hub</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
@@ -36,9 +36,6 @@
                                         <input type="date" class="form-control ml-0 ml-sm-2" name="date_from"
                                             value="{{ $date_from }}" required>
                                     </div>
-                                    <div class="form-group col-12 col-md-auto">
-                                        <label>-</label>
-                                    </div>
                                     <div class="form-group mr-4 col-12 col-md-auto">
                                         <input type="date" class="form-control ml-0 ml-sm-2" name="date_to"
                                             value="{{ $date_to }}" required>
@@ -55,7 +52,7 @@
                                     <form action="{{ url('/hubs/' . $receiver . '/search') }}" method="get">
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control" name="key" style="width: 280px;"
-                                                placeholder="Search"
+                                                placeholder="Search Tracking # or Shipment ID"
                                                 value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">
@@ -71,6 +68,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">Shipment Id</th>
+                                            <th scope="col">Tracking #</th>
                                             <th scope="col">Ship Carrier</th>
                                             <th scope="col">Ship Method</th>
                                             <th scope="col">Total Weight</th>
@@ -87,11 +85,10 @@
                                                     $expiration = $hub_inv->getExpiration($item->lot_code);
                                                 @endphp
                                                 <tr>
+                                                    <td>{{ $item->shipmentId }}</td>
                                                     <td>
-                                                        <a href="#" class="btn-pickup-details"
-                                                            data-target="#pickupModal" data-toggle="modal"
-                                                            data-shipmentId="{{ $item->shipmentId }}"
-                                                            data-order-details="{{ json_encode($item) }}"><u>{{ $item->shipmentId }}</u></a>
+                                                        <a href="https://app.flyinghighenergyexpress.com/catalog/tracking/view/{{ $item->trackingNo }}"
+                                                            target="_blank"><u>{{ $item->trackingNo }}</u></a>
                                                     </td>
                                                     <td>{{ $item->shipCarrier }}</td>
                                                     <td>{{ $item->shipMethod }}</td>
@@ -99,48 +96,21 @@
                                                     <td>{{ $item->freightCharges . ' ' . $item->currCode }}</td>
                                                     <td>{{ $item->qtyPackages }}</td>
                                                     <td>
-                                                        @if ($item->status == 2)
+                                                        @if ($item->status == 0)
                                                             <span class="badge badge-pill badge-primary">Pending</span>
-                                                        @elseif ($item->status == 3)
-                                                            <span class="badge badge-pill badge-warning">Partially Completed</span>
-                                                        @elseif ($item->status == 4)
-                                                            <span class="badge badge-pill badge-success">Completed</span>
+                                                        @elseif ($item->status == 1)
+                                                            <span class="badge badge-pill badge-warning">Picked up</span>
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        @if ($item->status == 2)
-                                                            <a class="btn btn-sm btn-primary btn-pickup"
-                                                                data-order-details="{{ json_encode($item) }}"
-                                                                data-shipmentId="{{ $item->shipmentId }}">
-                                                                Process Pickup
-                                                            </a>
-                                                            <a class="btn btn-sm btn-primary btn-mark-as-partial"
-                                                                data-shipmentId="{{ $item->shipmentId }}">
-                                                                Mark as Partially
-                                                                Completed
-                                                            </a>
-                                                            <a class="btn btn-sm btn-primary btn-mark-as-completed"
-                                                                data-shipmentId="{{ $item->shipmentId }}">
-                                                                 Mark as Completed
-                                                            </a>
-                                                        @elseif ($item->status == 3)
-                                                            <a class="btn btn-sm btn-primary btn-pickup"
-                                                                data-order-details="{{ json_encode($item) }}"
-                                                                data-shipmentId="{{ $item->shipmentId }}">
-                                                                 Process Pickup
-                                                            </a>
-                                                            <a class="btn btn-sm btn-primary btn-mark-as-completed"
-                                                                data-shipmentId="{{ $item->shipmentId }}">
-                                                                 Mark as Completed
-                                                            </a>
-                                                        @elseif ($item->status == 4)
-                                                            <a class="btn btn-sm btn-primary btn-pickup"
-                                                                data-order-details="{{ json_encode($item) }}"
-                                                                data-shipmentId="{{ $item->shipmentId }}">
-                                                                 Process Pickup
-                                                            </a>
-                                                        @endif
-
+                                                        <a class="btn btn-sm btn-primary"
+                                                            href="https://app.flyinghighenergyexpress.com/catalog/tracking/view/{{ $item->trackingNo }}"
+                                                            target="_blank">Shipment History >
+                                                        </a>
+                                                        <a class="btn btn-sm btn-primary"
+                                                            href="{{ url('/hubs/' . $receiver . '/pickup/' . $item->shipmentId) }}"
+                                                            target="_blank">Pickup >
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             @endforeach

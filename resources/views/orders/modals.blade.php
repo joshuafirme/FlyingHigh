@@ -74,7 +74,7 @@
                     </div>
                 </div>
                 <div class="col-12">
-                    <h4>Line Items</h4>
+                    <h4 class="page-title">Line Items</h4>
                     <table class="table table-hover">
                         <thead>
                             <tr>
@@ -179,7 +179,7 @@
                 </div>
 
                 <div class="col-md-12 mb-2">
-                    <h4>Line Items</h4>
+                    <h4 class="page-title">Line Items</h4>
                     <table class="table table-hover">
                         <thead>
                             <tr>

@@ -11,7 +11,7 @@
             </div>
             <div class="modal-body row g-3">
                 <div class="col-12">
-                    <h4>Line Items</h4>
+                    <h4 class="page-title">Line Items</h4>
                     <table class="table table-hover">
                         <thead>
                             <tr>

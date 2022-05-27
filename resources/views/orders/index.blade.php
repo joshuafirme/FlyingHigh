@@ -11,7 +11,7 @@ $status = request()->status;
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="text-dark">Orders</h4>
+                <h4 class="page-title">Orders</h4>
             </div>
 
             <div class="row">

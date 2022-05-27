@@ -9,7 +9,7 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="text-dark">Lot Code List</h4>
+                <h4 class="page-title">Lot Code List</h4>
             </div>
 
             <div class="row">

@@ -34,6 +34,21 @@ class HubInventoryController extends Controller
         return view('hubs-inventory.index', compact('deliveries', 'hub_name', 'receiver', 'hub_inv'));
     }
 
+    public function pickup($receiver, $shipmentId, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
+    {
+        $line_items = $this->getLineItems($shipmentId);
+        $hubs = Hub::where('status', 1)->get();
+        $reasons = ReturnReason::where('status', 1)->get();
+
+        $hub_name = $hub->getHubName($receiver);
+        return view('hubs-inventory.pickup', compact('line_items', 'hub_name', 'receiver', 'hub_inv'));
+    }
+    
+    public function getLineItems($shipmentId) {
+        $lineItem = new ShipmentLineItem;
+        return $lineItem->getLineItems($shipmentId);
+    }
+
     public function getAllStock($sku, HubInventory $hub_inv) {
         return $hub_inv->getAllStock($sku);
     }

@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/hubs/{hub_id}/search', [HubInventoryController::class, 'searchProduct'])->name('searchProductHub');
     Route::get('/hubs/{receiver}', [HubInventoryController::class, 'hubInventory']);
+    Route::get('/hubs/{receiver}/pickup/{shipmentId}', [HubInventoryController::class, 'pickup']);
     Route::get('/hub/bundle-qty-list/{sku}/{hub_id}', [HubInventoryController::class, 'getBundleQtyList']);
 
     Route::post('/hub/update/{id}', [HubController::class, 'update']);
