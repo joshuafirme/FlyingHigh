@@ -17,6 +17,27 @@ class Utils
         return json_decode(json_encode($data), true);
     }
 
+    public static function separateString($str, $separator = '-', $separated_num = 3) 
+    {
+        if (!$str) { return false; }
+        $str_length = strlen($str);
+        $ctr = 0;
+        $out_str = '';
+        for ($i = 0; $i < $str_length; $i++) {
+            $ctr++;
+            $out_str .= $str[$i];
+            if ($ctr == $separated_num) {
+                $out_str .=  $separator;
+                $ctr = 0;
+            }
+        }
+        $out_str_length = strlen($out_str);
+        if ($out_str[$out_str_length-1] == '-') {
+            $out_str = substr($out_str, 0, $out_str_length - 1);
+        }
+        return $out_str;
+    }
+
     public static function getTaxPerItem($unit_price) 
     {
         $res =  $unit_price * 0.12;

@@ -38,7 +38,8 @@ class OrderController extends Controller
         $orders = $orders->searchOrder($key, 10);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
-        return view('orders.index', compact('orders', 'hubs','reasons'));
+        $invoice = new Invoice;
+        return view('orders.index', compact('orders', 'hubs','reasons', 'invoice'));
     }
 
     public function getLineItems($orderId, LineItem $lineItem) 
@@ -343,7 +344,7 @@ class OrderController extends Controller
             <div class="text-info float-right mr-100">
                 Sold to: <span>' . $order_details->custName . '</span> <br>
                 Address: <span>' . $order_details->shipAddr1 . '</span> <br>
-                TIN: <span>' . $order_details->customerTIN . '</span> <br>
+                TIN: <span>' . Utils::separateString($order_details->customerTIN) . '</span> <br>
             </div>
             <div class="text-info ml-1">
                 Order Number: <span>' . $orderId . '</span> <br>
@@ -371,6 +372,11 @@ class OrderController extends Controller
                         continue;
                     }
 
+                    $component_txt = "";
+                    if ($item->remarks == "Component") {
+                        $component_txt = $item->remarks;
+                    }
+
                     $with_vat = Utils::getWithVAT($item->itemUnitPrice, $item->pv);
                     $total_cost = Utils::getTotalCost($with_vat, $item->quantity);
 
@@ -379,12 +385,12 @@ class OrderController extends Controller
                     $output .= '
                     <tr>
                         <td class="text-center">' . $item->quantity . '</td>
-                        <td class="text-center">' . $item->partNumber . '</td>
-                        <td class="text-center">' . $item->name . '</td>
-                        <td class="text-center">' . Utils::toFixed($item->pv) . '</td>
-                        <td class="text-center">Php ' . Utils::toFixed($item->itemUnitPrice) . '</td>
-                        <td class="text-center">Php ' . Utils::getTaxPerItem($item->itemUnitPrice) . '</td>
-                        <td class="text-center">Php ' . $with_vat . '</td>
+                        <td>' . $component_txt . " " . $item->partNumber . '</td>
+                        <td>' . $item->name . '</td>
+                        <td class="text-right">' . Utils::toFixed($item->pv) . '</td>
+                        <td class="text-right">Php ' . Utils::toFixed($item->itemUnitPrice) . '</td>
+                        <td class="text-right">Php ' . Utils::getTaxPerItem($item->itemUnitPrice) . '</td>
+                        <td class="text-right">Php ' . $with_vat . '</td>
                         <td class="text-right">Php ' . $total_cost . '</td>
                     </tr>';
                 }
@@ -397,20 +403,20 @@ class OrderController extends Controller
             <table width="100%" style="border-collapse:collapse;" class="mt-3">
                 <thead>
                     <th></th>
-                    <th class="text-left">Total<span class="float-right">Php ' . Utils::toFixed($total_amount) . '</span></th>
+                    <th class="text-left">Total<span class="float-right">Php ' . number_format($total_amount_due, 2, '.', ',') . '</span></th>
                 </thead>  
                 <tbody>
                     <tr>
                         <td class="text-left">Order Subtotal</td>
-                        <td><span class="float-right">' . Utils::toFixed($order_subtotal) . '</span></td>
+                        <td><span class="float-right">' . number_format($order_subtotal, 2, '.', ',') . '</span></td>
                     </tr>
                     <tr>
                         <td class="text-left">Package Shipping/Handling</td>
-                        <td><span class="float-right">Php ' . $order_details->shippingChargeAmount . '</span></td>
+                        <td><span class="float-right">Php ' . number_format($order_details->shippingChargeAmount, 2, '.', ',') . '</span></td>
                     </tr>
                     <tr>
                         <td class="text-left">Vatable Sales</td>
-                        <td><span class="float-right">Php ' . $vatable_sales . '</span></td>
+                        <td><span class="float-right">Php ' . number_format($vatable_sales, 2, '.', ',') . '</span></td>
                     </tr>
                     <tr>
                         <td class="text-left">VAT Exempt Sales</td>
@@ -422,11 +428,11 @@ class OrderController extends Controller
                     </tr>
                     <tr>
                         <td class="text-left">12% VAT</td>
-                        <td><span class="float-right">Php ' . $vat .'</span></td>
+                        <td><span class="float-right">Php ' . number_format($vat, 2, '.', ',') .'</span></td>
                     </tr>
                     <tr>
                         <td class="text-left">&shy;</td>
-                        <th><span class="float-right"><span class="mr-2">TOTAL AMOUNT DUE:</span> Php ' . $total_amount_due . '</span></th>
+                        <th><span class="float-right"><span class="mr-2">TOTAL AMOUNT DUE:</span> Php ' .  number_format($total_amount_due, 2, '.', ',') . '</span></th>
                     </tr>
                 </tbody>  
             </table>
@@ -489,7 +495,7 @@ class OrderController extends Controller
     public function renderCollection($order_details, $line_items, $orderId) 
     {
 
-        $total_amount_due = self::getTotalAmountDue($line_items, $order_details);
+        $total_amount_due = $order_details->packageTotal;
         
         $currency  = $total_amount_due > 0 ? "pesos" : "peso"; 
 
