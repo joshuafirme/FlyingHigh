@@ -70,13 +70,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders/return', [OrderController::class, 'tagAsReturned']);
     Route::post('/orders/change-status/{shipmentId}/{status}', [OrderController::class, 'changeStatus']);
     Route::get('/orders/returned', [OrderController::class, 'getReturnedList']);
-    Route::get('/orders/generate-collection-receipt/{shipmentId}/{orderId}', [OrderController::class, 'generateCollectionReceipt']);
-    Route::get('/orders/generate-delivery-receipt/{shipmentId}/{orderId}', [OrderController::class, 'generateDeliveryReceipt']);
     Route::get('/get-line-items/{orderId}', [OrderController::class, 'getLineItems']);
     
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/search', [OrderController::class, 'search']);
-    Route::get('/order/generate/{shipmentId}/{orderId}', [OrderController::class, 'generateSalesInvoice']);
 
     Route::post('/order/do-ship', [OrderController::class, 'doShip']);
 
@@ -155,6 +152,9 @@ Route::middleware('auth')->group(function () {
     Route::post('increment-stock', [ProductController::class, 'incrementStock']);
 });
 
+Route::get('/orders/generate-collection-receipt/{shipmentId}/{orderId}', [OrderController::class, 'generateCollectionReceipt']);
+Route::get('/orders/generate-delivery-receipt/{shipmentId}/{orderId}', [OrderController::class, 'generateDeliveryReceipt']);
+Route::get('/order/generate/{shipmentId}/{orderId}', [OrderController::class, 'generateSalesInvoice']);
 
 Route::get('/fetch-orders', [OrderController::class, 'fetchOrdersData']);
 Route::get('/fetch-shipments', [ShipmentsController::class, 'fetchShipments']);

@@ -177,33 +177,15 @@ class OrderController extends Controller
     }
 
     public function tagOneAsPickedUp() {
-        $sku = request()->sku;
         $orderId = request()->orderId;
-        $qty = request()->qty;
-        $hub_id = request()->hub_id;
+        $partNumber = request()->partNumber;
 
-        $hub_inv = new HubInventory;
+        if ($orderId && $partNumber) {
+            ShipmentLineItem::where('orderId', $orderId)
+                ->where('partNumber', $partNumber)
+                ->update([ 'status' => 1 ]);
 
-        if ($sku && $orderId && $hub_id && $qty) {
-            if ($hub_inv->hasStock($sku, $qty, $hub_id))   {
-                $hub_inv->decrementStock($sku, $qty, $hub_id);
-                LineItem::where('orderId', $orderId)
-                    ->where('partNumber', $sku)
-                    ->update([ 'status' => 1 ]);
-
-                LineItem::where('orderId', $orderId)
-                    ->where('partNumber', $sku)
-                    ->update([ 'status' => 1 ]);
-
-                return response()->json(['success' => true], 200);
-            }
-            else {
-                return response()->json([
-                        'success' =>  false,
-                        'message' => 'not_enough_stock',
-                    ], 200); 
-                    
-            }
+            return response()->json(['success' => true], 200);
         }
         return response()->json(['success' => false], 200);
 
@@ -460,7 +442,7 @@ class OrderController extends Controller
             <div class="text-info mr-100">
                 Delivered to: <span>' . $order_details->custName . '</span> <br>
                 Address: <span>' . $order_details->shipAddr1 . '</span> <br>
-                TIN: <span>' . $order_details->customerTIN . '</span> <br>
+                TIN: <span>' . Utils::separateString($order_details->customerTIN) . '</span> <br>
             </div>
             <table width="100%" style="border-collapse:collapse;" class="mt-2">
                 <thead>
@@ -514,7 +496,7 @@ class OrderController extends Controller
             <div class="text-info mr-100">
                 Delivered to: <span>' . $order_details->custName . '</span> <br>
                 Address: <span>' . $order_details->shipAddr1 . '</span> <br>
-                TIN: <span>' . $order_details->customerTIN . '</span> <br>
+                TIN: <span>' . Utils::separateString($order_details->customerTIN) . '</span> <br>
             </div>
             <div class="text-info " style="margin-top:80px">
             The sum of  <u>' . Utils::convertNumberToWord(number_format((float)$total_amount_due, 2, '.', ''), $currency) . '</u>

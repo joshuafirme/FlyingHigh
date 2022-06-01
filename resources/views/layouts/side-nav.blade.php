@@ -100,6 +100,9 @@
                         <a href="{{ url('/reports/inbound-transfer') }}">Inbound Transfers</a>
                     </li>
                     <li>
+                        <a href="{{ url('/reports/hub-transfer') }}">Hub Transfers</a>
+                    </li>
+                    <li>
                         <a href="{{ url('/reports/stock-adjustment') }}">Stock Adjustment</a>
                     </li>
                     <li>
