@@ -178,28 +178,24 @@ class ProductController extends Controller
         $qty = $request->qty;
         $hub_id = $request->hub_id;
         $except_values = ['bundles', 'search_terms'];
-        $isAllStockEnough = json_decode($lc->isAllStockEnough($lot_codes, $qty));
-      
+        $isAllStockEnough = json_decode($lc->isAllStockEnough($all_sku, $lot_codes, $qty));
+       
         if ($isAllStockEnough->result) {
-
             foreach ($all_sku as $ctr => $sku) {  
-                if ($lc->hasStock($sku, $qty[$ctr])) { 
-                    if ($hub->isLotCodeExistsInHub($sku, $lot_codes[$ctr], $hub_id[$ctr])) { 
-                        $hub->incrementStock($lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
-                        $hub_transfer->record($sku, $lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
-                    }
-                    else {
-                        $hub->createLotCode($sku, $lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
-                        $hub_transfer->record($sku, $lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
-                    }
-                    
-                   $lc->decrementStock($sku, $lot_codes[$ctr], $qty[$ctr]);
+                if ($hub->isLotCodeExistsInHub($sku, $lot_codes[$ctr], $hub_id[$ctr])) { 
+                    $hub->incrementStock($lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
+                    $hub_transfer->record($sku, $lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
                 }
+                else {  
+                    $hub->createLotCode($sku, $lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
+                    $hub_transfer->record($sku, $lot_codes[$ctr], $qty[$ctr], $hub_id[$ctr]);
+                }
+                $lc->decrementStock($sku, $lot_codes[$ctr], $qty[$ctr]);
             }
-            return response()->json([
-                'success' =>  true,
-                'message' => 'transfer_success'
-            ], 200);
+                return response()->json([
+                    'success' =>  true,
+                    'message' => 'transfer_success'
+                ], 200);
         }
         else {
             return response()->json([

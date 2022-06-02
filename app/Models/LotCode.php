@@ -90,8 +90,8 @@ class LotCode extends Model
         return self::where('id', $id)->update(['status' => 0]);
     }
 
-    public function getOneLotCode($lot_code) {
-        return self::where('lot_code', $lot_code)->value('stock');
+    public function getOneLotCode($sku, $lot_code) {
+        return self::where('sku', $sku)->where('lot_code', $lot_code)->value('stock');
     }
 
     public function getFirstExpiry($sku) {
@@ -158,12 +158,12 @@ class LotCode extends Model
             ->update(['stock' => DB::raw('stock - ' . $qty)]);
     }
 
-    public function isAllStockEnough($lot_codes, $qty) {
+    public function isAllStockEnough($sku, $lot_codes, $qty) {
         $has_enough_stock = true;
         $sku_list = [];
         foreach ($lot_codes as $key => $lot_code) {  
 
-            if ($this->hasStock($lot_code, $qty[$key])) {
+            if ($this->hasStock($sku[$key], $lot_code, $qty[$key])) {
                 // enough stock, do nothing...
             }
             else {
@@ -211,9 +211,9 @@ class LotCode extends Model
         return false;
     }
 
-    public function hasStock($lot_code, $qty) 
+    public function hasStock($sku, $lot_code, $qty) 
     {
-        $stock = $this->getOneLotCode($lot_code);
+        $stock = $this->getOneLotCode($sku, $lot_code);
 
         if ($stock >= $qty) {
             return true;

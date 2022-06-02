@@ -26,4 +26,11 @@ Route::get('product/sku/{sku}', [ProductApi::class, 'getBySKU']);
 Route::get('product/barcode/{barcode}', [ProductApi::class, 'getByBarcode']);
 Route::get('product/bundle-qty-list/{sku}', [ProductApi::class, 'getBundleQtyList']);
 
-Route::get('lotcode/{sku}', [LotCodeApi::class, 'getLotCode']);
+
+Route::get('lotcode/{sku}', [LotCodeApi::class, 'getLotCode']); 
+
+Route::post('sync-skumasters', [ProductApi::class, 'syncSkuMasters']);
+
+Route::middleware('client')->group(function () {
+    Route::get('get-yl-access-token', [ProductApi::class, 'getAccessToken']);
+});  
