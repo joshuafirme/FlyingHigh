@@ -17,6 +17,20 @@ class Utils
         return json_decode(json_encode($data), true);
     }
 
+    public static function httpPost($data, $url) 
+    {
+        $options = array(
+            'http' => array(
+                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method' => "POST",
+                'content' => http_build_query($data)
+            )
+        );
+        
+        $context  = stream_context_create($options);
+        return json_decode(file_get_contents($url, false, $context));
+    }
+
     public static function curlRequest($url) {
 		$c = curl_init();
 		curl_setopt($c, CURLOPT_URL, $url);

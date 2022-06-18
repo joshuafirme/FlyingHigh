@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\ProductApi;
 use App\Http\Controllers\Api\LotCodeApi;
+use App\Http\Controllers\Api\YLApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,8 +30,9 @@ Route::get('product/bundle-qty-list/{sku}', [ProductApi::class, 'getBundleQtyLis
 
 Route::get('lotcode/{sku}', [LotCodeApi::class, 'getLotCode']); 
 
-Route::post('sync-skumasters', [ProductApi::class, 'syncSkuMasters']);
+Route::post('sync-skumasters', [YLApiController::class, 'syncSkuMasters']);
+Route::post('purchase-orders', [YLApiController::class, 'postPurchaseOrders']);
 
 Route::middleware('client')->group(function () {
-    Route::get('get-yl-access-token', [ProductApi::class, 'getAccessToken']);
+    Route::get('get-yl-access-token', [YLApiController::class, 'getAccessToken']);
 });  

@@ -15,18 +15,69 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'sku',
-        'description',
-        'qty',
-        'buffer_stock',
-        'jde_lot_code',
-        'supplier_lot_code',
-        'expiration',
-        'has_bundle',
-        'bundles',
-        'barcode',
-        'status',
+        "itemNumber",
+        "lotCode",
+        "stock",
+        "bufferStock",
+        "actionCode",
+        "baseUOM",
+        "conversionFactor",
+        "height",
+        "width",
+        "depth",
+        "itemDimensionUnit",
+        "weight",
+        "weightUnit",
+        "volume",
+        "volumeUom",
+        "productDescription",
+        "harmonizedCode",
+        "hazardous",
+        "food",
+        "refrigerated",
+        "retailPrice",
+        "willMelt",
+        "willFreeze",
+        "specialShippingCode",
+        "isBarcoded",
+        "barCodeNumber",
+        "currencyCode",
+        "lineType",
+        "unHazardCode",
+        "isLotControlled",
+        "status"
     ];
+
+    public function storeProduct($item) {
+        $this->itemNumber = $item->itemNumber;
+        $this->actionCode = $item->actionCode;
+        $this->baseUOM = $item->baseUOM;
+        $this->conversionFactor = $item->conversionFactor;
+        $this->height = $item->height;
+        $this->width = $item->width;
+        $this->depth = $item->depth;
+        $this->itemDimensionUnit = $item->itemDimensionUnit;
+        $this->weight = $item->weight;
+        $this->weightUnit = $item->weightUnit;
+        $this->volume = $item->volume;
+        $this->volumeUom = $item->volumeUom;
+        $this->productDescription = $item->productDescription;
+        $this->harmonizedCode = $item->harmonizedCode;
+        $this->hazardous = $item->hazardous;
+        $this->food = $item->food;
+        $this->refrigerated = $item->refrigerated;
+        $this->retailPrice = $item->retailPrice;
+        $this->willMelt = $item->willMelt;
+        $this->willFreeze = $item->willFreeze;
+        $this->specialShippingCode = $item->specialShippingCode;
+        $this->isBarcoded = $item->isBarcoded;
+        $this->barCodeNumber = $item->barCodeNumber;
+        $this->currencyCode = $item->currencyCode;
+        $this->lineType = $item->lineType;
+        $this->unHazardCode = $item->unHazardCode;
+        $this->isLotControlled = $item->isLotControlled;
+        $this->save(); 
+    }
 
     public function createProduct($request) {
         self::create([
@@ -90,16 +141,25 @@ class Product extends Model
         return count($res) > 0 ? true : false;
     }
 
+    public function isItemExists($item) {
+        $res = self::where([
+            ['itemNumber', '=', $item->itemNumber],
+            ['baseUOM', '=', $item->baseUOM],
+        ])->get();
+
+        return count($res) > 0 ? true : false;
+    }
+
     public function isBarcodeExists($barcode) {
         $res = self::where('barcode', $barcode)->get();
         return count($res) > 0 ? true : false;
     }
 
     public function getHubsStockBySku($sku) {
-        $data = self::select('HI.sku', 'HI.stock', 'description', 'H.name as hub', 'HI.lot_code')
-            ->leftJoin('hub_inventory as HI', 'HI.sku', '=', 'products.sku')
+        $data = self::select('HI.itemNumber', 'HI.stock', 'description', 'H.name as hub', 'HI.lot_code')
+            ->leftJoin('hub_inventory as HI', 'HI.itemNumber', '=', 'products.itemNumber')
             ->leftJoin('hubs as H', 'H.id', '=', 'HI.hub_id')
-            ->where('HI.sku', $sku)
+            ->where('HI.itemNumber', $sku)
             ->get();
 
         $data_arr = [];

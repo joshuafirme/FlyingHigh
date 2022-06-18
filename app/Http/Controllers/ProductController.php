@@ -34,7 +34,7 @@ class ProductController extends Controller
     
     public function index() 
     {
-        $products = Product::orderBy('created_at','desc')->paginate(50);
+        $products = Product::orderBy('created_at','desc')->paginate(20);
         $remarks = AdjustmentRemarks::where('status', 1)->get();
         $product_count = Product::count('id');
         $lot_code = new LotCode;

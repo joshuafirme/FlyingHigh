@@ -56,7 +56,7 @@
                                                 <tr>
                                                     <td>{{ $item->sku }}</td>
                                                     <td>{{ $item->lot_code ? $item->lot_code : 'N/A' }}</td>
-                                                    <td>{{ $item->description }}</td>
+                                                    <td>{{ $item->productDescription }}</td>
                                                     <td>{{ $item->stock }}</td>
                                                     <td>{{ $item->expiration ? $item->expiration : 'N/A' }}</td>
                                                     <td></td>

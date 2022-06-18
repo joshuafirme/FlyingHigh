@@ -39,9 +39,9 @@ class LineItem extends Model
 
     
     public function getReturnedList($per_page) {
-        return self::select('P.sku', 'P.description', 'quantity', 'line_items.status', 'orderId','partNumber', 
+        return self::select('P.itemNumber', 'P.productDescription', 'quantity', 'line_items.status', 'orderId','partNumber', 
         'qty_returned','orderId','return_reason',$this->table . '.updated_at', 'R.reason','rma_number')
-        ->leftJoin('products as P', 'P.sku', '=', $this->table . '.partNumber')
+        ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.partNumber')
         ->leftJoin('return_reasons as R', 'R.id', '=', $this->table . '.return_reason')
         ->orderBy($this->table.'.updated_at', 'desc')
         ->where($this->table . '.status', 2)->paginate($per_page);

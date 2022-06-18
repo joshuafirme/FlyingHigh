@@ -10,14 +10,23 @@ use App\Models\StockTransfer;
 use App\Models\InboundTransfer;
 use App\Models\LotCode;
 use App\Models\Product;
+use App\Models\PurchaseOrder;
+use App\Models\POLineItems;
 use Utils;
 
 class StockTransferController extends Controller
 {
-    public function index(StockTransfer $tr) 
+    public function index() 
     {
-        $transfer_request = $tr->getDataTodayPaginate(50);
-        return view('stock-transfer.index', compact('transfer_request'));
+        $purchase_orders = PurchaseOrder::paginate(10);
+        return view('stock-transfer.index', compact('purchase_orders'));
+    }
+
+    public function readOneOrder($orderNumber) 
+    {
+        $purchase_order = PurchaseOrder::where('orderNumber', $orderNumber)->first();
+        $line_items = POLineItems::where('orderNumber', $orderNumber)->get();
+        return view('stock-transfer.line-items', compact('purchase_order', 'line_items'));
     }
 
     public function search(StockTransfer $tr) 

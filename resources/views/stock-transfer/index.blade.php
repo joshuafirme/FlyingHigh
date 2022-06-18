@@ -22,27 +22,8 @@
                                     $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
                                     $hub_id = request()->hub_id;
                                 @endphp
-                                <form class="form-inline" action="{{ url('/stock-transfer/filter') }}" method="get">
-                                    <div class="form-group col-12 col-md-auto">
-                                        <label>Delivery Date from</label>
-                                        <input type="date" class="form-control ml-0 ml-sm-2" name="date_from"
-                                            value="{{ $date_from }}" required>
-                                    </div>
-                                    <div class="form-group col-12 col-md-auto">-</div>
-                                    <div class="form-group mr-4 col-12 col-md-auto">
-                                        <input type="date" class="form-control ml-0 ml-sm-2" name="date_to"
-                                            value="{{ $date_to }}" required>
-                                    </div>
-                                    <div class="form-group ml-1">
-                                        <button class="btn btn-sm btn-primary" type="submit">Filter</button>
-                                    </div>
-                                    <div class="form-group ml-1">
-                                        <a class="btn btn-sm btn-primary" href="{{ url('/stock-transfer') }}"><i
-                                                class="fa fa-sync" aria-hidden="true"></i> Refresh</a>
-                                    </div>
-                                </form>
-
                                 <div class="form-group ml-auto mt-4 mt-sm-2">
+                                    <a class="btn btn-sm btn-primary"><i class="fas fa-sync"></i> Sync ASN</a>
 
                                     <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#importModal"><i
                                             class="fas fa-file-import"></i>
@@ -59,7 +40,7 @@
                                     class="ml-4">
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" name="key" style="width: 280px;"
-                                            placeholder="Search Tracking #"
+                                            placeholder="Search Transaction Reference #"
                                             value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary" type="submit">
@@ -74,50 +55,33 @@
                                 <table class="table table-borderless table-hover">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Tracking #</th>
-                                            <th scope="col">SKU</th>
-                                            <th scope="col">Description</th>
-                                            <th scope="col">Pending Qty</th>
-                                            <th scope="col">Qty Received</th>
-                                            <th scope="col">UOM</th>
-                                            <th scope="col">Order date</th>
-                                            <th scope="col">Delivery date</th>
-                                            <th scope="col">Remarks</th>
-                                            <th scope="col">Status</th>
+                                            <th scope="col">Transaction Reference #</th>
+                                            <th scope="col">Order #</th>
+                                            <th scope="col">Order Type</th>
+                                            <th scope="col">Order Date</th>
+                                            <th scope="col">Vendo No</th>
+                                            <th scope="col">Vendor Name</th>
+                                            <th scope="col">Ship From Address</th>
+                                            <th scope="col">Ship From Country</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($transfer_request))
-                                            @foreach ($transfer_request as $item)
+                                        @if (count($purchase_orders))
+                                            @foreach ($purchase_orders as $item)
                                                 <tr>
-                                                    <td>{{ $item->tracking_no }}</td>
-                                                    <td>{{ $item->sku }}</td>
-                                                    <td>{{ $item->description }}</td>
-                                                    <td>{{ $item->qty_order }}</td>
-                                                    <td>{{ $item->qty_received }}</td>
-                                                    <td>{{ $item->uom }}</td>
-                                                    <td>{{ $item->order_date }}</td>
-                                                    <td>{{ $item->delivery_date }}</td>
-                                                    <td>{{ $item->remarks }}</td>
-                                                    <td>
-                                                        @if ($item->status == 0)
-                                                            <span class="badge badge-primary badge-pill">Pending</span>
-                                                        @elseif ($item->status == 1)
-                                                            <span class="badge badge-warning badge-pill">Partially
-                                                                Transferred</span>
-                                                        @elseif ($item->status == 2)
-                                                            <span
-                                                                class="badge badge-success badge-pill">Transferred</span>
-                                                        @endif
-                                                    </td>
-                                                    @if ($item->status != 2)
-                                                        <td>
-                                                            <a class="btn btn-primary btn-sm btn-transfer"
-                                                                data-obj="{{ json_encode($item) }}"><i
-                                                                    class="fas fa-dolly"></i> Transfer</a>
-                                                        </td>
-                                                    @endif
+                                                <td>{{ $item->transactionReferenceNumber }}</td>
+                                                <td>{{ $item->orderNumber }}</td>
+                                                <td>{{ $item->orderType }}</td>
+                                                <td>{{ $item->orderDate }}</td>
+                                                <td>{{ $item->vendorNo }}</td>
+                                                <td>{{ $item->vendorName }}</td>
+                                                <td>{{ $item->shipFromAddress }}</td>
+                                                <td>{{ $item->shipFromCountry }}</td>
+                                                <td>
+                                                    <a href="{{ url('/stock-transfer/asn/' . $item->orderNumber) }}" target="_blank" class="btn btn-primary btn-sm btn-transfer" data-obj="{{ json_encode($item) }}">
+                                                        <i class="fas fa-dolly"></i> Line Items</a>
+                                                </td>
                                                 </tr>
                                             @endforeach
                                         @else
@@ -140,7 +104,7 @@
                             </div>
 
                             @php
-                                echo $transfer_request->appends(request()->query())->links('pagination::bootstrap-4');
+                                echo $purchase_orders->appends(request()->query())->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>

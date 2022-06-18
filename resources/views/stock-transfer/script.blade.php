@@ -2,7 +2,7 @@
     $(function() {
         "use strict";
 
-        $(document).on('click', '.btn-transfer', function() {
+        /*$(document).on('click', '.btn-transfer', function() {
             let mdl = $('#transferModal');
             mdl.modal('show');
             let _this = $(this);
@@ -116,7 +116,7 @@
             })
 
             return false;
-        });
+        });*/
 
 
         function swalSuccess(message) {

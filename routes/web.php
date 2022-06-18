@@ -141,6 +141,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/product-lot-codes/export', [ProductLotCodesController::class, 'exportReport']);
 
     Route::get('/stock-transfer', [StockTransferController::class, 'index']);
+    Route::get('/stock-transfer/asn/{orderNumber}', [StockTransferController::class, 'readOneOrder']);
     Route::get('/stock-transfer/search', [StockTransferController::class, 'search']);
     Route::get('/stock-transfer/filter', [StockTransferController::class, 'filter']);
     Route::post('/stock-transfer/transfer', [StockTransferController::class, 'transfer']);

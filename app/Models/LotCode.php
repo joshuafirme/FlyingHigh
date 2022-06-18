@@ -18,6 +18,8 @@ class LotCode extends Model
         'stock',
         'expiration',
         'type',
+        'uom',
+        'location',
         'status',
     ];
 
@@ -30,22 +32,22 @@ class LotCode extends Model
     }
 
     public function getAllPaginate($per_page) {
-        return self::select($this->table . '.*', 'P.description')
-            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+        return self::select($this->table . '.*', 'P.productDescription')
+            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.sku')
             ->orderBy($this->table . '.created_at', 'desc')
             ->paginate($per_page);
     }
 
     public function getAll() {
-        return self::select($this->table . '.*', 'P.description')
-            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+        return self::select($this->table . '.*', 'P.productDescription')
+            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.sku')
             ->orderBy($this->table . '.created_at', 'desc')
             ->get();
     }
     
     public function getExpired($per_page) {
-        return self::select($this->table . '.*', 'P.description')
-            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+        return self::select($this->table . '.*', 'P.productDescription')
+            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.sku')
             ->whereDate($this->table . '.expiration', '=', date('Y-m-d'))
             ->where('lot_code', '!=', 0)
             ->orderBy($this->table . '.expiration', 'desc')
@@ -55,8 +57,8 @@ class LotCode extends Model
     public function getExpiredFilterPaginate($per_page) {
         $date_from = request()->date_from ? request()->date_from : date('Y-m-d');
         $date_to = request()->date_to ? request()->date_to : date('Y-m-d');
-        return self::select($this->table . '.*', 'P.description')
-            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+        return self::select($this->table . '.*', 'P.productDescription')
+            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.sku')
             ->whereDate($this->table . '.expiration', '<', date('Y-m-d'))
             ->where('lot_code', '!=', 0)
             ->orderBy($this->table . '.expiration', 'desc')
@@ -68,8 +70,8 @@ class LotCode extends Model
         $date_from = $date_from ? $date_from : date('Y-m-d');
         $date_to = $date_to ? $date_to : date('Y-m-d');
         $tbl = $this->table;
-        return self::select($tbl . '.sku', $tbl . '.lot_code', 'P.description', $tbl . '.stock', $tbl . '.expiration')
-            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+        return self::select($tbl . '.sku', $tbl . '.lot_code', 'P.productDescription', $tbl . '.stock', $tbl . '.expiration')
+            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.sku')
             ->whereDate($this->table . '.expiration', '<', date('Y-m-d'))
             ->where('lot_code', '!=', 0)
             ->orderBy($this->table . '.expiration', 'desc')

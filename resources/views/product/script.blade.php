@@ -2,6 +2,42 @@
     $(function() {
         "use strict";
 
+        lastSycned()
+
+        setInterval(() => {
+            lastSycned();
+        }, 60000);
+
+        function lastSycned() {
+            let timeago = convertUnixTimeToTimeAgo("{{ Cache::get('sku_master_last_sync') }}");
+            let timeago_splitted = timeago.split(' ');
+            let ago_text = timeago_splitted[0] > 1 ? 's ago' : ' ago';
+            console.log(timeago)
+            $('#last_synced').html(timeago + ago_text)
+        }
+
+        function convertUnixTimeToTimeAgo(datetime) { 
+            let timestamp = Math.floor(new Date(datetime).getTime() / 1000)
+            var seconds = Math.floor(((new Date().getTime()/1000) - timestamp)),
+            interval = Math.floor(seconds / 31536000);
+
+            if (interval > 1) return interval + " year";
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) return interval + " month";
+            
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) return interval + " day";
+
+            interval = Math.floor(seconds / 3600);
+            if (interval >= 1) return interval + " hr";
+
+            interval = Math.floor(seconds / 60);
+            if (interval > 1) return interval + " min";
+
+            return Math.floor(seconds) + "s";
+        }
+
+
         const el_choices_multi_sku = document.getElementById('choices-multiple-sku');
         const multi_sku = new Choices(el_choices_multi_sku, {
             removeItemButton: true,
@@ -27,10 +63,10 @@
 
         function appendInputs(data){
             var html = '';
-            html += '<tr id="' + data.id + '_' + data.sku + '">';
+            html += '<tr id="' + data.id + '_' + data.itemNumber + '">';
             html += '<td>';
             html += data.description;
-            html += '<input type="hidden" class="form-control" name="sku[]" value="' + data.sku + '">';
+            html += '<input type="hidden" class="form-control" name="sku[]" value="' + data.itemNumber + '">';
             html += '</td>';
             html += '<td>';
             html += '<select class="form-control" name="lot_code[]" required>';
@@ -55,7 +91,7 @@
             html += '@endforeach ';
             html += '</select>';
             html += '</td>';
-            html += '<td><a class="btn btn-remove-sku" data-id="' + data.id + '_' + data.sku + '"><i class="fa fa-trash"></i></a></td>';
+            html += '<td><a class="btn btn-remove-sku" data-id="' + data.id + '_' + data.itemNumber + '"><i class="fa fa-trash"></i></a></td>';
             html += '</tr>';
             $('#inputs-container').append(html);
         }
@@ -92,12 +128,12 @@
                         return data.map(function(v) {
                             let is_selected = false;
                             if (bundles != null && bundles.indexOf(v
-                                    .sku) != -1) {
+                                    .itemNumber) != -1) {
                                 is_selected = true;
                             }
                             return {
-                                label: v.sku + ' | ' + v.description,
-                                value: v.sku,
+                                label: v.itemNumber + ' | ' + v.description,
+                                value: v.itemNumber,
                                 selected: is_selected
                             };
                         });
@@ -206,7 +242,7 @@
         function swalError(html) {
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
+                title: 'Oops... Error was occured.',
                 html: html,
             })
         }
@@ -245,7 +281,7 @@
                         }
                         modal.find('[name=' + key + ']').val(data[key]);
                     }
-                    getLotCodes(data.sku);
+                    getLotCodes(data.itemNumber);
                 }
             });
             
@@ -261,17 +297,50 @@
             $('.btn-view-detail').click(function() {
                 let data = JSON.parse($(this).attr('data-info'));
                 let modal = $('#detailModal');
+                let tbl = $('.tbl-product-details');
+                tbl.find('tbody').empty()
                 for (var key of Object.keys(data)) {
-                    if (key == 'expiration') {
-                        data[key] = data[key] ? data[key].substring(0, 10) : '';
+                    if (key == 'id' ||  key == 'productDescription' || key == 'lotCode' || key == 'stock' || key == 'status' || key == 'created_at' || key == 'updated_at') {
+                        continue;
                     }
-                    if (key == 'status') {
-                        data[key] = data[key] == 1 ? 'Active' : 'Inactive';
-                    }
-                    
-                    modal.find('[name=' + key + ']').val(data[key]);
+                    let html_attr = '';
+                    html_attr += '<tr>';
+                        html_attr += '<td>'+key+'</td>';
+                        html_attr += '<td>'+data[key]+'</td>';
+                    html_attr += ' </tr>';
+                    tbl.find('tbody').append(html_attr)
                 }
-                getLotCodes(data.sku, 'details');
+                getLotCodes(data.itemNumber, 'details');
+            });
+
+            $(document).on('click', '#btn-sync-skumaster', function() {
+                let btn = $(this);
+                btn.prop("disabled", true);
+                let current_html = btn.html();
+                btn.html('Syncing...')
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ url('/api/sync-skumasters') }}",
+                    data: {
+                        'client_id' : "{{ env('LF_CLIENT_ID') }}",
+                        'client_secret' : "{{ env('LF_CLIENT_SECRET') }}"
+                    },
+                }).done(function(response) { console.log(response)
+                    if (response.success) {
+                        lastSycned()
+                        swalSuccess(response.message);
+                    }
+                    else {
+                        swalError(response.exceptionMessage);
+                    }
+                    btn.html(current_html);
+                    btn.prop("disabled", false);
+                })
+                .fail(function(e) {
+                    swalError(e.responseJSON.message);
+                    btn.html(current_html);
+                    btn.prop("disabled", false);
+                });
             });
 
             $(document).on('click', '.btn-hubs-stock', function() {
@@ -350,7 +419,7 @@
                         .then(data => data.json())
                         .then(data => {
                             console.log(data)
-                            if (data.sku) {
+                            if (data.itemNumber) {
                                 $(this).val('')
                                 appendInputs(data);
                             }
@@ -362,9 +431,9 @@
                 let data = JSON.parse($(this).attr('data-info'));
                 let mdl = $('#lotCodesModal');
                 mdl.find('.modal-title').text('Lot Codes');
-                mdl.find('.sku-text').html(data.sku); 
+                mdl.find('.itemNumber-text').html(data.itemNumber); 
                 mdl.find('.description-text').html(data.description); 
-                getLotCodes(data.sku, 'lotcodes');
+                getLotCodes(data.itemNumber, 'lotcodes');
             });
 
             $('.btn-transfer').click(function() {
@@ -616,16 +685,6 @@
             });
 
 
-            $('#has_bundle').click(function(e) {
-                if ($(this).is(':checked')) {
-                    $('.bundle-choices').removeClass('d-none');
-                    $('#choices-multiple-remove-button').prop('required', true);
-                } else {
-                    $('.bundle-choices').addClass('d-none');
-                    $('#choices-multiple-remove-button').prop('required', false);
-                }
-            });
-
             $('#btn-open-import-via-barcode').click(function(e) {
                 e.preventDefault();
                 $('#barcodeScanModal').modal('show');
@@ -648,15 +707,15 @@
                         .then(data => data.json())
                         .then(data => {
                             console.log(data)
-                            if (data.sku) {
+                            if (data.itemNumber) {
                                 el.val('');
-                                modal.find('[name=sku]').val(data.sku);
+                                modal.find('[name=sku]').val(data.itemNumber);
                                 modal.find('[name=description]').val(data.description);
-                                incrementStock(data.sku, qty);
+                                incrementStock(data.itemNumber, qty);
                             }
                             else {
                                 modal.find('.error-message').removeClass('d-none');
-                                modal.find('.error-message').html(data.sku);
+                                modal.find('.error-message').html(data.itemNumber);
                             }
                     });
                 }
@@ -679,8 +738,8 @@
                         } 
                         else if (data.message == 'some_sku_not_exists') {
                             let html = data.description + '<br>';
-                            console.log(data.sku_list)
-                            for (let sku of data.sku_list) {
+                            console.log(data.itemNumber_list)
+                            for (let sku of data.itemNumber_list) {
                                 html += '<a target="_blank" href="#">'+sku+'</a><br>';
                             }
                             swalError(html);

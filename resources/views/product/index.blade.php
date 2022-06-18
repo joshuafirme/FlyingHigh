@@ -5,6 +5,13 @@
 
 @include('layouts.side-nav')
 
+<style>
+    .tbl-product-details tr td{
+        padding: 2px !important;
+        margin: 2px !important;
+    }
+</style>
+
 <div class="content-page">
     <div class="content">
         <div class="container-fluid" id="app">
@@ -62,11 +69,11 @@
                                             data-keyboard="false"><i class="fa fa-exchange-alt"></i>
                                             Hub Transfer
                                         </button>
-                                        <a href="{{ url('/product') }}"
-                                            class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto">
+                                        <button class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
+                                            id="btn-sync-skumaster">
                                             <i class="fa fa-sync"></i>
-                                            Refresh
-                                        </a>
+                                            Sync
+                                        </button>
 
                                     </div>
 
@@ -87,8 +94,9 @@
                                 </div>
                             </div>
 
+                            <small>Last synced: <span id="last_synced"></span></small>
                             <div class="table-responsive" style="min-height: 500px;">
-                                <table class="table table-borderless table-hover">
+                                <table class="table table-bordered table-hover">
                                     <thead>
                                         <tr>
                                             <th scope="col">SKU</th>
@@ -96,9 +104,7 @@
                                             <th scope="col">Stock</th>
                                             <th scope="col">Buffer Stock</th>
                                             <th scope="col">Stock Level</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Created at</th>
-                                            <th scope="col">Action</th>
+                                            <th scope="col" style="width:20%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -108,7 +114,7 @@
                                                     $text_class = 'text-success';
                                                     $stock_level = 'Normal';
                                                     $icon = '<i class="fas fa-check-circle"></i>';
-                                                    $stock = $lot_code->getAllStock($item->sku);
+                                                    $stock = $lot_code->getAllStock($item->itemNumber);
                                                     if ($stock == 0) {
                                                         $text_class = 'text-danger';
                                                         $stock_level = 'Out of stock';
@@ -118,102 +124,82 @@
                                                         $stock_level = 'Critical';
                                                         $icon = '<i class="fas fa-exclamation-circle"></i>';
                                                     }
-                                                    $expiration = Utils::validateExpiration($item->expiration);
                                                     $date_now = date('Y-m-d');
                                                 @endphp
-                                                <tr id="record-id-{{ $item->id }}">
+                                                <tr>
                                                     <td><a class="btn-view-detail" href="#" data-target="#detailModal"
                                                             data-toggle="modal" data-info="{{ json_encode($item) }}">
-                                                            {{ $item->sku }}</a></td>
-                                                    <td>{{ $item->description }}</td>
+                                                            {{ $item->itemNumber }}</a></td>
+                                                    <td>{{ $item->productDescription }}</td>
                                                     <td class="{{ $text_class }}">{{ $stock }}</td>
-                                                    <td>{{ $item->buffer_stock }}</td>
+                                                    <td>{{ $item->bufferStock }}</td>
                                                     <td class="{{ $text_class }}">{!! $icon !!}
                                                         {{ $stock_level }}</td>
-                                                    <td>@php
-                                                        if ($item->status == 1) {
-                                                            echo '<span class="badge rounded-pill bg-primary">Active</span>';
-                                                        } elseif ($item->status == 0) {
-                                                            echo '<span class="badge rounded-pill bg-danger">Inactive</span>';
-                                                        }
-                                                    @endphp</td>
-                                                    <td>{{ Utils::formatDate($item->created_at) }}</td>
                                                     <td>
-                                                        <div class="btn-group">
-                                                            <a href="#" class="btn btn-dark btn-sm"
+
+                                                        <a class="btn btn-sm btn-primary btn-hubs-stock"
+                                                            data-target="#hubsStockModal" data-toggle="modal"
+                                                            data-itemNumber="{{ $item->itemNumber }}"
+                                                            data-desc="{{ $item->description }}"><i
+                                                                class="fa fa-warehouse"></i> Hubs
+                                                            Stock</a>
+                                                        <a class="btn btn-sm btn-primary btn-stock-adjustment"
+                                                            data-target="#stockAdjustmentModal" data-toggle="modal"
+                                                            data-sku="{{ $item->itemNumber }}"
+                                                            data-stock="{{ $stock }}"
+                                                            data-desc="{{ $item->description }}"
+                                                            data-backdrop="static" data-keyboard="false"><i
+                                                                class="fas fa-sort-amount-up"></i></i> Stock
+                                                            Adjustment</a>
+                                                        <a class="btn btn-sm btn-primary btn-view-detail"
+                                                            data-target="#detailModal" data-toggle="modal" data-info="{{ json_encode($item) }}">
+                                                            <i class="fa fa-eye"></i> Details</a>
+
+                                                        <!--<a href="#" class="btn btn-dark btn-sm"
                                                                 data-toggle="dropdown" data-backdrop="static"
                                                                 data-keyboard="false" role="button" aria-haspopup="true"
                                                                 aria-expanded="false"><i
                                                                     class="fas fa-ellipsis-v"></i></a>
                                                             <div class="dropdown-menu">
-                                                                <!-- <a class="btn dropdown-item btn-transfer"
+                                                                 <a class="btn dropdown-item btn-transfer"
                                                                     data-backdrop="static" data-keyboard="false"
                                                                     data-target="#transferModal" data-toggle="modal"
-                                                                    data-sku="{{ $item->sku }}"
+                                                                    data-itemNumber="{{ $item->itemNumber }}"
                                                                     data-desc="{{ $item->description }}"
                                                                     data-stock="{{ $stock }}"><i
-                                                                        class="fa fa-exchange-alt"></i> Hub Transfer</a>
-                                                                <a class="btn dropdown-item btn-hubs-stock"
-                                                                    data-target="#hubsStockModal" data-toggle="modal"
-                                                                    data-sku="{{ $item->sku }}"
-                                                                    data-desc="{{ $item->description }}"><i
-                                                                        class="fa fa-warehouse"></i> Hubs
-                                                                    Stock</a>-->
-                                                                <a class="btn btn-stock-adjustment dropdown-item"
-                                                                    data-target="#stockAdjustmentModal"
-                                                                    data-toggle="modal" data-sku="{{ $item->sku }}"
-                                                                    data-stock="{{ $stock }}"
-                                                                    data-desc="{{ $item->description }}"
-                                                                    data-backdrop="static" data-keyboard="false"><i
-                                                                        class="fas fa-sort-amount-up"></i></i> Stock
-                                                                    Adjustment</a>
-                                                                <a class="btn btn-edit open-modal dropdown-item"
-                                                                    data-backdrop="static" data-keyboard="false"
-                                                                    modal-type="update"
-                                                                    data-info="{{ json_encode($item) }}"><i
-                                                                        class="fa fa-edit"></i> Edit</a>
-                                                                <a class="btn delete-record dropdown-item"
-                                                                    data-id="{{ $item->id }}" object="product"
-                                                                    data-toggle="modal"
-                                                                    data-target="#delete-record-modal">
-                                                                    <i class="fa fa-trash">
-                                                                        Delete</i>
-                                                                </a>
-
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @else
-                                            <tr>
-                                                <td colspan="10">
-                                                    <div class="alert alert-danger alert-dismissible fade show"
-                                                        role="alert">
-                                                        No data found.
-                                                        <button type="button" class="close"
-                                                            data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endif
-
-                                    </tbody>
-                                </table>
+                                                                        class="fa fa-exchange-alt"></i> Hub Transfer</a>-->
                             </div>
+                            </td>
+                            </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="10">
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        No data found.
+                                        <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endif
 
-                            @php
-                                echo $products->links('pagination::bootstrap-4');
-                            @endphp
+                            </tbody>
+                            </table>
                         </div>
+
+                        @php
+                            echo $products->links('pagination::bootstrap-4');
+                        @endphp
                     </div>
                 </div>
             </div>
-
         </div>
+
     </div>
+</div>
 </div>
 
 @include('product.modals')

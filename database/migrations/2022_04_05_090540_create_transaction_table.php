@@ -16,7 +16,10 @@ class CreateTransactionTable extends Migration
         Schema::create('transaction', function (Blueprint $table) {
             $table->id();
             $table->string('transactionType');
-            $table->string('transactionReferenceNumber');
+            $table->string('transactionReferenceNumber');    
+            $table->integer('messageCount');       
+            $table->integer('sender');       
+            $table->integer('receiver');       
             $table->timestamps();
         });
     }

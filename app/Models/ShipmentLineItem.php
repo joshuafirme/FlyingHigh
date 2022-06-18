@@ -29,8 +29,8 @@ class ShipmentLineItem extends Model
 
     public function getLineItems($shipmentId) {
         return self::select(
-                    "P.sku", 
-                    "P.description",
+                    "P.itemNumber", 
+                    "P.productDescription",
                     "orderId",
                     "shipmentId",
                     "orderLineNumber",
@@ -43,7 +43,7 @@ class ShipmentLineItem extends Model
                     "lotNumber",
                     $this->table.".status"
                 )
-        ->leftJoin('products as P', 'P.sku', '=', $this->table.'.partNumber')
+        ->leftJoin('products as P', 'P.itemNumber', '=', $this->table.'.partNumber')
         ->where('shipmentId', $shipmentId)
         ->get();
             

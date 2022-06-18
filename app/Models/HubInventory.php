@@ -38,19 +38,19 @@ class HubInventory extends Model
     public function getByHub($hub_id, $per_page) 
     {
         return self::select('P.*', $this->table . '.stock', $this->table . '.lot_code', 'hub_id', $this->table . '.updated_at')
-            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.itemNumber')
             ->where($this->table . '.receiver', $receiver)
-            ->orderBy($this->table . '.sku', 'desc')
+            ->orderBy($this->table . '.itemNumber', 'desc')
             ->paginate($per_page);
     }
 
     public function searchByHub($hub_id, $per_page) 
     { 
         return self::select('P.*', $this->table . '.stock', $this->table . '.lot_code', 'hub_id')
-            ->leftJoin('products as P', 'P.sku', '=', $this->table . '.sku')
+            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.itemNumber')
             ->where($this->table . '.hub_id', $hub_id)
             ->where(function ($query) {
-               $query->where($this->table . '.sku', 'LIKE', '%' . request()->key . '%')
+               $query->where($this->table . '.itemNumber', 'LIKE', '%' . request()->key . '%')
                      ->orWhere('description', 'LIKE', '%' . request()->key . '%');
             })
             ->orderBy($this->table . '.updated_at', 'desc')

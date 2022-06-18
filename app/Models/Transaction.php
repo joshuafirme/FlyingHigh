@@ -15,7 +15,19 @@ class Transaction extends Model
     protected $fillable = [
         'transactionReferenceNumber',
         'transactionType',
+        'messageCount',
+        'sender',
+        'receiver'
     ];
+
+    public function saveTransaction($request) {
+        $this->transactionType = $request->transactionType;
+        $this->transactionReferenceNumber = $request->transactionReferenceNumber;
+        $this->messageCount = $request->messageCount;
+        $this->sender = $request->sender;
+        $this->receiver = $request->receiver;
+        $this->save();
+    }
 
     public function isTransactionExists($transRefNum) {
         $res = self::where('transactionReferenceNumber', $transRefNum)->get();
