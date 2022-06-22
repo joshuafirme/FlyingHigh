@@ -36,9 +36,9 @@
                         <li>
                             <a href="{{ url('/product') }}">Products</a>
                         </li>
-                        <li>
+                        <!--<li>
                             <a href="{{ url('/product-lot-codes') }}">Lot Code List</a>
-                        </li>
+                        </li>-->
                         <li>
                             <a href="{{ url('/stock-transfer') }}">Stock Transfer</a>
                         </li>

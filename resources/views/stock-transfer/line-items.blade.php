@@ -63,6 +63,9 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-12 mb-2">
+                                    <a id="btn-transfer-all" class="btn btn-primary btn-sm">Transfer all</a>
+                                </div>
                             </div>
                             <div class="p-2"><strong>Line Items</strong></div>
                             <div class="row">
@@ -73,15 +76,16 @@
                                                 <tr>
                                                     <th scope="col">Action</th>
                                                     <th scope="col">Line Number</th>
-                                                    <th scope="col">Transaction Action</th>
                                                     <th scope="col">Item Number</th>
                                                     <th scope="col">Lot Number</th>
                                                     <th scope="col">Description</th>
                                                     <th scope="col">Qty Ordered</th>
                                                     <th scope="col">Qty Open</th>
+                                                    <th scope="col">Qty Transferred</th>
                                                     <th scope="col">Ship Date</th>
                                                     <th scope="col">UOM</th>
                                                     <th scope="col">Location</th>
+                                                    <th scope="col">Transaction Action</th>
                                                     <th scope="col">Country Of Origin</th>
                                                     <th scope="col">Expected Date</th>
                                                     <th scope="col">extWeight</th>
@@ -103,15 +107,16 @@
                                                         <i class="fas fa-dolly"></i> Transfer</a>
                                                         </td>
                                                         <td>{{ $item->lineNumber }}</td>
-                                                        <td>{{ $item->transactionAction }}</td>
                                                         <td>{{ $item->itemNumber }}</td>
                                                         <td>{{ $item->lotNumber }}</td>
                                                         <td>{{ $item->description }}</td>
                                                         <td>{{ $item->quantityOrdered }}</td>
                                                         <td>{{ $item->quantityOpen }}</td>
+                                                        <td>{{ $item->quantityTransferred }}</td>
                                                         <td>{{ $item->shipDate }}</td>
                                                         <td>{{ $item->unitOfMeasure }}</td>
                                                         <td>{{ $item->location }}</td>
+                                                        <td>{{ $item->transactionAction }}</td>
                                                         <td>{{ $item->countryOfOrigin }}</td>
                                                         <td>{{ $item->expectedDate }}</td>
                                                         <td>{{ $item->extWeight }}</td>
@@ -139,10 +144,10 @@
     </div>
 </div>
 
-@include('hubs-inventory.modals')
+@include('stock-transfer.modals')
 
 @include('layouts.footer')
 
 @include('scripts._global_scripts')
 
-@include('hubs-inventory.script')
+@include('stock-transfer.script')

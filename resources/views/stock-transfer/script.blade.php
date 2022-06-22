@@ -2,8 +2,8 @@
     $(function() {
         "use strict";
 
-        /*$(document).on('click', '.btn-transfer', function() {
-            let mdl = $('#transferModal');
+        $(document).on('click', '.btn-transfer', function() {
+            let mdl = $('#transferOneModal');
             mdl.modal('show');
             let _this = $(this);
             let obj = _this.attr('data-obj');
@@ -11,12 +11,62 @@
             mdl.attr('data-shipmentid',obj.shipmentId);
             console.log(obj)
 
+            mdl.find('[name=qtyTransfer]').val('')
+
             for (var key of Object.keys(obj)) {
                 mdl.find('[name='+key+']').val(obj[key]);
             }
         });
 
-        $(document).on('click', '#select-from-old', function() {
+        $('#btn-transfer-all').click(function(event) {
+            let mdl = $('#transferModal');
+            let btn = mdl.find('[typr=submit]');
+            let id = mdl.find('[name=id]').val();
+            let qty_transfer = mdl.find('[name=qty_transfer]').val();
+            
+            let url = '/stock-transfer/transfer/{{ $purchase_order->orderNumber }}';
+
+            Swal.fire({
+                title: 'Transfer all line items of Order # {{ $purchase_order->orderNumber }}',
+                text: "",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    btn.html("Please wait...");
+                    $.ajax({
+                            type: 'POST',
+                            _token: '{{ csrf_token() }}',
+                            url: url,
+                            data: $(this).serialize()
+                        })
+
+                        .done(function(data) {
+                            console.log(data)
+                            if (data.success == true) {
+                                swalSuccess('Product was successfully transferred.');
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 2500);
+                            } 
+                            else {
+                                swalError('Qty to transfer is greater than pending qty.');
+                            }
+                            btn.html("Transfer");
+                        })
+                        .fail(function() {
+                            swalError('Error occured, please contact support!');
+                            btn.html("Transfer");
+                        });
+                }
+            })
+
+            return false;
+        });
+        /*$(document).on('click', '#select-from-old', function() {
             let mdl = $('#transferModal');
             let html = '<div class="col-md-12 mt-3 lot-codes-container">';
                 html +=    '<label class="form-label">Lot Code</label>';

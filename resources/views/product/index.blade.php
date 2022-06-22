@@ -72,7 +72,7 @@
                                         <button class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
                                             id="btn-sync-skumaster">
                                             <i class="fa fa-sync"></i>
-                                            Sync
+                                            Sync SKU Master
                                         </button>
 
                                     </div>
@@ -101,6 +101,7 @@
                                         <tr>
                                             <th scope="col">SKU</th>
                                             <th scope="col">Description</th>
+                                            <th scope="col">Base UOM</th>
                                             <th scope="col">Stock</th>
                                             <th scope="col">Buffer Stock</th>
                                             <th scope="col">Stock Level</th>
@@ -131,6 +132,7 @@
                                                             data-toggle="modal" data-info="{{ json_encode($item) }}">
                                                             {{ $item->itemNumber }}</a></td>
                                                     <td>{{ $item->productDescription }}</td>
+                                                    <td>{{ $item->baseUOM }}</td>
                                                     <td class="{{ $text_class }}">{{ $stock }}</td>
                                                     <td>{{ $item->bufferStock }}</td>
                                                     <td class="{{ $text_class }}">{!! $icon !!}

@@ -41,6 +41,12 @@ class StockTransferController extends Controller
         return view('stock-transfer.index', compact('transfer_request'));
     }
 
+    public function transferByOrderNo($orderNumber) 
+    {
+        $transfer_request = $tr->filterPaginate(50);
+        return view('stock-transfer.index', compact('transfer_request'));
+    }
+
     public function transfer(StockTransfer $tr, Product $product, LotCode $lc, InboundTransfer $inbound_transfer) 
     { 
         $sku = request()->sku;

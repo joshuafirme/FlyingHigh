@@ -18,6 +18,7 @@ class POLineItems extends Model
         'itemNumber',
         'quantityOrdered',
         'quantityOpen',
+        'quantityTransferred',
         'shipDate',
         'unitOfMeasure',
         'location',

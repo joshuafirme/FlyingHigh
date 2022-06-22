@@ -20,6 +20,7 @@ class LotCode extends Model
         'type',
         'uom',
         'location',
+        'palletId',
         'status',
     ];
 

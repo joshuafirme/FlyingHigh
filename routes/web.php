@@ -145,6 +145,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/stock-transfer/search', [StockTransferController::class, 'search']);
     Route::get('/stock-transfer/filter', [StockTransferController::class, 'filter']);
     Route::post('/stock-transfer/transfer', [StockTransferController::class, 'transfer']);
+    Route::post('/stock-transfer/transfer/order/{orderNumber}', [StockTransferController::class, 'transferByOrderNo']);
     Route::post('/stock-transfer/import', [StockTransferController::class, 'import']);
     Route::get('/stock-transfer/preview/{date_from}/{date_to}', [StockTransferController::class, 'previewReport']);
     Route::get('/stock-transfer/download/{date_from}/{date_to}', [StockTransferController::class, 'downloadReport']);

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\PurchaseOrder;
 use App\Models\POLineItems;
+use DB;
 use Cache;
 use Utils;
 use Http;
@@ -18,14 +19,32 @@ class YLApiController extends Controller
     public function syncSkuMasters(Request $request) 
     {
         try {
+            DB::beginTransaction();
+            
             $token = $this->getAccessToken($request)->access_token;
             $url = "https://lf-gateway-stage.awsvodev.youngliving.com/inventory/skumasters";
 
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-            ])->get($url);
+            //$response = Http::withHeaders([
+            //    'Authorization' => 'Bearer ' . $token,
+            //])->get($url);
+        
 
-            $response = json_decode($response);
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization' => 'Bearer ' . $token,
+            ]);
+            $result = curl_exec($ch);
+
+
+            $path = public_path() . '/sku_master.json';
+            $response = json_decode(file_get_contents($path));
+
+            //$response = json_decode($response);
             $products = $response->skuMasterDetails;
             $newly_inserted = [];
            
@@ -48,6 +67,8 @@ class YLApiController extends Controller
 
             Cache::put('sku_master_last_sync', date("Y-m-d H:i:s"));
 
+            DB::commit();
+
             return response()->json([
                 "success" => true,
                 "message" => 'SKU Masters was successfully synced!',    
@@ -58,6 +79,9 @@ class YLApiController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+
+            DB::rollback();
+
             return response()->json([
                     "success" => false,
                     "exceptionMessage" => $e->getMessage(),    
@@ -73,11 +97,14 @@ class YLApiController extends Controller
 
             $url = "https://lf-gateway-stage.awsvodev.youngliving.com/inventory/asn";
 
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-            ])->get($url);
-
+            $header = [
+                'Authorization: Bearer ' . $token,
+            ];
+            
+            $response = Utils::curlRequestWithHeaders($url, $header);
+         
             $response = json_decode($response);
+            return $response;
             $duplicates = [];
             foreach ($response->purchaseOrderHeaders as $purchaseOrder) { 
                 $po = new PurchaseOrder;

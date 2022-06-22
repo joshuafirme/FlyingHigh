@@ -85,3 +85,50 @@
         </form>
     </div>
 </div>
+
+<div class="modal fade" id="transferOneModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <form id="transferForm" action="{{ url('/stock-transfer/transfer') }}" method="POST"
+            enctype="multipart/form-data" class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Transfer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row g-3">
+                <input type="hidden" name="id">
+                <div class="col-md-6 mt-1">
+                    <label class="form-label">Item Number</label>
+                    <input type="text" name="itemNumber" class="form-control" readonly>
+                </div>
+                <div class="col-md-6 mt-1">
+                    <label class="form-label">Lot Number</label>
+                    <input type="text" name="lotNumber" class="form-control" readonly>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label class="form-label">Description</label>
+                    <input type="text" name="description" class="form-control" readonly>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label class="form-label">Qty Open</label>
+                    <input type="text" name="quantityOpen" class="form-control" readonly>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label class="form-label">Qty To Transfer</label>
+                    <input type="number" name="qtyTransfer" class="form-control" required>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label class="form-label">Reciept date</label>
+                    <input type="date" name="expiration" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-primary" type="submit">Transfer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
