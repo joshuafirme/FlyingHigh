@@ -121,4 +121,3 @@
 
 @include('scripts._global_scripts')
 
-@include('stock-transfer.script')

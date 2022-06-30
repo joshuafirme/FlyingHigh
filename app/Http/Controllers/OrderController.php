@@ -320,27 +320,16 @@ class OrderController extends Controller
         $output .= 
         '<div class="text-left">
             ';
-            $output .= $this->getInvoiceHeader("Sales Invoice");
+            $output .= $this->getInvoiceHeader("Sales Invoice", $order_details);
             $output .= '
-            <hr class="ml-2 mr-2">
-            <div class="text-info float-right mr-100">
-                Sold to: <span>' . $order_details->custName . '</span> <br>
-                Address: <span>' . $order_details->shipAddr1 . '</span> <br>
-                TIN: <span>' . Utils::separateString($order_details->customerTIN) . '</span> <br>
-            </div>
-            <div class="text-info ml-1">
-                Order Number: <span>' . $orderId . '</span> <br>
-                Order Date: <span>' . date('d-M-Y', strtotime($order_details->dateTimeSubmittedIso)) . '</span> <br>
-                Member ID: <span>' . $order_details->custId . '</span> <br>
-            </div>
-            <table width="100%" style="border-collapse:collapse;" class="mt-2">
+            <table width="100%" style="border-collapse:collapse; margin-top: 47px !important;" class="table-items">
                 <thead>
                     <th>Qty</th>
                     <th>Code</th>
                     <th>Description</th>
                     <th>Unit PV</th>
                     <th>Unit Price</th>
-                    <th>VAT/Item</th>
+                    <th>VAT /Unit</th>
                     <th>With VAT</th>
                     <th>Total Cost</th>
                 </thead>
@@ -364,16 +353,17 @@ class OrderController extends Controller
 
                     $total_amount += $total_cost;
                     $order_subtotal += $item->itemUnitPrice * $item->quantity;
+                   // $with_vat = $with_vat == 0.00 ? '<span class="peso">&#8369;</span>' . $with_vat : "N/A";
                     $output .= '
                     <tr>
                         <td class="text-center">' . $item->quantity . '</td>
                         <td>' . $component_txt . " " . $item->partNumber . '</td>
                         <td>' . $item->name . '</td>
                         <td class="text-right">' . Utils::toFixed($item->pv) . '</td>
-                        <td class="text-right">Php ' . Utils::toFixed($item->itemUnitPrice) . '</td>
-                        <td class="text-right">Php ' . Utils::getTaxPerItem($item->itemUnitPrice) . '</td>
-                        <td class="text-right">Php ' . $with_vat . '</td>
-                        <td class="text-right">Php ' . $total_cost . '</td>
+                        <td class="text-right"><span class="peso">&#8369;</span> ' . Utils::toFixed($item->itemUnitPrice) . '</td>
+                        <td class="text-right"><span class="peso">&#8369;</span> ' . Utils::getTaxPerItem($item->itemUnitPrice) . '</td>
+                        <td class="text-right"><span class="peso">&#8369;</span>' . $with_vat . '</td>
+                        <td class="text-right"><span class="peso">&#8369;</span> ' . $total_cost . '</td>
                     </tr>';
                 }
                 $vatable_sales = $order_subtotal + $order_details->shippingChargeAmount;
@@ -382,10 +372,10 @@ class OrderController extends Controller
                 $output .= '
                 </tbody>
             </table>
-            <table width="100%" style="border-collapse:collapse;" class="mt-3">
+            <table width="100%" style="border-collapse:collapse; margin-top: 12px;" class="table-computation">
                 <thead>
                     <th></th>
-                    <th class="text-left">Total<span class="float-right">Php ' . number_format($total_amount_due, 2, '.', ',') . '</span></th>
+                    <th class="text-left" style="padding: 0px !important; margin: 0px !important;font-size:15px;">Total w/VAT:<span class="float-right"><span class="peso">&#8369;</span> ' . number_format($total_amount_due, 2, '.', ',') . '</span></th>
                 </thead>  
                 <tbody>
                     <tr>
@@ -394,27 +384,27 @@ class OrderController extends Controller
                     </tr>
                     <tr>
                         <td class="text-left">Package Shipping/Handling</td>
-                        <td><span class="float-right">Php ' . number_format($order_details->shippingChargeAmount, 2, '.', ',') . '</span></td>
+                        <td><span class="float-right"><span class="peso">&#8369;</span> ' . number_format($order_details->shippingChargeAmount, 2, '.', ',') . '</span></td>
                     </tr>
                     <tr>
                         <td class="text-left">Vatable Sales</td>
-                        <td><span class="float-right">Php ' . number_format($vatable_sales, 2, '.', ',') . '</span></td>
+                        <td><span class="float-right"><span class="peso">&#8369;</span> ' . number_format($vatable_sales, 2, '.', ',') . '</span></td>
                     </tr>
                     <tr>
                         <td class="text-left">VAT Exempt Sales</td>
-                        <td><span class="float-right"></span></td>
+                        <td><span class="float-right"><span class="peso">&#8369;</span> 0.00</span></td>
                     </tr>
                     <tr>
                         <td class="text-left">Zero-rated sales</td>
-                        <td><span class="float-right"></span></td>
+                        <td><span class="float-right"><span class="peso">&#8369;</span> 0.00</span></td>
                     </tr>
                     <tr>
                         <td class="text-left">12% VAT</td>
-                        <td><span class="float-right">Php ' . number_format($vat, 2, '.', ',') .'</span></td>
+                        <td><span class="float-right"><span class="peso">&#8369;</span> ' . number_format($vat, 2, '.', ',') .'</span></td>
                     </tr>
                     <tr>
                         <td class="text-left">&shy;</td>
-                        <th><span class="float-right"><span class="mr-2">TOTAL AMOUNT DUE:</span> Php ' .  number_format($total_amount_due, 2, '.', ',') . '</span></th>
+                        <th style="padding: 3px !important; margin: 2px !important;font-size: 18px;"><span class="mr-2">TOTAL AMOUNT DUE:</span> <span class="float-right"><span class="peso">&#8369;</span> ' .  number_format($total_amount_due, 2, '.', ',') . '</span></th>
                     </tr>
                 </tbody>  
             </table>
@@ -431,19 +421,8 @@ class OrderController extends Controller
         $output .= 
         '<div class="text-left">
             ';
-            $output .= $this->getInvoiceHeader("Delivery Receipt");
+            $output .= $this->getInvoiceHeader("Delivery Receipt", $order_details);
             $output .= '
-            <hr class="ml-2 mr-2">
-            <div class="text-info ml-1 float-right">
-                Order Number: <span>' . $orderId . '</span> <br>
-                Order Date: <span>' . date('d-M-Y', strtotime($order_details->dateTimeSubmittedIso)) . '</span> <br>
-                Member ID: <span>' . $order_details->custId . '</span> <br>
-            </div>
-            <div class="text-info mr-100">
-                Delivered to: <span>' . $order_details->custName . '</span> <br>
-                Address: <span>' . $order_details->shipAddr1 . '</span> <br>
-                TIN: <span>' . Utils::separateString($order_details->customerTIN) . '</span> <br>
-            </div>
             <table width="100%" style="border-collapse:collapse;" class="mt-2">
                 <thead>
                     <th>Qty</th>
@@ -485,19 +464,8 @@ class OrderController extends Controller
         $output .= 
         '<div class="text-left">
             ';
-            $output .= $this->getInvoiceHeader("Collection Receipt");
+            $output .= $this->getInvoiceHeader("Collection Receipt", $order_details);
             $output .= '
-            <hr class="ml-2 mr-2">
-            <div class="text-info ml-1 float-right">
-                Order Number: <span>' . $orderId . '</span> <br>
-                Order Date: <span>' . date('d-M-Y', strtotime($order_details->dateTimeSubmittedIso)) . '</span> <br>
-                Member ID: <span>' . $order_details->custId . '</span> <br>
-            </div>
-            <div class="text-info mr-100">
-                Delivered to: <span>' . $order_details->custName . '</span> <br>
-                Address: <span>' . $order_details->shipAddr1 . '</span> <br>
-                TIN: <span>' . Utils::separateString($order_details->customerTIN) . '</span> <br>
-            </div>
             <div class="text-info " style="margin-top:80px">
             The sum of  <u>' . Utils::convertNumberToWord(number_format((float)$total_amount_due, 2, '.', ''), $currency) . '</u>
             </div>
@@ -535,7 +503,7 @@ class OrderController extends Controller
                         $output .= '<tr style="background:#F0F0F0;">
                             <td>'.$item->name.'</td>
                             <td></td>
-                            <td class="text-right">Php '.number_format((float)str_replace('-','',$item->itemUnitPrice), 2, '.', ',').'</td>
+                            <td class="text-right"><span class="peso">&#8369;</span>'.number_format((float)str_replace('-','',$item->itemUnitPrice), 2, '.', ',').'</td>
                         </tr>';
                     }
                 }
@@ -544,7 +512,7 @@ class OrderController extends Controller
                 <tr>
                     <td></td>
                     <td class="text-info text-right"><span class="text-bold">BALANCE:</span></td>
-                    <td class="text-info border-solid text-right text-bold">Php '.number_format((float)$total_amount_due, 2, '.', ',').'</td>
+                    <td class="text-info border-solid text-right text-bold"><span class="peso">&#8369;</span>'.number_format((float)$total_amount_due, 2, '.', ',').'</td>
                 </tr>
                 </tbody>
             </table>
@@ -571,78 +539,104 @@ class OrderController extends Controller
         return ($vatable_sales + $vat);
     }
 
-    function getInvoiceHeader($title) {
-        return '<img class="logo" src="' . public_path() . "/assets/yl_logo.png" . '" width="173" height="55" alt="" />
+    function getInvoiceHeader($title, $order_details) {
+        return '<img class="logo" src="' . public_path() . "/assets/yl_logo_hd.png" . '" width="200" alt="" />
             <div class="head-2">' . $title . '</div>
+            <div class="serial-number">No. ' . request()->invoice_no . '</div>
             <div class="head-1">YOUNG LIVING PHILIPPINES LLC</div>
-            <div class="head-3"> YOUNG LIVING PHILIPPINES LLC - PHILIPPINE BRANCH</div>
-            <div class="serial-number mr-3">No. ' . request()->invoice_no . '</div>
-            <div class="text-info ml-1">
+            <div class="head-2"> YOUNG LIVING PHILIPPINES LLC - PHILIPPINE BRANCH</div>
+            <div class="text-info">
                 Unit G07, G08, G09 & 12th Floor, <br>
                 Twenty-Five Seven McKinley Building, <br>
                 25th Street corner 7th Avenue, Bonifacio Global City, <br>
                 Taguig City, Metro Manila <br>
                 VAR REG TIN: 009-915-795-000 <br>
-                <small>Business Name/Style: Other Wholesaling</small>
-            </div>';
+            </div>
+            <hr style="margin-top: 25px; margin-bottom: 2px">
+            <div class="text-info float-right" style="line-height: 19px;">
+                <div><span style="margin-right: 105px;">Order Number:</span> <span class="float-right">' . $order_details->orderId . '</span></div>
+                <div><span style="margin-right: 10px;">Order Date:</span> <span class="float-right">' . date('m/d/Y', strtotime($order_details->dateTimeSubmittedIso)) . '</span></div>
+                <div>Member ID: <span class="float-right">' . $order_details->custId . '</span></div>
+            </div>
+            <div class="text-info">
+                <div>Sold To: <span style="margin-left:37px;">' . $order_details->custName . '</span></div>
+                <div style="margin-top: 25px;">Address: <span style="margin-left:34px;">' . $order_details->shipAddr1 . '</span></div>
+                <div class="mt-2">TIN: <span style="margin-left:60px;">' . Utils::separateString($order_details->customerTIN) . '</span></div>
+            </div>
+            ';
     }
 
     function getInvoiceFooter() {
         $output = 
-            '<table width="100%" style="border-collapse:collapse;" class="mt-3">
-                <th class="text-left">Prepared by</th>
-                <th class="text-left">Received by</th> 
+            '<table width="100%" style="border-collapse:collapse;" class="table-footer mt-1">
+                <td class="text-left">Prepared by:</td>
+                <td class="text-left">Received by:</td> 
+                <td class="text-left">Date:</td> 
             </table>
 
-            <div class="text-info mt-3">
-                BIR Accreditation number: <br>
-                Date of Accreditation:  <br>
-                Acknowledgement Certificate No.: <br>
-                <span class="mr-1">Date issued: mm/dd/yy </span> Valid Until: mm/dd/yy <br>
-                Approved Series No.: 
+            <div class="text-info mt-1" style="line-height: 20px;">
+                Accreditation No.: AC-044-10-2021-00141 <br>
+                Accreditation Date: FEBRUARY 15, 2022 <br>
+                Acknowledgement Certificate No.: AC-044-10-2021-0014 <br>
+                <span class="mr-1">Date issued: FEBRUARY 15, 2022 </span> Valid Until: FEBRUARY 14, 2027 <br>
+                Approved Series No.: 000001 to 999999
             </div>
         ';
 
-        $output .= '<div class="phrase mt-5 text-center">THIS INVOICE/RECEIPT SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF THE PERMIT TO USE.</div>';
+        $output .= '<div class="phrase mt-4 text-center">THIS INVOICE/RECEIPT SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF THE ACKNOWLEDGEMENT CERTIFICATE</div>';
         return $output;
     }
 
     function invoiceStyle() {
         return "<style>
+            @page { margin: 18px 38px 15px 38px; }
             * { font-family: Calibri, sans-serif; }
             .text-left { text-align:left; }
             .text-center { text-align: center; }
             .text-right { text-align: right; }
             .text-bold { font-style: bold; }
-            .phrase { font-size: 21px; }
+            .phrase { font-size: 12px; }
             .head-3 { font-size: 14px; }
-            .head-2 { font-size: 16px; font-style:bold; }
-            .head-1 { font-size: 21px; font-style:bold; }
-            .logo { float:right; }
+            .head-2 { font-size: 12px; font-style:bold; text-transform: uppercase; }
+            .head-1 { font-size: 15px; font-style:bold; margin-top: 5px; }
+            .logo { 
+                object-fit: cover;
+                position: absolute;
+                right: 0;
+                top: 1px;
+            }
             .serial-number { 
-                font-size: 22px;
-                float:right;
-                color: #DC3545; 
+                font-style: bold;
+                font-size: 24px;
+                position: absolute;
+                right: 13px;
+                top: 58px;
+                color: #FF0000; 
             }
             .text-info { 
-                line-height: 20px; 
                 margin-top: 3px; 
-                font-size: 14px;
+                font-size: 12px;
             }
             .mb-1 { margin-bottom:10px; }
             .ml-1 { margin-left:10px; }
             .ml-2 { margin-left:20px; }
+            .ml-3 { margin-left:30px; }
             .mr-2 { margin-right:20px; }
             .mr-3 { margin-right:30px; }
             .mr-100 { margin-right:100px; }
+            .mt-08 { margin-top:8px; }
+            .mt-1 { margin-top:10px; }
             .mt-2 { margin-top:20px; }
             .mt-3 { margin-top:30px; }
+            .mt-4 { margin-top:40px !important; }
             .mt-5 { margin-top:50px; }
             .mt-100 { margin-top:100px; }
             .float-right { float:right; }
-            table { font-size: 11px; }
+            table { font-size: 12px; }
             td, th { padding: 5px; }
             th { border: 1px solid; }
+            .table-computation td, th, .table-items th { padding: 2px !important; margin: 2px !important; }
+            .table-footer td, th { padding: 10px !important; border: 1px solid; }
             .border-solid { border: 1px solid; }
             .border-bl { border-bottom: 1px solid black; border-left: 1px solid black; }
             .border-br { border-bottom: 1px solid black; border-right: 1px solid black; }
@@ -650,6 +644,9 @@ class OrderController extends Controller
             .border-lr { border-left: 1px solid black; border-right: 1px solid black; }
             .border-l { border-left: 1px solid black; }
             .border-r { border-right: 1px solid black; }
+            span.peso {
+                font-family: DejaVu Sans; sans-serif;
+            }
         </style>";
     }
 }
