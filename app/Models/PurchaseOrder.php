@@ -19,7 +19,9 @@ class PurchaseOrder extends Model
         'vendorName',
         'shipFromAddress',
         'shipFromCountry',
-        'transactionReferenceNumber'
+        'transactionReferenceNumber',
+        'receiptDate',
+        'status'
     ];
 
     public function savePurchaseOrders($purchaseOrder) {

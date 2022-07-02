@@ -63,9 +63,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12 mb-2">
-                                    <a id="btn-transfer-all" class="btn btn-primary btn-sm">Transfer all</a>
-                                </div>
                             </div>
                             <div class="p-2"><strong>Line Items</strong></div>
                             <div class="row">
@@ -74,7 +71,6 @@
                                         <table class="table table table-bordered table-hover">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col">Action</th>
                                                     <th scope="col">Line Number</th>
                                                     <th scope="col">Item Number</th>
                                                     <th scope="col">Lot Number</th>
@@ -102,10 +98,6 @@
                                             <tbody>
                                                 @foreach ($line_items as $item)
                                                     <tr>
-                                                        <td>
-                                                        <a class="btn btn-primary btn-sm btn-transfer" data-obj="{{ json_encode($item) }}">
-                                                        <i class="fas fa-dolly"></i> Transfer</a>
-                                                        </td>
                                                         <td>{{ $item->lineNumber }}</td>
                                                         <td>{{ $item->itemNumber }}</td>
                                                         <td>{{ $item->lotNumber }}</td>

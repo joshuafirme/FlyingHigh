@@ -2,70 +2,58 @@
     $(function() {
         "use strict";
 
-        $(document).on('click', '.btn-transfer', function() {
-            let mdl = $('#transferOneModal');
+        $(document).on('click', '.btn-receive', function(event) {
+            let __this = $(this);
+            let mdl = $('#receiveModal');
             mdl.modal('show');
-            let _this = $(this);
-            let obj = _this.attr('data-obj');
+            let btn = mdl.find('[type=submit]');
+            let obj = __this.attr('data-item');
             obj = JSON.parse(obj);
-            mdl.attr('data-shipmentid',obj.shipmentId);
-            console.log(obj)
-
-            mdl.find('[name=qtyTransfer]').val('')
-
             for (var key of Object.keys(obj)) {
-                mdl.find('[name='+key+']').val(obj[key]);
+                mdl.find('[name=' + key + ']').val(obj[key]);
+                mdl.find('[class=' + key + ']').text(obj[key]);
             }
+            $('#receiveForm').attr('orderNumber', obj.orderNumber);
         });
 
-        $('#btn-transfer-all').click(function(event) {
-            let mdl = $('#transferModal');
-            let btn = mdl.find('[typr=submit]');
-            let id = mdl.find('[name=id]').val();
-            let qty_transfer = mdl.find('[name=qty_transfer]').val();
-            
-            let url = '/stock-transfer/transfer/{{ $purchase_order->orderNumber }}';
+        $('#receiveForm').on('submit', function(event) {
+            let orderNumber = $(this).attr('orderNumber')
+            let receiptDate = $(this).find('[name=receiveDate]').val()
+            if (!orderNumber) { 
+                swalError('An error occured, please refresh your page and test again.')
+            }
+            let url = `/stock-transfer/transfer/${orderNumber}/${receiptDate}`;
 
-            Swal.fire({
-                title: 'Transfer all line items of Order # {{ $purchase_order->orderNumber }}',
-                text: "",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirm'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    btn.html("Please wait...");
-                    $.ajax({
-                            type: 'POST',
-                            _token: '{{ csrf_token() }}',
-                            url: url,
-                            data: $(this).serialize()
-                        })
-
-                        .done(function(data) {
-                            console.log(data)
-                            if (data.success == true) {
-                                swalSuccess('Product was successfully transferred.');
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 2500);
-                            } 
-                            else {
-                                swalError('Qty to transfer is greater than pending qty.');
-                            }
-                            btn.html("Transfer");
-                        })
-                        .fail(function() {
-                            swalError('Error occured, please contact support!');
-                            btn.html("Transfer");
-                        });
-                }
-            })
+            ajaxPost(url)
 
             return false;
         });
+
+        async function ajaxPost(url, data = null) {
+            $.ajax({
+                    type: 'POST',
+                    _token: '{{ csrf_token() }}',
+                    url: url,
+                    data: data
+                })
+                .done(function(data) {
+                    console.log(data)
+                    if (data.success) {
+                        swalSuccess(data.message);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2500);
+                    } else {
+                        swalError(data.exceptionMessage);
+                    }
+                    $('.btn-confirm-receive').html("Receive");
+                })
+                .fail(function() {
+                    swalError('Error occured, please contact support!');
+                    $('.btn-confirm-receive').html("Receive");
+                });
+        }
+
         /*$(document).on('click', '#select-from-old', function() {
             let mdl = $('#transferModal');
             let html = '<div class="col-md-12 mt-3 lot-codes-container">';

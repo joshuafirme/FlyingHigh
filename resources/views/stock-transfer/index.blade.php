@@ -63,6 +63,7 @@
                                             <th scope="col">Vendor Name</th>
                                             <th scope="col">Ship From Address</th>
                                             <th scope="col">Ship From Country</th>
+                                            <th scope="col">Status</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
@@ -79,8 +80,16 @@
                                                 <td>{{ $item->shipFromAddress }}</td>
                                                 <td>{{ $item->shipFromCountry }}</td>
                                                 <td>
+                                                    @if ($item->status == 1) 
+                                                        <span class="badge badge-pill badge-success">Received</span>
+                                                    @else 
+                                                        <span class="badge badge-pill badge-info">Pending</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-primary btn-sm btn-receive" data-item="{{ json_encode($item) }}">Receive</a>
                                                     <a href="{{ url('/stock-transfer/asn/' . $item->orderNumber) }}" target="_blank" class="btn btn-primary btn-sm btn-transfer" data-obj="{{ json_encode($item) }}">
-                                                        <i class="fas fa-dolly"></i> Line Items</a>
+                                                         Line Items</a>
                                                 </td>
                                                 </tr>
                                             @endforeach
@@ -121,3 +130,4 @@
 
 @include('scripts._global_scripts')
 
+@include('stock-transfer.script')

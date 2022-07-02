@@ -23,61 +23,62 @@ class YLApiController extends Controller
             
             $token = $this->getAccessToken($request)->access_token;
             $url = "https://lf-gateway-stage.awsvodev.youngliving.com/inventory/skumasters";
+            
+            $header = [
+                'Authorization' => 'Bearer ' . $token,
+            ];
 
             //$response = Http::withHeaders([
             //    'Authorization' => 'Bearer ' . $token,
             //])->get($url);
-        
 
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Authorization' => 'Bearer ' . $token,
-            ]);
-            $result = curl_exec($ch);
-
+            $response = Utils::curlRequestWithHeaders($url, $header);
 
             $path = public_path() . '/sku_master.json';
             $response = json_decode(file_get_contents($path));
 
             //$response = json_decode($response);
-            $products = $response->skuMasterDetails;
-            $newly_inserted = [];
-           
-            // Insert products to database
-            foreach ($products as $item) {
-                
-                $p = new Product;
+            if ($response->transactionReferenceNumber != "NA") {
+                $products = $response->skuMasterDetails;
+                $newly_inserted = [];
+            
+                // Insert products to database
+                foreach ($products as $item) {
+                    
+                    $p = new Product;
 
-                if ( ! $p->isItemExists($item) ) {
-                    array_push($newly_inserted, $item);
+                    if ( ! $p->isItemExists($item) ) {
+                        array_push($newly_inserted, $item);
 
-                    $p->storeProduct($item);
+                        $p->storeProduct($item);
+                    }
                 }
-                       
-                
+
+                $t = new Transaction;
+                $t->saveTransaction($response);
+
+                Cache::put('sku_master_last_sync', date("Y-m-d H:i:s"));
+
+                $acknowledge_url = "https://lf-gateway-stage.awsvodev.youngliving.com/inventory/skumasters/S20220618063455/103434";
+
+                $acknowledge_response = Utils::httpPut($acknowledge_url, $header);
+
+                DB::commit();
+
+                return response()->json([
+                    "success" => true,
+                    "message" => 'SKU Masters was successfully synced!',    
+                    "transactionType"=> $response->transactionType,
+                    "transactionReferenceNumber"=> $response->transactionReferenceNumber,
+                    "acknowledge_response" => $acknowledge_response,
+                    "itemCount" => count($newly_inserted),
+                    "newly_inserted" => $newly_inserted
+                ], 200);
             }
+            else {
 
-            $t = new Transaction;
-            $t->saveTransaction($response);
-
-            Cache::put('sku_master_last_sync', date("Y-m-d H:i:s"));
-
-            DB::commit();
-
-            return response()->json([
-                "success" => true,
-                "message" => 'SKU Masters was successfully synced!',    
-                "transactionType"=> $response->transactionType,
-                "transactionReferenceNumber"=> $response->transactionReferenceNumber,
-                "itemCount" => count($newly_inserted),
-                "newly_inserted" => $newly_inserted
-            ], 200);
-
+            }
+ 
         } catch (\Exception $e) {
 
             DB::rollback();
@@ -102,9 +103,8 @@ class YLApiController extends Controller
             ];
             
             $response = Utils::curlRequestWithHeaders($url, $header);
-         
             $response = json_decode($response);
-            return $response;
+
             $duplicates = [];
             foreach ($response->purchaseOrderHeaders as $purchaseOrder) { 
                 $po = new PurchaseOrder;
@@ -152,8 +152,10 @@ class YLApiController extends Controller
             'client_secret' => $request->client_secret,
             'scope' => 'lf-manila'
         ];
+
+        $header = "Content-type: application/x-www-form-urlencoded\r\n";
         
-        $response = Utils::httpPost($data, $url);
+        $response = Utils::httpRequest($header, "POST", $data, $url);
        
         if ($response && $response->access_token) {
             return $response;

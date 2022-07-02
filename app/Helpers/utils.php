@@ -30,18 +30,38 @@ class Utils
 		return $response;
     }
 
-    public static function httpPost($data, $url) 
+    public static function httpRequest($header, $method, $data, $url) 
     {
         $options = array(
             'http' => array(
-                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                'method' => "POST",
+                'header' => $header,
+                'method' => $method,
                 'content' => http_build_query($data)
             )
         );
         
         $context  = stream_context_create($options);
         return json_decode(file_get_contents($url, false, $context));
+    }
+
+    public static function httpPut($url, $header) 
+    {
+        $ch = curl_init($url);
+
+        curl_setopt($ch, CURLOPT_PUT, true);
+        
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+        $fields = array("id" => 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
+
+        //Execute the request.
+        $response = curl_exec($ch);
+
+        return $response;
     }
 
     public static function curlRequest($url) {

@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\POLineItems;
 use Utils;
+use DB;
 
 class StockTransferController extends Controller
 {
@@ -41,10 +42,65 @@ class StockTransferController extends Controller
         return view('stock-transfer.index', compact('transfer_request'));
     }
 
-    public function transferByOrderNo($orderNumber) 
+    public function transferByOrderNo($orderNumber, $receiptDate) 
     {
-        $transfer_request = $tr->filterPaginate(50);
-        return view('stock-transfer.index', compact('transfer_request'));
+        try {
+
+            DB::beginTransaction();
+
+            $line_items = POLineItems::where('orderNumber', $orderNumber)->get();
+
+            foreach ($line_items as $item) {
+            
+                $lot = new LotCode; 
+
+                // TO ASK: how to identify uniqueness if lot.
+                if ($lot->isLotCodeExists(
+                        $item->itemNumber, $item->lotNumber, $item->lotExp, $item->wtUom)) {
+                            
+                    LotCode::where([
+                        ['sku', '=', $item->itemNumber],
+                        ['lot_code', '=', $item->lotNumber],
+                        ['expiration', '=', $item->lotExp],
+                        ['uom', '=', $item->wtUom],
+                    ])->increment('stock', $item->quantityOrdered);
+                }
+                else {
+                    $lot->sku = $item->itemNumber;
+                    $lot->lot_code = $item->lotNumber; 
+                    $lot->stock = $item->quantityOrdered;
+                    $lot->expiration = $item->lotExp;
+                    $lot->location = $item->location;
+                    $lot->uom = $item->wtUom;
+                    $lot->palletId = $item->palletId;
+                    $lot->save();
+                }
+                
+            }
+
+            
+            PurchaseOrder::where('orderNumber', $orderNumber)
+                ->update([ 
+                    'receiptDate' => $receiptDate,
+                    'status' => 1,
+                ]);
+
+            DB::commit();
+
+            return response()->json([
+                    "success" => true,
+                    "message" => "Order $orderNumber was successfully received.",    
+            ], 200);
+
+        } catch (\Exception $e) {
+
+            DB::rollback();
+
+            return response()->json([
+                    "success" => false,
+                    "exceptionMessage" => $e->getMessage(),    
+            ], 200);
+        }
     }
 
     public function transfer(StockTransfer $tr, Product $product, LotCode $lc, InboundTransfer $inbound_transfer) 

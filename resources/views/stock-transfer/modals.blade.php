@@ -86,10 +86,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="transferOneModal" tabindex="-1">
+<div class="modal fade" id="receiveModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <form id="transferForm" action="{{ url('/stock-transfer/transfer') }}" method="POST"
-            enctype="multipart/form-data" class="modal-content">
+        <form id="receiveForm" class="modal-content">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title">Transfer</h5>
@@ -98,37 +97,45 @@
                 </button>
             </div>
             <div class="modal-body row g-3">
-                <input type="hidden" name="id">
-                <div class="col-md-6 mt-1">
-                    <label class="form-label">Item Number</label>
-                    <input type="text" name="itemNumber" class="form-control" readonly>
+                <div class="col-12">
+                    <table width="100%" cellpadding="0" cellspaceing="0">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <address class="ic-invoice-addess">
+                                        <strong>Order Number:
+                                            <span class="orderNumber"></span></strong><br>
+                                        <p class="mb-0">Transaction Reference #:
+                                            <span class="transactionReferenceNumber"></span>
+                                        </p>
+                                        <p class="mb-0">Order Type:
+                                            <span class="orderType"></span></p>
+                                        <p class="mb-0">Order Date:
+                                            <span class="orderDate"></span></p>
+                                        <p class="mb-0">Vendor no:
+                                            <span class="vendorNo"></span></p>
+                                        <p class="mb-0">Vendor name:
+                                            <span class="vendorName"></span></p>
+                                        <p class="mb-0">Ship from address:
+                                            <span class="shipFromAddress"></span></p>
+                                        <p class="mb-0">Ship from country:
+                                            <span class="shipFromCountry"></span></p>
+                                    </address>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="col-md-6 mt-1">
-                    <label class="form-label">Lot Number</label>
-                    <input type="text" name="lotNumber" class="form-control" readonly>
-                </div>
+                <input type="hidden" name="orderNumber" class="form-control">
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Description</label>
-                    <input type="text" name="description" class="form-control" readonly>
-                </div>
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Qty Open</label>
-                    <input type="text" name="quantityOpen" class="form-control" readonly>
-                </div>
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Qty To Transfer</label>
-                    <input type="number" name="qtyTransfer" class="form-control" required>
-                </div>
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Reciept date</label>
-                    <input type="date" name="expiration" class="form-control">
+                    <label class="form-label">Receive date</label>
+                    <input type="date" name="receiveDate" class="form-control" value="{{ date('Y-m-d') }}" required>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-sm btn-primary" type="submit">Transfer</button>
+                <button class="btn btn-sm btn-primary btn-confirm-receive" type="submit">Receive</button>
+                <a class="btn btn-sm btn-outline-dark">Close</a>
             </div>
         </form>
     </div>
 </div>
-
-

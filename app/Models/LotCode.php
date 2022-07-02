@@ -124,8 +124,13 @@ class LotCode extends Model
             ->get();
     }
     
-    public function isLotCodeExists($sku,$lot_code) {
-        $res = self::where('sku', $sku)->where('lot_code', $lot_code)->get();
+    public function isLotCodeExists($sku, $lot_code, $lotExp, $wtUom) {
+        $res = self::where([
+            ['sku', '=', $sku],
+            ['lot_code', '=', $lot_code],
+            ['expiration', '=', $lotExp],
+            ['uom', '=', $wtUom],
+        ])->get();
         return count($res) > 0 ? true : false;
     }
 
