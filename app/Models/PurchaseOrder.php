@@ -27,6 +27,7 @@ class PurchaseOrder extends Model
     public function savePurchaseOrders($purchaseOrder, $transactionReferenceNumber) {
         $this->orderNumber = $purchaseOrder->orderNumber;
         $this->orderType = $purchaseOrder->orderType;
+        $this->orderDate = $purchaseOrder->orderDate;
         $this->vendorNo = $purchaseOrder->vendorNo;
         $this->vendorName = $purchaseOrder->vendorName;
         $this->shipFromAddress = $purchaseOrder->shipFromAddress;
