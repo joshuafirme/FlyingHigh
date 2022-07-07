@@ -177,7 +177,7 @@ class YLApiController extends Controller
 
     public function postPurchaseOrders(Request $request) 
     {
-        try {
+   //     try {
 
             DB::beginTransaction();
 
@@ -224,7 +224,7 @@ class YLApiController extends Controller
                 ]
             ], 200);
 
-        } catch (\Exception $e) {
+     //   } catch (\Exception $e) {
             
             DB::rollback();
 
@@ -232,7 +232,7 @@ class YLApiController extends Controller
                 "success" => false,
                 "exceptionMessage" => $e->getMessage(),    
             ], 200);
-        }
+     //   }
     }
 
     public function getAccessToken($request) 
