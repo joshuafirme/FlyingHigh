@@ -204,7 +204,7 @@ class YLApiController extends Controller
 
                     foreach ($purchaseOrder->purchaseOrderDetails as $lineItems) {
                         $poli = new POLineItems;
-                        $poli->saveItem($lineItems);
+                        $poli->saveItem($lineItems, $purchaseOrder);
                     }
                 }
             }

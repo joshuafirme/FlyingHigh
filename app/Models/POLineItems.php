@@ -37,7 +37,7 @@ class POLineItems extends Model
         'palletId'
     ];
 
-    public function saveItem() {
+    public function saveItem($lineItems, $purchaseOrder) {
         $this->orderNumber = $purchaseOrder->orderNumber;
         $this->transactionAction = $lineItems->transactionAction;
         $this->lineNumber = $lineItems->lineNumber;
