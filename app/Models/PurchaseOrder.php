@@ -24,14 +24,14 @@ class PurchaseOrder extends Model
         'status'
     ];
 
-    public function savePurchaseOrders($purchaseOrder) {
+    public function savePurchaseOrders($purchaseOrder, $transactionReferenceNumber) {
         $this->orderNumber = $purchaseOrder->orderNumber;
         $this->orderType = $purchaseOrder->orderType;
         $this->vendorNo = $purchaseOrder->vendorNo;
         $this->vendorName = $purchaseOrder->vendorName;
         $this->shipFromAddress = $purchaseOrder->shipFromAddress;
         $this->shipFromCountry = $purchaseOrder->shipFromCountry;
-        $this->transactionReferenceNumber = $response->transactionReferenceNumber;
+        $this->transactionReferenceNumber = $transactionReferenceNumber;
         $this->save();
     }
 
