@@ -182,3 +182,7 @@ a {
 .table-responsive {
     min-height: 600px;
 }
+
+.alert-success {
+    background-color: #D4EDDA;
+}

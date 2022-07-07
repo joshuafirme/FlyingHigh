@@ -124,12 +124,12 @@ class LotCode extends Model
             ->get();
     }
     
-    public function isLotCodeExists($sku, $lot_code, $lotExp, $wtUom) {
+    public function isLotCodeExists($sku, $lot_code, $lotExp, $unitOfMeasure) {
         $res = self::where([
             ['sku', '=', $sku],
             ['lot_code', '=', $lot_code],
             ['expiration', '=', $lotExp],
-            ['uom', '=', $wtUom],
+            ['uom', '=', $unitOfMeasure],
         ])->get();
         return count($res) > 0 ? true : false;
     }
@@ -145,14 +145,14 @@ class LotCode extends Model
         return count($res) > 0 ? true : false;
     }
 
-    public function getAllStock($sku) {
+    public function getAllStock($sku, $baseUOM) {
         return self::where('sku', $sku)
-            ->where(function ($query) {
-                $query->whereDate('expiration', '>', date('Y-m-d'))
-                ->orWhere('lot_code', 0);
-            })
-            ->where('status', 1)
-            ->sum('stock');
+            //->where(function ($query) {
+            //    $query->whereDate('expiration', '>', date('Y-m-d'));
+            //})
+            ->where('uom', $baseUOM)
+            ->where($this->table . '.status', 1)
+            ->sum($this->table . '.stock');
     }
 
     public function incrementStock($sku, $lot_code, $qty) { 

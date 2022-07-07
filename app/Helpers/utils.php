@@ -30,13 +30,38 @@ class Utils
 		return $response;
     }
 
+    public static function curlPost($url, $header, $data) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        $result = curl_exec($ch);
+        return json_decode($result);
+    }
+
+    public static function curlPut($url, $header, $data = []) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_PUT, 1);
+        $result = curl_exec($ch);
+        return json_decode($result);
+    }
+
     public static function httpRequest($header, $method, $data, $url) 
     {
         $options = array(
             'http' => array(
                 'header' => $header,
                 'method' => $method,
-                'content' => http_build_query($data)
+                'content' => $data
             )
         );
         

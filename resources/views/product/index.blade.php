@@ -115,7 +115,7 @@
                                                     $text_class = 'text-success';
                                                     $stock_level = 'Normal';
                                                     $icon = '<i class="fas fa-check-circle"></i>';
-                                                    $stock = $lot_code->getAllStock($item->itemNumber);
+                                                    $stock = $lot_code->getAllStock($item->itemNumber, $item->baseUOM);
                                                     if ($stock == 0) {
                                                         $text_class = 'text-danger';
                                                         $stock_level = 'Out of stock';

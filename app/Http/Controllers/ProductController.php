@@ -209,8 +209,8 @@ class ProductController extends Controller
     public function search()
     {
         $key = isset(request()->key) ? request()->key : "";
-        $products = Product::where('sku', 'LIKE', '%' . $key . '%')
-                    ->orWhere('description', 'LIKE', '%' . $key . '%')
+        $products = Product::where('itemNumber', 'LIKE', '%' . $key . '%')
+                    ->orWhere('productDescription', 'LIKE', '%' . $key . '%')
                     ->paginate(50);
         $remarks = AdjustmentRemarks::where('status', 1)->get();
         $hubs = Hub::where('status', 1)->get();

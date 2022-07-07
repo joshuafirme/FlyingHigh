@@ -61,7 +61,9 @@ class YLApiController extends Controller
 
                 $acknowledge_url = "https://lf-gateway-stage.awsvodev.youngliving.com/inventory/skumasters/S20220618063455/103434";
 
-                $acknowledge_response = Utils::httpPut($acknowledge_url, $header);
+                $headers = ["Content-Type: application/json", "Authorization: Bearer {$token}"];
+                
+                $acknowledge_response = Utils::curlPut($acknowledge_url, $headers);
 
                 DB::commit();
 
@@ -90,9 +92,94 @@ class YLApiController extends Controller
         }
     }
 
+    public function confirmPurchaseOrders($transaction_ref, Request $request) {
+
+        try {
+
+            DB::beginTransaction();
+
+            $orders = PurchaseOrder::select('orderNumber', 'orderType', 'receiptDate')
+            ->where('transactionReferenceNumber', $transaction_ref)
+            ->where('status', 1)->get();
+
+            if (count($orders) < 1) {
+                return response()->json([
+                    "success" => false, 
+                    "transactionReferenceNumber"=> $transaction_ref,
+                    "message" => "PurchaseOrderReceiptHeaders is empty",
+                ], 200);
+            }
+
+            $token = $this->getAccessToken($request)->access_token;
+
+            $data = [];
+            $data['TransactionType'] = '3P';
+            $data['TransactionReferenceNumber'] = $transaction_ref;
+            $data['MessageCount'] = count($orders);
+            $data['Sender'] = 4803;
+            $data['Receiver'] = 1001;
+            $data['PurchaseOrderReceiptHeaders'] = [];
+
+            foreach ($orders as $order) {
+                
+                $PurchaseOrderReceiptDetails = [];
+
+                $line_items = POLineItems::where('orderNumber', $order->orderNumber)->get();
+
+                foreach ($line_items as $item) {
+                    array_push($PurchaseOrderReceiptDetails, [
+                        "BillOfLading" => $item->iOfLading ? $item->iOfLading : "N/A",
+                        "ItemNumber" => $item->itemNumber,
+                        "UnitOfMeasure" => $item->unitOfMeasure,
+                        "QtyRcdGood" => $item->quantityOrdered,
+                        "QtyRcdBad" => 0,
+                        "RcvComments" => "",
+                        "PalletId" => $item->palletId ? $item->palletId : "N/A",
+                        "LineNumber" => $item->lineNumber,
+                        "LotNumber" => $item->lotNumber,
+                        "LotExpiration" => $item->lotExp,
+                        "ReceiptDate" => "2022-03-21T12:00:00",
+                        "Location" => $item->location
+                    ]);
+                }
+
+                $PurchaseOrderReceiptHeaders = [
+                    'OrderNumber' => $order->orderNumber,
+                    'OrderType' => $order->orderType,
+                    'PurchaseOrderReceiptDetails' => $PurchaseOrderReceiptDetails
+                ];
+                array_push($data['PurchaseOrderReceiptHeaders'], $PurchaseOrderReceiptHeaders);
+            }
+
+            $url = "https://lf-gateway-stage.awsvodev.youngliving.com/inventory/asn";
+            
+            $headers = ["Content-Type: application/json", "Authorization: Bearer {$token}"];
+            
+            $confirmation_response = Utils::curlPost($url, $headers, $data);
+            
+            DB::commit(); 
+            
+            return response()->json([
+                "success" => true, 
+                "transactionReferenceNumber"=> $transaction_ref,
+                "confirmation_response" => $confirmation_response,
+            ], 200);
+        } catch (\Exception $e) {
+            
+            DB::rollback();
+
+            return response()->json([
+                "success" => false,
+                "exceptionMessage" => $e->getMessage(),    
+            ], 200);
+        }
+    }
+
     public function postPurchaseOrders(Request $request) 
     {
         try {
+
+            DB::beginTransaction();
 
             $token = $this->getAccessToken($request)->access_token;
 
@@ -125,6 +212,8 @@ class YLApiController extends Controller
             $t = new Transaction;
             $t->saveTransaction($response);
 
+            DB::commit();
+
             return response()->json([
                 "success" => true,    
                 "transactionType"=> $response->transactionType,
@@ -136,6 +225,9 @@ class YLApiController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+            
+            DB::rollback();
+
             return response()->json([
                 "success" => false,
                 "exceptionMessage" => $e->getMessage(),    
@@ -155,7 +247,7 @@ class YLApiController extends Controller
 
         $header = "Content-type: application/x-www-form-urlencoded\r\n";
         
-        $response = Utils::httpRequest($header, "POST", $data, $url);
+        $response = Utils::httpRequest($header, "POST", http_build_query($data), $url);
        
         if ($response && $response->access_token) {
             return $response;

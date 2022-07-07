@@ -12,6 +12,7 @@ use App\Models\LotCode;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\POLineItems;
+use App\Models\Transaction;
 use Utils;
 use DB;
 
@@ -20,7 +21,8 @@ class StockTransferController extends Controller
     public function index() 
     {
         $purchase_orders = PurchaseOrder::paginate(10);
-        return view('stock-transfer.index', compact('purchase_orders'));
+        $po_transaction = Transaction::select('transactionReferenceNumber')->where('transactionType', 'PO')->get();
+        return view('stock-transfer.index', compact('purchase_orders', 'po_transaction'));
     }
 
     public function readOneOrder($orderNumber) 
@@ -28,6 +30,11 @@ class StockTransferController extends Controller
         $purchase_order = PurchaseOrder::where('orderNumber', $orderNumber)->first();
         $line_items = POLineItems::where('orderNumber', $orderNumber)->get();
         return view('stock-transfer.line-items', compact('purchase_order', 'line_items'));
+    }
+
+    public function getReceivedList($trasaction_ref) 
+    {
+        return PurchaseOrder::where('transactionReferenceNumber', $trasaction_ref)->where('status', 1)->get();
     }
 
     public function search(StockTransfer $tr) 
@@ -56,13 +63,13 @@ class StockTransferController extends Controller
 
                 // TO ASK: how to identify uniqueness if lot.
                 if ($lot->isLotCodeExists(
-                        $item->itemNumber, $item->lotNumber, $item->lotExp, $item->wtUom)) {
+                        $item->itemNumber, $item->lotNumber, $item->lotExp, $item->unitOfMeasure)) {
                             
                     LotCode::where([
                         ['sku', '=', $item->itemNumber],
                         ['lot_code', '=', $item->lotNumber],
                         ['expiration', '=', $item->lotExp],
-                        ['uom', '=', $item->wtUom],
+                        ['uom', '=', $item->unitOfMeasure],
                     ])->increment('stock', $item->quantityOrdered);
                 }
                 else {
@@ -71,7 +78,7 @@ class StockTransferController extends Controller
                     $lot->stock = $item->quantityOrdered;
                     $lot->expiration = $item->lotExp;
                     $lot->location = $item->location;
-                    $lot->uom = $item->wtUom;
+                    $lot->uom = $item->unitOfMeasure;
                     $lot->palletId = $item->palletId;
                     $lot->save();
                 }

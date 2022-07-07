@@ -24,20 +24,23 @@
                                 @endphp
                                 <div class="form-group ml-auto mt-4 mt-sm-2">
                                     <a class="btn btn-sm btn-primary"><i class="fas fa-sync"></i> Sync ASN</a>
+                                    <a data-target="#confirmModal" data-toggle="modal" class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i> Send Confirmation to YL</a>
 
                                     <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#importModal"><i
                                             class="fas fa-file-import"></i>
                                         Import Excel
                                     </a>
-                                    <a class="btn btn-sm btn-primary" href="{{ url('/stock-transfer/export/' . $date_from . '/' . $date_to) }}"
+                                    <a class="btn btn-sm btn-primary"
+                                        href="{{ url('/stock-transfer/export/' . $date_from . '/' . $date_to) }}"
                                         target="_blank"><i class="fas fa-file-export"></i> Export Excel</a>
-                                    <a class="btn btn-sm btn-primary" href="{{ url('/stock-transfer/download/' . $date_from . '/' . $date_to) }}"
+                                    <a class="btn btn-sm btn-primary"
+                                        href="{{ url('/stock-transfer/download/' . $date_from . '/' . $date_to) }}"
                                         target="_blank"><i class="fa fa-download"></i> Download PDF</a>
-                                    <a class="btn btn-sm btn-primary" href="{{ url('/stock-transfer/preview/' . $date_from . '/' . $date_to) }}"
+                                    <a class="btn btn-sm btn-primary"
+                                        href="{{ url('/stock-transfer/preview/' . $date_from . '/' . $date_to) }}"
                                         target="_blank"><i class="fa fa-print"></i> Print</a>
                                 </div>
-                                <form action="{{ url('/stock-transfer/search') }}" method="get"
-                                    class="ml-4">
+                                <form action="{{ url('/stock-transfer/search') }}" method="get" class="ml-4">
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" name="key" style="width: 280px;"
                                             placeholder="Search Transaction Reference #"
@@ -71,26 +74,32 @@
                                         @if (count($purchase_orders))
                                             @foreach ($purchase_orders as $item)
                                                 <tr>
-                                                <td>{{ $item->transactionReferenceNumber }}</td>
-                                                <td>{{ $item->orderNumber }}</td>
-                                                <td>{{ $item->orderType }}</td>
-                                                <td>{{ $item->orderDate }}</td>
-                                                <td>{{ $item->vendorNo }}</td>
-                                                <td>{{ $item->vendorName }}</td>
-                                                <td>{{ $item->shipFromAddress }}</td>
-                                                <td>{{ $item->shipFromCountry }}</td>
-                                                <td>
-                                                    @if ($item->status == 1) 
-                                                        <span class="badge badge-pill badge-success">Received</span>
-                                                    @else 
-                                                        <span class="badge badge-pill badge-info">Pending</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <a class="btn btn-primary btn-sm btn-receive" data-item="{{ json_encode($item) }}">Receive</a>
-                                                    <a href="{{ url('/stock-transfer/asn/' . $item->orderNumber) }}" target="_blank" class="btn btn-primary btn-sm btn-transfer" data-obj="{{ json_encode($item) }}">
-                                                         Line Items</a>
-                                                </td>
+                                                    <td>{{ $item->transactionReferenceNumber }}</td>
+                                                    <td>{{ $item->orderNumber }}</td>
+                                                    <td>{{ $item->orderType }}</td>
+                                                    <td>{{ $item->orderDate }}</td>
+                                                    <td>{{ $item->vendorNo }}</td>
+                                                    <td>{{ $item->vendorName }}</td>
+                                                    <td>{{ $item->shipFromAddress }}</td>
+                                                    <td>{{ $item->shipFromCountry }}</td>
+                                                    <td>
+                                                        @if ($item->status == 1)
+                                                            <span class="badge badge-pill badge-success">Received</span>
+                                                        @else
+                                                            <span class="badge badge-pill badge-info">Pending</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if ($item->status == 1)
+                                                        @else
+                                                        <a class="btn btn-primary btn-sm btn-receive"
+                                                            data-item="{{ json_encode($item) }}">Receive</a>
+                                                        @endif
+                                                        <a href="{{ url('/stock-transfer/asn/' . $item->orderNumber) }}"
+                                                            target="_blank" class="btn btn-primary btn-sm btn-transfer"
+                                                            data-obj="{{ json_encode($item) }}">
+                                                            Line Items</a>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         @else
@@ -99,8 +108,8 @@
                                                     <div class="alert alert-danger alert-dismissible fade show"
                                                         role="alert">
                                                         No data found.
-                                                        <button type="button" class="close"
-                                                            data-dismiss="modal" aria-label="Close">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
