@@ -16,13 +16,12 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="page-title">Product</h4>
+                <h4 class="page-title">Products</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Product</a></li>
-                            <li class="breadcrumb-item active">Product List <span
-                                    class="badge badge-pill badge-primary">{{ $product_count }}</span></li>
+                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Warehouse</a></li>
+                            <li class="breadcrumb-item active">Products</li>
                         </ol>
                     </div>
                 </div>
@@ -32,10 +31,18 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="mt-3 mb-3">
+                            <div class="mb-3">
 
                                 @include('layouts.alerts')
-                                <div class="d-md-flex flex-md-wrap">
+                                <div class="font-weight-normal mb-2">
+                                    <div>
+                                        <span>Total SKU Count:</span> <span class="font-weight-bold">{{ Utils::numFormat($product_count) }}</span>
+                                    </div>
+                                    <div>
+                                        Last synced: <span id="last_synced"></span>
+                                    </div>
+                                </div>
+                                <div class="d-md-flex flex-md-wrap ml-2">
                                     <div class="row d-flex mb-3 mb-sm-3">
                                         <button type="button" id="btn-create"
                                             class="btn btn-sm btn-primary w-auto open-modal m-1 col-12 col-sm-auto"
@@ -106,7 +113,6 @@
                                 </div>
                             </div>
 
-                            <small>Last synced: <span id="last_synced"></span></small>
                             <div class="table-responsive" style="min-height: 500px;">
                                 <table class="table table-bordered table-hover">
                                     <thead>

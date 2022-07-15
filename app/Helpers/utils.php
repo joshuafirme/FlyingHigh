@@ -167,6 +167,12 @@ class Utils
         return number_format((float)$num, $dec_p, '.', '');
     }
 
+    public static function numFormat($num, $dec_p = 2)
+    {
+        return number_format($num)
+;
+    }
+
     public static function getStatusTextClass($status) {
             $status_text = 'Shipment Status - Pending';
             $status_class = 'primary';

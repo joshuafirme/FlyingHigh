@@ -38,7 +38,7 @@ $status = request()->status;
                                         <button class="btn btn-sm btn-primary" type="submit">Filter</button>
                                     </div>
                                     <div class="form-group ml-1">
-                                        <a class="btn btn-sm btn-primary" href="{{ url('/reports/expired') }}"><i
+                                        <a class="btn btn-sm btn-primary" href="{{ url('/orders') }}"><i
                                                 class="fa fa-sync" aria-hidden="true"></i> Refresh</a>
                                     </div>
                                 </form>
@@ -130,7 +130,7 @@ $status = request()->status;
                                 </table>
                             </div>
                             @php
-                                echo $orders->links('pagination::bootstrap-4');
+                                echo $orders->appends(request()->query())->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>

@@ -32,9 +32,9 @@ class StockTransferController extends Controller
         return view('stock-transfer.line-items', compact('purchase_order', 'line_items'));
     }
 
-    public function getReceivedList($trasaction_ref) 
+    public function getPOListByTransaction($trasaction_ref) 
     {
-        return PurchaseOrder::where('transactionReferenceNumber', $trasaction_ref)->where('status', 1)->get();
+        return PurchaseOrder::where('transactionReferenceNumber', $trasaction_ref)->where('status', 0)->get();
     }
 
     public function search() 

@@ -12,7 +12,7 @@
 
         $(document).on('click', '[data-target="#confirmModal"]', function(event) {
             let transactionReferenceNumber = $('#transactionReferenceNumber').val();
-            let url = `/stock-transfer/received-list/${transactionReferenceNumber}`;
+            let url = `/stock-transfer/po-list/${transactionReferenceNumber}`;
             let identifier = "#orderListContainer";
             fetchData(url, identifier)
         });
@@ -20,21 +20,42 @@
         $(document).on('change', '#transactionReferenceNumber', function(event) {
             let __this = $(this);
             let transactionReferenceNumber = __this.val();
-            let url = `/stock-transfer/received-list/${transactionReferenceNumber}`;
+            let url = `/stock-transfer/po-list/${transactionReferenceNumber}`;
             let identifier = "#orderListContainer";
             fetchData(url, identifier)
         });
 
-        $(document).on('click', '#btn-send-confirmation', function(event) {
+        $(document).on('submit', '#confirmation-form', function(e) {
+            e.preventDefault()
             let __this = $(this);
-            __this.html("Please wait...")
-            __this.prop("disabled", true)
+            let checkboxes = $("#orderListContainer input:checkbox:checked");
+            if (checkboxes.length < 1) {
+                swalError("No selected item.")
+                return false;
+            }
+            __this.find('[type="submit"]').html("Please wait...")
+            __this.find('[type="submit"]').prop("disabled", true)
+
             let transactionReferenceNumber = $('#transactionReferenceNumber').val();
             let url = `/api/confirm-purchase-orders/${transactionReferenceNumber}`;
+            
+            let order_numbers = []
+            let received_dates = []
+
+            checkboxes.each(function(){
+                order_numbers.push($(this).val());
+                received_dates.push($('#received-' + $(this).val()).val())
+            });
+            
+            console.log(order_numbers)
+            console.log(received_dates)
 
             let data = {
-                'client_id': "{{ env('LF_CLIENT_ID') }}",
-                'client_secret': "{{ env('LF_CLIENT_SECRET') }}"
+                client_id : "{{ env('LF_CLIENT_ID') }}",
+                client_secret : "{{ env('LF_CLIENT_SECRET') }}",
+                order_numbers : order_numbers,
+                received_dates : received_dates,
+
             }
             $.ajax({
                     type: 'POST',
@@ -46,19 +67,22 @@
                     console.log(data)
                     if (data.success) {
                         responseMessage(data, 'success')
+                        fetchData(`/stock-transfer/po-list/${transactionReferenceNumber}`, "#orderListContainer", false)
                     } else {
                         responseMessage(data, 'danger')
                     }
 
-                    __this.html("Send")
+                    __this.find('[type="submit"]').html("Send")
                     __this.prop("disabled", false)
                 })
                 .fail(function() {
                     swalError(data.exceptionMessage);
 
-                    __this.html("Send")
+                    __this.find('[type="submit"]').html("Send")
                     __this.prop("disabled", false)
                 });
+
+            return false;
         });
 
         function responseMessage(data, alert_class) {
@@ -71,6 +95,19 @@
             alert += `</div>`;
             $('#confirmModal .modal-body').append(alert)
         }
+
+        $("#checkAll").change(function () {
+            $("input:checkbox").prop('checked', $(this).prop("checked"));
+        });
+
+        $(document).on('click', '.chck-order', function(e) {
+            if ($(this).is(':checked')) {
+                $('#received-' + $(this).val()).prop('required',true);
+            }
+            else {
+                $('#received-' + $(this).val()).prop('required',false);
+            }
+        });
 
         $(document).on('click', '.btn-receive', function(event) {
             let __this = $(this);
@@ -99,10 +136,12 @@
             return false;
         });
 
-        async function fetchData(url, identifier) {
+        async function fetchData(url, identifier, empty_msg = true) {
 
             $(identifier).empty();
-            $('.confirmation-message').empty();
+            if (empty_msg) {
+                $('.confirmation-message').empty();
+            }
             let html = `<tr>`;
             html += `<td class="text-center" colspan="7">Fetching...</td>`;
             html += `</tr>`;
@@ -115,13 +154,13 @@
                         if (data.length > 0) {
                             for (let item of data) {
                                 let html = `<tr>`;
-                                html += `<td>${item.orderNumber}</td>`;
-                                html += `<td>${item.orderType}</td>`;
+                                html += `<td><input type="checkbox" class="chck-order"  value="${item.orderNumber}" /></td>`;
+                                html += `<td>${item.orderNumber} <br> ${item.orderType}</td>`;
                                 html += `<td>${item.orderDate}</td>`;
-                                html += `<td>${item.vendorNo}</td>`;
-                                html += `<td>${item.vendorName}</td>`;
-                                html += `<td>${item.shipFromAddress}</td>`;
-                                html += `<td>${item.shipFromCountry}</td>`;
+                                html += `<td>${item.vendorNo} <br> ${item.vendorName}</td>`;
+                                html += `<td>${item.shipFromAddress} <br> ${item.shipFromCountry}</td>`;
+                                html += `<td><input type="datetime-local" id="received-${item.orderNumber}" class="form-control" value="{{ date('Y-m-d') }}"></td>`;
+                                html += `<td><a href="/stock-transfer/asn/${item.orderNumber}" target="_blank" class="btn btn-primary btn-sm btn-transfer">Line Items</a></td>`;
                                 html += `</tr>`;
 
                                 $(identifier).append(html);

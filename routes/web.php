@@ -14,6 +14,7 @@ use App\Http\Controllers\ShipmentsController;
 use App\Http\Controllers\AdjustmentRemarksController;
 use App\Http\Controllers\ReturnReasonController;
 use App\Http\Controllers\StockTransferController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Reports\StockAdjustmentController;
 use App\Http\Controllers\Reports\HubTransferController;
 use App\Http\Controllers\Reports\PickupReportController;
@@ -143,7 +144,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/stock-transfer', [StockTransferController::class, 'index']);
     Route::get('/stock-transfer/asn/{orderNumber}', [StockTransferController::class, 'readOneOrder']);
-    Route::get('/stock-transfer/received-list/{transactionRef}', [StockTransferController::class, 'getReceivedList']);
+    Route::get('/stock-transfer/received-list/{transactionRef}', [StockTransferController::class, 'getPOListByTransaction']);
     Route::get('/stock-transfer/search', [StockTransferController::class, 'search']);
     Route::get('/stock-transfer/filter', [StockTransferController::class, 'filter']);
     Route::post('/stock-transfer/transfer', [StockTransferController::class, 'transfer']);
@@ -152,6 +153,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/stock-transfer/preview/{date_from}/{date_to}', [StockTransferController::class, 'previewReport']);
     Route::get('/stock-transfer/download/{date_from}/{date_to}', [StockTransferController::class, 'downloadReport']);
     Route::get('/stock-transfer/export/{date_from}/{date_to}', [StockTransferController::class, 'export']);
+    
+    Route::get('/transactions', [TransactionController::class, 'index']);
 
     Route::post('increment-stock', [ProductController::class, 'incrementStock']);
 });

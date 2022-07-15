@@ -20,7 +20,8 @@
                     </a>
                 </li>-->
                 <li>
-                    <a href="#" class=""><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABGUlEQVRIieXVoU/DQBQG8B8wgyEs/BlkYthNIFBYAoa/ALEENyQzBIsBDBKFRyEQIAGBQZJMoLEgQPQSStOu17WZgC95Se+7e9/3rq93ZQZYqLh+DTv4xFts0lyk8HaIL9xiPeRehXisWCxYxSFe8IoT9DNFxayZSrhW7j7GOEI3QnQSukFnHHS1wsQyLkI1dfEU4iPomm9AtBR5JgPJVzRtDGJMVjCSNK1qjEJ+qUnjmIlJq3wJ6GAzh7/Gc1MmW9jAXYrrY7FJE7jx+xxFn6n/0/g9LKEXxsPUXJp7x3mRSNlOTtHGQ4g2jnO4s0kiMY0/yIyHBVwh/mbje5JtZ5uc9yqKuF7m+Z6f32MHuzWKLcKliBuhEXwDB0lEZhWus9YAAAAASUVORK5CYII="/><span>
+                    <a href="#" class=""><img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABGUlEQVRIieXVoU/DQBQG8B8wgyEs/BlkYthNIFBYAoa/ALEENyQzBIsBDBKFRyEQIAGBQZJMoLEgQPQSStOu17WZgC95Se+7e9/3rq93ZQZYqLh+DTv4xFts0lyk8HaIL9xiPeRehXisWCxYxSFe8IoT9DNFxayZSrhW7j7GOEI3QnQSukFnHHS1wsQyLkI1dfEU4iPomm9AtBR5JgPJVzRtDGJMVjCSNK1qjEJ+qUnjmIlJq3wJ6GAzh7/Gc1MmW9jAXYrrY7FJE7jx+xxFn6n/0/g9LKEXxsPUXJp7x3mRSNlOTtHGQ4g2jnO4s0kiMY0/yIyHBVwh/mbje5JtZ5uc9yqKuF7m+Z6f32MHuzWKLcKliBuhEXwDB0lEZhWus9YAAAAASUVORK5CYII=" /><span>
                             Warehouse
                             <span class="float-right menu-arrow">
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
@@ -51,9 +52,10 @@
                             Orders </span>
                     </a>
                 </li>
-                
+
                 <li>
-                    <a href="#" class=""><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAA/klEQVRIie3UvUoDQRTF8Z/fiKQxvZWNhWBjaZHGJ4itpV1ImVJ7+4CvIHaWtoJ9qmAhgiCo8RlikTGwy26cWVdMkT8sA7N3zjl39+4yZzRxiY+wNmMPLkfUNHCOIbZwHNZh2G8khs2wjjO84hq7ufs7uMIbethMEV/DKZ5wh4Mf6vdCiBd0sTGreAkneMQ9jlKS4RC3eDZ5Aiv5gn0M8IBWonieVtAZBN0pF+j/UjxPP+hmpuu9ZpOpXtkIf2Jc4RoVia2WmGybDEIq46LNmI/xm7Zs6nbswbJOirhRrbuZJoWt123yL++kMguThcnf0xHxo4tglNPp1JJubvgCJ2g5VUtoVOIAAAAASUVORK5CYII="/><span>
+                    <a href="#" class=""><img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAA/klEQVRIie3UvUoDQRTF8Z/fiKQxvZWNhWBjaZHGJ4itpV1ImVJ7+4CvIHaWtoJ9qmAhgiCo8RlikTGwy26cWVdMkT8sA7N3zjl39+4yZzRxiY+wNmMPLkfUNHCOIbZwHNZh2G8khs2wjjO84hq7ufs7uMIbethMEV/DKZ5wh4Mf6vdCiBd0sTGreAkneMQ9jlKS4RC3eDZ5Aiv5gn0M8IBWonieVtAZBN0pF+j/UjxPP+hmpuu9ZpOpXtkIf2Jc4RoVia2WmGybDEIq46LNmI/xm7Zs6nbswbJOirhRrbuZJoWt123yL++kMguThcnf0xHxo4tglNPp1JJubvgCJ2g5VUtoVOIAAAAASUVORK5CYII=" /><span>
                             Hub
                             <span class="float-right menu-arrow">
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
@@ -67,13 +69,13 @@
                         </span></a>
                     <ul class="submenu">
                         @php
-                            $hubs = App\Models\Hub::where('status', 1)->get(); 
+                            $hubs = App\Models\Hub::where('status', 1)->get();
                             $permissions = App\Models\Role::permissions();
                             
                         @endphp
                         @foreach ($hubs as $item)
                             <li class="">
-                                @if(in_array($item->name, $permissions)) 
+                                @if (in_array($item->name, $permissions))
                                     <a href="{{ url('/hubs/' . $item->receiver) }}">{{ $item->name }}</a>
                                 @endif
                             </li>
@@ -81,15 +83,21 @@
                 </li>
             </ul>
             </li>
-            
+
+            <li>
+                <a href="{{ url('/transactions') }}" class="">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAAS0lEQVRIiWNgGAWDEbAwMDC8YmBg+M/AwHAZKpYH5ZOCQ6B6tzIwMEQzMDBEQdmjgHRA7ThhYBiNE0rBaJwMPjBadg0+MJpPRiAAADoOVcsLs2lNAAAAAElFTkSuQmCC"><span>
+                        Transactions </span>
+                </a>
+            </li>
             <li>
                 <a href="#" class=""><img
                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAAv0lEQVRIie2VQQrCQAxFnyLSrXSlV9ETWG+jB2hBBPVaehXP0HZTF0UYh7TppBRdzIcwMMnPnyQwgT/BASiBRrASyEITXoBKSJZ3xOdCbAWc3aC5RzoCa2DmWKE8rPDiN8Cpj9A4p7USN48q8kFG/0z2Cn+QSAhEvj+TSbBQ/DtgK9xfPf8TeFhFEmA1wJ8oeb4wyUxiu4L4sV1B/NiuIP7PP0hrNapIDaS0a9SKlHbPd4rcgRewHCFSA7cRfBvevSlTJctzIg0AAAAASUVORK5CYII=" /><span>
                         Reports
                         <span class="float-right menu-arrow">
                             <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="10 15 15 20 20 15"></polyline>
                                 <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                             </svg>
@@ -111,49 +119,49 @@
                 </ul>
             </li>
 
-                <li>
-                    <a href="#" class=""><img
-                            src="https://img.icons8.com/external-xnimrodx-lineal-xnimrodx/25/000000/external-admin-responsive-design-xnimrodx-lineal-xnimrodx.png" /><span>
-                            Administration
-                            <span class="float-right menu-arrow">
-                                <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <polyline points="10 15 15 20 20 15"></polyline>
-                                    <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                                </svg>
-                            </span>
+            <li>
+                <a href="#" class=""><img
+                        src="https://img.icons8.com/external-xnimrodx-lineal-xnimrodx/25/000000/external-admin-responsive-design-xnimrodx-lineal-xnimrodx.png" /><span>
+                        Administration
+                        <span class="float-right menu-arrow">
+                            <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="10 15 15 20 20 15"></polyline>
+                                <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
+                            </svg>
                         </span>
-                    </a>
-                    <ul class="submenu">
-                        <li class=""><a href="{{ url('users') }}">Users</a>
-                        </li>
-                        <li class=""><a href="{{ url('role') }}">Roles</a></li>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#" class=""><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAApUlEQVRIie2VQQ5AMBBFX0QcgMO6ABuO5w5W7NWmFixoNKZTFsRLmrbJTP/Mb5PCl6kBA1jFMEAlETFAriywACZJoFUKePOTyANFuCKdMwOMXN/FECpcOnuJfdazFiXs974ugkW6LWhv1yOd+Oy6rZOzoOhO7npdo6CQA65doajsihaR2PUIv11BfMMugJn1h9NQsP6sB9KTwBbogUwhMgONIu8lLJo3XjTHV1cFAAAAAElFTkSuQmCC"/><span>
-                            Catalog
-                            <span class="float-right menu-arrow">
-                                <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <polyline points="10 15 15 20 20 15"></polyline>
-                                    <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                                </svg>
-                            </span>
+                    </span>
+                </a>
+                <ul class="submenu">
+                    <li class=""><a href="{{ url('users') }}">Users</a>
+                    </li>
+                    <li class=""><a href="{{ url('role') }}">Roles</a></li>
+            </li>
+            </ul>
+            </li>
+            <li>
+                <a href="#" class=""><img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAApUlEQVRIie2VQQ5AMBBFX0QcgMO6ABuO5w5W7NWmFixoNKZTFsRLmrbJTP/Mb5PCl6kBA1jFMEAlETFAriywACZJoFUKePOTyANFuCKdMwOMXN/FECpcOnuJfdazFiXs974ugkW6LWhv1yOd+Oy6rZOzoOhO7npdo6CQA65doajsihaR2PUIv11BfMMugJn1h9NQsP6sB9KTwBbogUwhMgONIu8lLJo3XjTHV1cFAAAAAElFTkSuQmCC" /><span>
+                        Catalog
+                        <span class="float-right menu-arrow">
+                            <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polyline points="10 15 15 20 20 15"></polyline>
+                                <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
+                            </svg>
                         </span>
-                    </a>
-                    <ul class="submenu">
-                        <li class=""><a href="{{ url('/hub') }}">Hub List</a></li>
-                        <li class=""><a href="{{ url('/adjustment-remarks') }}">Adjustment Remarks</a>
-                        <li class=""><a href="{{ url('/return-reason') }}">Reason for Return</a>
-                        </li>
-                    </ul>
-                </li>
+                    </span>
+                </a>
+                <ul class="submenu">
+                    <li class=""><a href="{{ url('/hub') }}">Hub List</a></li>
+                    <li class=""><a href="{{ url('/adjustment-remarks') }}">Adjustment Remarks</a>
+                    <li class=""><a href="{{ url('/return-reason') }}">Reason for Return</a>
+                    </li>
+                </ul>
+            </li>
             <li>
                 <a href="https://clanvent-alpha.laravel-script.com/admin/system-settings" class="">
                     <img

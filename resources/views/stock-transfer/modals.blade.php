@@ -150,7 +150,7 @@
 
 <div class="modal fade" id="confirmModal" tabindex="-1">
     <div class="modal-dialog modal-xl">
-        <div class="modal-content">
+        <form id="confirmation-form" class="modal-content">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title">Send Confirmation to YL</h5>
@@ -173,25 +173,27 @@
                     </select>
                 </div>
                 <div class="col-12 mt-3">
-                    <table class="table pb-3">
-                        <thead>
-                            <th scope="col">Order #</th>
-                            <th scope="col">Order Type</th>
-                            <th scope="col">Order Date</th>
-                            <th scope="col">Vendo No</th>
-                            <th scope="col">Vendor Name</th>
-                            <th scope="col">Ship From Address</th>
-                            <th scope="col">Ship From Country</th>
-                        </thead>
-                        <tbody id="orderListContainer">
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table pb-3 tbl-order-confirm">
+                            <thead>
+                                <th scope="col" style="width:2%"><input type="checkbox" id="checkAll" /></th>
+                                <th scope="col" style="width:10%">Order #</th>
+                                <th scope="col">Order Date</th>
+                                <th scope="col">Vendor</th>
+                                <th scope="col">Ship From Address</th>
+                                <th scope="col" style="width:10%">Date received</th>
+                                <th scope="col" style="width:10%"></th>
+                            </thead>
+                            <tbody id="orderListContainer">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <div class="modal-footer">
                 <button class="btn btn-sm btn-primary" id="btn-send-confirmation" type="submit">Send</button>
             </div>
-        </div>
+        </form>
     </div>
 </div>

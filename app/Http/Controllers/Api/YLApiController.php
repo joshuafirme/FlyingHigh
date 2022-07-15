@@ -96,12 +96,23 @@ class YLApiController extends Controller
     public function confirmPurchaseOrders($transaction_ref, Request $request) {
 
         try {
-
             DB::beginTransaction();
+           
+            foreach ($request->order_numbers as $key => $order_no) {
+                $orders = PurchaseOrder::where('transactionReferenceNumber', $transaction_ref)
+                ->where('orderNumber', $order_no)
+                ->update([
+                    'receiptDate' => $request->received_dates[$key],
+                    'status' => 1
+                ]);
+
+                $this->transferByOrderNo($order_no, $request->received_dates[$key]);
+            }
 
             $orders = PurchaseOrder::select('orderNumber', 'orderType', 'receiptDate')
-            ->where('transactionReferenceNumber', $transaction_ref)
-            ->where('status', 1)->get();
+                ->where('transactionReferenceNumber', $transaction_ref)
+                ->whereIn('orderNumber', $request->order_numbers)
+                ->get();
 
             if (count($orders) < 1) {
                 return response()->json([
@@ -178,9 +189,40 @@ class YLApiController extends Controller
         }
     }
 
+    public function transferByOrderNo($orderNumber, $receiptDate) 
+    {
+        
+        $line_items = POLineItems::where('orderNumber', $orderNumber)->get();
+
+        foreach ($line_items as $item) {
+            
+            $lot = new LotCode; 
+
+            if ($lot->isLotCodeExists(
+                $item->itemNumber, $item->lotNumber, $item->unitOfMeasure)) {
+                
+                LotCode::where([
+                    ['sku', '=', $item->itemNumber],
+                    ['lot_code', '=', $item->lotNumber],
+                    ['uom', '=', $item->unitOfMeasure],
+                ])->increment('stock', $item->quantityOrdered);
+            }
+            else {
+                $lot->sku = $item->itemNumber;
+                $lot->lot_code = $item->lotNumber; 
+                $lot->stock = $item->quantityOrdered;
+                $lot->expiration = $item->lotExp;
+                $lot->location = $item->location;
+                $lot->uom = $item->unitOfMeasure;
+                $lot->palletId = $item->palletId;
+                $lot->save();
+            }
+        }
+    }
+
     public function postPurchaseOrders(Request $request) 
     {
-      //  try {
+        try {
 
             DB::beginTransaction();
 
@@ -195,12 +237,13 @@ class YLApiController extends Controller
             $response = Utils::curlRequestWithHeaders($url, $header);
             $response = json_decode($response);
 
+            $saved_po = 0;
             $duplicates = [];
             foreach ($response->purchaseOrderHeaders as $purchaseOrder) { 
                 $po = new PurchaseOrder;
                 
                 if ($po->isPurchaseOrderExists($purchaseOrder->orderNumber)) {
-                    array_push($duplicates, $purchaseOrder);
+                    array_push($duplicates, $purchaseOrder->orderNumber);
                 }
                 else {
                     $po->savePurchaseOrders($purchaseOrder, $response->transactionReferenceNumber);
@@ -209,25 +252,31 @@ class YLApiController extends Controller
                         $poli = new POLineItems;
                         $poli->saveItem($lineItems, $purchaseOrder);
                     }
+                    $saved_po++;
                 }
             }
-
-            $t = new Transaction;
-            $t->saveTransaction($response);
+            
+            if ($saved_po > 0) {
+                $t = new Transaction;
+                $t->saveTransaction($response);
+            }
 
             DB::commit();
+            $warnings = [];
+            if (count($duplicates) > 0) {
+                $warnings = [
+                    "already_exists_order_numbers" => $duplicates
+                ];
+            }
 
             return response()->json([
                 "success" => true,    
                 "transactionType"=> $response->transactionType,
                 "transactionReferenceNumber"=> $response->transactionReferenceNumber,
-                "warnings" => [
-                    "count" => count($duplicates),
-                    "already_exists_orders" => $duplicates
-                ]
+                "warnings" => $warnings
             ], 200);
 
-      //  } catch (\Exception $e) {
+        } catch (\Exception $e) {
             
             DB::rollback();
 
@@ -235,7 +284,7 @@ class YLApiController extends Controller
                 "success" => false,
                 "exceptionMessage" => $e->getMessage(),    
             ], 200);
-     //   }
+        }
     }
 
     

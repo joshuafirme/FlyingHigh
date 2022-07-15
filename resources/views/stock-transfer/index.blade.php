@@ -90,11 +90,6 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        @if ($item->status == 1)
-                                                        @else
-                                                        <a class="btn btn-primary btn-sm btn-receive"
-                                                            data-item="{{ json_encode($item) }}">Receive</a>
-                                                        @endif
                                                         <a href="{{ url('/stock-transfer/asn/' . $item->orderNumber) }}"
                                                             target="_blank" class="btn btn-primary btn-sm btn-transfer"
                                                             data-obj="{{ json_encode($item) }}">

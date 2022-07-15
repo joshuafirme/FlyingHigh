@@ -9,14 +9,18 @@ use App\Models\TransactionLineItems;
 use App\Exports\InboundTransferExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\InboundTransfer;
+use App\Models\PurchaseOrder;
 use Utils;
+use DB;
 
 class InboundTransferController extends Controller
 {
     public function index(InboundTransfer $trans) 
     {
-        $transfers = $trans->getDataTodayPaginate(10);
-        return view('reports.inbound-transfer.index', compact('transfers'));
+        $purchase_orders = PurchaseOrder::where(DB::raw('DATE(receiptDate)'), date('Y-m-d'))
+            ->orderBy('receiptDate', 'desc')
+            ->paginate(15);
+        return view('reports.inbound-transfer.index', compact('purchase_orders'));
     }
 
     public function filter(InboundTransfer $trans) 

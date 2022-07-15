@@ -61,27 +61,41 @@
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table class="table table-hover">
+                                <table class="table table-borderless table-hover">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Tracking #</th>
-                                            <th scope="col">SKU</th>
-                                            <th scope="col">Lot Code</th>
-                                            <th scope="col">Description</th>
-                                            <th scope="col">Qty</th>
-                                            <th scope="col">Date time transferred</th>
+                                            <th scope="col">Transaction Reference #</th>
+                                            <th scope="col">Order #</th>
+                                            <th scope="col">Order Type</th>
+                                            <th scope="col">Order Date</th>
+                                            <th scope="col">Vendo No</th>
+                                            <th scope="col">Vendor Name</th>
+                                            <th scope="col">Ship From Address</th>
+                                            <th scope="col">Ship From Country</th>
+                                            <th scope="col">Date time Received</th>
+                                            <th scope="col">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($transfers))
-                                            @foreach ($transfers as $item)
+                                        @if (count($purchase_orders))
+                                            @foreach ($purchase_orders as $item)
                                                 <tr>
-                                                    <td>{{ $item->tracking_no }}</td>
-                                                    <td>{{ $item->sku }}</td>
-                                                    <td>{{ $item->lot_code }}</td>
-                                                    <td>{{ $item->description }}</td>
-                                                    <td>{{ $item->qty }}</td>
-                                                    <td>{{ Utils::formatDate($item->created_at) }}</td>
+                                                    <td>{{ $item->transactionReferenceNumber }}</td>
+                                                    <td>{{ $item->orderNumber }}</td>
+                                                    <td>{{ $item->orderType }}</td>
+                                                    <td>{{ $item->orderDate }}</td>
+                                                    <td>{{ $item->vendorNo }}</td>
+                                                    <td>{{ $item->vendorName }}</td>
+                                                    <td>{{ $item->shipFromAddress }}</td>
+                                                    <td>{{ $item->shipFromCountry }}</td>
+                                                    <td>{{ Utils::formatDate($item->receiptDate) }}
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ url('/stock-transfer/asn/' . $item->orderNumber) }}"
+                                                            target="_blank" class="btn btn-primary btn-sm btn-transfer"
+                                                            data-obj="{{ json_encode($item) }}">
+                                                            Line Items</a>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         @else
@@ -90,8 +104,8 @@
                                                     <div class="alert alert-danger alert-dismissible fade show"
                                                         role="alert">
                                                         No data found.
-                                                        <button type="button" class="close"
-                                                            data-dismiss="modal" aria-label="Close">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
@@ -104,7 +118,7 @@
                             </div>
 
                             @php
-                                echo $transfers->appends(request()->query())->links('pagination::bootstrap-4');
+                                echo $purchase_orders->appends(request()->query())->links('pagination::bootstrap-4');
                             @endphp
                         </div>
                     </div>
