@@ -1,0 +1,96 @@
+{
+    "msg_Date_Time": "2022-07-04T18:13:46",
+    "sender": 4803,
+    "receiver": 1001,
+    "shipmentDetails": [
+        {
+            "shipmentId": 33579192070322,
+            "shipCarrier": "EGO",
+            "shipMethod": "PHSDEGO",
+            "totalWeight": 2.342,
+            "freightCharges": 0,
+            "qtyPackages": 1,
+            "weightUoM": "KG",
+            "currCode": "PHP",
+            "itemDetails": [
+                {
+                    "orderId": 182223459,
+                    "orderLineNumber": 1,
+                    "partNumber": "35251",
+                    "trackingNo": "0206-057456",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-07-04T18:13:33",
+                    "lotNumber": ""
+                },
+                {
+                    "orderId": 182223459,
+                    "orderLineNumber": 2,
+                    "partNumber": "24885",
+                    "trackingNo": "0206-057456",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-07-04T18:13:33",
+                    "lotNumber": ""
+                },
+                {
+                    "orderId": 182223459,
+                    "orderLineNumber": 3,
+                    "partNumber": "35839",
+                    "trackingNo": "0206-057456",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-07-04T18:13:33",
+                    "lotNumber": ""
+                },
+                {
+                    "orderId": 182223459,
+                    "orderLineNumber": 4,
+                    "partNumber": "384937",
+                    "trackingNo": "0206-057456",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-07-04T18:13:33",
+                    "lotNumber": ""
+                },
+                {
+                    "orderId": 182223459,
+                    "orderLineNumber": 5,
+                    "partNumber": "40963",
+                    "trackingNo": "0206-057456",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-07-04T18:13:33",
+                    "lotNumber": ""
+                },
+                {
+                    "orderId": 182223459,
+                    "orderLineNumber": 6,
+                    "partNumber": "40561",
+                    "trackingNo": "0206-057456",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-07-04T18:13:33",
+                    "lotNumber": ""
+                },
+                {
+                    "orderId": 182223459,
+                    "orderLineNumber": 7,
+                    "partNumber": "35131",
+                    "trackingNo": "0206-057456",
+                    "qtyOrdered": 1,
+                    "qtyShipped": 1,
+                    "reasonCode": "",
+                    "shipDateTime": "2022-07-04T18:13:33",
+                    "lotNumber": "21104941"
+                }
+            ]
+        }
+    ]
+}

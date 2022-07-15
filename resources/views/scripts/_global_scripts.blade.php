@@ -23,7 +23,12 @@
 <script>
     $(function() {
         'use strict'
+        
+        $('[data-toggle="tooltip"]').tooltip()
+
         enlarge();
+
+
         $(window).on("resize", function(event) {
             enlarge();
         });

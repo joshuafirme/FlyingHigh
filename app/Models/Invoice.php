@@ -21,5 +21,8 @@ class Invoice extends Model
     function getInvoiceDetails($shipmentId) {
         return self::where('shipmentId', $shipmentId)->get();
     }
-           
+
+    function getInvoiceNo($shipmentId, $type) {
+        return self::where('shipmentId', $shipmentId)->where('invoiceType', $type)->value('invoiceDetail');
+    }     
 }

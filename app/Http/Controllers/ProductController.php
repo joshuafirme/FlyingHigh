@@ -30,7 +30,7 @@ class ProductController extends Controller
             if (User::isPermitted($this->page)) { return $next($request); }
             return abort(401);
         });
-    }
+    }    
     
     public function index() 
     {
@@ -235,30 +235,46 @@ class ProductController extends Controller
         }
 
         $inputs = $request->except('lot_code', 'stock', 'expiration');
-        $inputs['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
-       
-        $bundles = isset($request->bundles) ? implode(',', $request->bundles) : '';
-        $inputs['bundles'] = $bundles;      
-        Product::create($inputs);
+
+        $data = array_merge($inputs, [
+            'food' => $request->food ? 'T' : 'F',
+            'refrigerated' => $request->refrigerated ? 'T' : 'F',
+            'willMelt' => $request->willMelt ? 'Y' : 'N',
+            'willFreeze' => $request->willFreeze ? 'Y' : 'N',
+            'isBarcoded' => $request->isBarcoded ? 'Y' : 'N',
+            'isLotControlled' => $request->isLotControlled ? 'T' : 'F'
+        ]);
+        
+        Product::create($data);
 
         return redirect()->back()->with('success', 'Product was successfully added.');
     }
 
     public function update(Request $request, $id)
-    {   
+    {  
         Cache::forget('all_sku_cache');
         
         $except_values = ['_token','search_terms','lot_code','lot_code','stock','expiration'];
-        $request['has_bundle'] = $request->has_bundle == 'on' ? 1 : 0;
-        $bundles = isset($request->bundles) ? implode(',', $request->bundles) : [];
-        $request['bundles'] = $bundles;
-        
-        Product::where('id',$id)->update($request->except($except_values));
 
-        foreach ($request['lot_code'] as $key => $lot_code) {
-            $expiration = $request->expiration[$key];
-            $lc = new LotCode;
-            $lc->where('lot_code', $lot_code)->update(['expiration' => $expiration]);
+        $data = $request->except($except_values);
+
+        $data = array_merge($data, [
+            'food' => $request->food ? 'T' : 'F',
+            'refrigerated' => $request->refrigerated ? 'T' : 'F',
+            'willMelt' => $request->willMelt ? 'Y' : 'N',
+            'willFreeze' => $request->willFreeze ? 'Y' : 'N',
+            'isBarcoded' => $request->isBarcoded ? 'Y' : 'N',
+            'isLotControlled' => $request->isLotControlled ? 'T' : 'F'
+        ]);
+        
+        Product::where('id',$id)->update($data);
+
+        if ($request['lot_code']) {
+            foreach ($request['lot_code'] as $key => $lot_code) {
+                $expiration = $request->expiration[$key];
+                $lc = new LotCode;
+                $lc->where('lot_code', $lot_code)->update(['expiration' => $expiration]);
+            }
         }
         
         $add_lot_code = json_decode($this->addLotCode($request, $action = 'update'));

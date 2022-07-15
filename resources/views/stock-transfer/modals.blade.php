@@ -135,7 +135,7 @@
                 <input type="hidden" name="orderNumber" class="form-control">
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Receive date</label>
-                    <input type="date" name="receiveDate" class="form-control" value="{{ date('Y-m-d') }}"
+                    <input type="datetime-local" name="receiveDate" class="form-control" value="{{ date('Y-m-d') }}"
                         required>
                 </div>
             </div>

@@ -6,7 +6,7 @@
 @include('layouts.side-nav')
 
 <style>
-    .tbl-product-details tr td{
+    .tbl-product-details tr td {
         padding: 2px !important;
         margin: 2px !important;
     }
@@ -74,6 +74,18 @@
                                             <i class="fa fa-sync"></i>
                                             Sync SKU Master
                                         </button>
+                                        <div class="dropdown float-left m-1">
+                                            <button class="btn btn-sm btn-primary dropdown-toggle"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                 Stock Status
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" target="_blank"
+                                                    href="#">Send Stock Status Report</a>
+                                                <a class="dropdown-item" target="_blank"
+                                                    href="#">Print Stock Status Report</a>
+                                            </div>
+                                        </div>
 
                                     </div>
 
@@ -128,8 +140,9 @@
                                                     $date_now = date('Y-m-d');
                                                 @endphp
                                                 <tr>
-                                                    <td><a class="btn-view-detail" href="#" data-target="#detailModal"
-                                                            data-toggle="modal" data-info="{{ json_encode($item) }}">
+                                                    <td><a class="btn-view-detail" href="#"
+                                                            data-target="#detailModal" data-toggle="modal"
+                                                            data-info="{{ json_encode($item) }}">
                                                             {{ $item->itemNumber }}</a></td>
                                                     <td>{{ $item->productDescription }}</td>
                                                     <td>{{ $item->baseUOM }}</td>
@@ -138,7 +151,11 @@
                                                     <td class="{{ $text_class }}">{!! $icon !!}
                                                         {{ $stock_level }}</td>
                                                     <td>
-
+                                                        <a class="btn btn-sm btn-primary open-modal"
+                                                            modal-type="update" data-info="{{ $item }}"
+                                                            data-toggle="tooltip" data-placement="top" title="Edit"
+                                                            data-desc="{{ $item->description }}"><i
+                                                                class="fa fa-edit"></i></a>
                                                         <a class="btn btn-sm btn-primary btn-hubs-stock"
                                                             data-target="#hubsStockModal" data-toggle="modal"
                                                             data-itemNumber="{{ $item->itemNumber }}"
@@ -154,7 +171,8 @@
                                                                 class="fas fa-sort-amount-up"></i></i> Stock
                                                             Adjustment</a>
                                                         <a class="btn btn-sm btn-primary btn-view-detail"
-                                                            data-target="#detailModal" data-toggle="modal" data-info="{{ json_encode($item) }}">
+                                                            data-target="#detailModal" data-toggle="modal"
+                                                            data-info="{{ json_encode($item) }}">
                                                             <i class="fa fa-eye"></i> Details</a>
 
                                                         <!--<a href="#" class="btn btn-dark btn-sm"

@@ -96,7 +96,31 @@ class Utils
 		$data = curl_exec($c);
 		curl_close($c);
 		return $data;
-	 }
+	}
+
+    
+    public function getAccessToken($request) 
+    {
+        $url = "https://auth-stage.youngliving.com/connect/token";
+        $data  = [
+            'grant_type' => 'client_credentials',
+            'client_id' => $request->client_id,
+            'client_secret' => $request->client_secret,
+            'scope' => 'lf-manila'
+        ];
+
+        $header = "Content-type: application/x-www-form-urlencoded\r\n";
+        
+        $response = self::httpRequest($header, "POST", http_build_query($data), $url);
+       
+        if ($response && $response->access_token) {
+            return $response;
+        }
+        return json_encode([
+            'success' => false,
+            'message' => 'Error occured, can\'t get access token.'
+        ]);
+    }
 
     public static function separateString($str, $separator = '-', $separated_num = 3) 
     {

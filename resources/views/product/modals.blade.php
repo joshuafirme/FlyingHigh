@@ -1,6 +1,6 @@
 <!-- Create update -->
 <div class="modal fade" id="postModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <form action="#" method="post" class="modal-content" autocomplete="off">
             @csrf
             <div class="modal-header">
@@ -10,29 +10,143 @@
                 </button>
             </div>
             <div class="modal-body row g-3">
-                <div class="col-md-6">
+                <div class="col-md-4 mt-3">
                     <label class="form-label">SKU</label>
-                    <input type="text" class="form-control" name="sku" required>
+                    <input type="text" class="form-control" name="itemNumber" required>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Barcode</label>
-                    <input type="text" class="form-control" name="barcode">
-                </div>
-                <div class="col-md-12 mt-3">
+                <div class="col-md-4 mt-3">
                     <label class="form-label">Description</label>
-                    <input type="text" class="form-control" name="description" required>
+                    <input type="text" class="form-control" name="productDescription" required>
                 </div>
-                <div class="col-md-6 mt-3">
+                <div class="col-md-4 mt-3">
+                    <label class="form-label">Barcode</label>
+                    <input type="text" class="form-control" name="barCodeNumber">
+                </div>
+                <div class="col-md-3 mt-3">
                     <label class="form-label">Buffer Stock</label>
-                    <input type="number" class="form-control" name="buffer_stock" required>
+                    <input type="number" class="form-control" name="bufferStock" required>
                 </div>
-                <div class="col-md-6 mt-3">
-                    <label for="validationCustom04" class="form-label">Status</label>
-                    <select class="form-control" name="status" required>
-                        <option selected disabled value="">Choose...</option>
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
-                    </select>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Action Code</label>
+                    <input type="text" class="form-control" name="actionCode">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Base UOM</label>
+                    <input type="text" class="form-control" name="baseUOM">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Conversion Factor</label>
+                    <input type="text" class="form-control" name="conversionFactor">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Height</label>
+                    <input type="text" class="form-control" name="height">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Width</label>
+                    <input type="text" class="form-control" name="width">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Depth</label>
+                    <input type="text" class="form-control" name="depth">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Item Demention Unit</label>
+                    <input type="text" class="form-control" name="itemDimensionUnit">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Weight</label>
+                    <input type="text" class="form-control" name="weight">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Weight Unit</label>
+                    <input type="text" class="form-control" name="weightUnit">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Volume</label>
+                    <input type="text" class="form-control" name="volume">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Volume Uom</label>
+                    <input type="text" class="form-control" name="volumeUom">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Harmonized Code</label>
+                    <input type="text" class="form-control" name="harmonizedCode">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Hazardous</label>
+                    <input type="text" class="form-control" name="hazardous">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Retail Price</label>
+                    <input type="text" class="form-control" name="retailPrice">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Special Shipping Code</label>
+                    <input type="text" class="form-control" name="specialShippingCode">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Currency Code</label>
+                    <input type="text" class="form-control" name="currencyCode">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Line Type</label>
+                    <input type="text" class="form-control" name="lineType">
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">UnHazardCode</label>
+                    <input type="text" class="form-control" name="unHazardCode">
+                </div>
+                <div class="col-md-12 mt-3 row">
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="food">
+                            <label class="form-check-label">
+                                Food
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="refrigerated">
+                            <label class="form-check-label">
+                                Refrigerated
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="willMelt">
+                            <label class="form-check-label">
+                                Will Melt
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="willFreeze">
+                            <label class="form-check-label">
+                                Will Freeze
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="isBarcoded">
+                            <label class="form-check-label">
+                                Is Barcoded
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="isLotControlled">
+                            <label class="form-check-label">
+                                Is Lot Controlled
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-sm-12 col-md-12 mt-4">
                     <a class="btn btn-sm btn-primary float-right mb-3" id="btn-add-lot-code"><i
@@ -163,13 +277,14 @@
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel"
+                        aria-labelledby="home-tab">
                         <form action="#" method="POST" enctype="multipart/form-data" class="row">
                             <div class="col-12 mt-3">
                                 <div class="form-group mb-4" style="max-width: 500px;">
                                     <div class="custom-file text-left">
-                                        <input type="file" name="file" class="custom-file-input" id="customFile"
-                                            required>
+                                        <input type="file" name="file" class="custom-file-input"
+                                            id="customFile" required>
                                         <label class="custom-file-label" for="customFile">Choose file</label>
                                     </div>
                                 </div>
@@ -189,7 +304,8 @@
                             <button class="btn btn-sm btn-primary" type="button" id="btn-fetch">Fetch</button>
                         </div>
 
-                        <button class="btn btn-sm btn-primary d-none" id="btn-api-import" type="submit">Import</button>
+                        <button class="btn btn-sm btn-primary d-none" id="btn-api-import"
+                            type="submit">Import</button>
                         <div class="col-12 mt-4">
                             <h5><span id="transactionReferenceNumber"></span></h5>
                             <div id="orders-container"></div>
@@ -243,14 +359,15 @@
                 <div class="col-sm-12 col-md-6 col-lg-4 mt-2">
                     <label class="col-form-label">Action</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="action" id="add" value="add" checked
-                            required>
+                        <input class="form-check-input" type="radio" name="action" id="add" value="add"
+                            checked required>
                         <label class="form-check-label" for="add">
                             Add
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="action" id="less" value="less" required>
+                        <input class="form-check-input" type="radio" name="action" id="less" value="less"
+                            required>
                         <label class="form-check-label" for="less">
                             Less
                         </label>
@@ -372,7 +489,7 @@
                             <th>Attributes</th>
                             <th>Value</th>
                         </thead>
-                        <tbody> 
+                        <tbody>
                         </tbody>
                     </table>
                 </div>

@@ -26,6 +26,15 @@ class OrderController extends Controller
         return view('orders.index', compact('orders', 'hubs', 'reasons', 'invoice'));
     }
 
+    public function filterPaginate(Order $orders) 
+    {
+        $orders = $orders->filterPaginate(10);
+        $hubs = Hub::where('status', 1)->get();
+        $reasons = ReturnReason::where('status', 1)->get();
+        $invoice = new Invoice;
+        return view('orders.index', compact('orders', 'hubs', 'reasons', 'invoice'));
+    }
+
     public function getReturnedList(LineItem $line_item) 
     {
         $returned_list = $line_item->getReturnedList(10);
@@ -49,7 +58,7 @@ class OrderController extends Controller
 
     public function fetchOrdersData() 
     {
-        $path = public_path() . '/to_ship_orders.json';
+        $path = public_path() . '/payloads/182223459.json';
         $data = json_decode(file_get_contents($path));
 
         if ($data->shipmentsToShip) {
@@ -339,7 +348,7 @@ class OrderController extends Controller
                 $order_subtotal = 0;
                 foreach ($line_items as $item) {
 
-                    if ($item->lineType == "PN" || $item->lineType == "N") {
+                    if ($item->lineType == "PN" || $item->lineType == "N" || $item->remarks == "Component") {
                         continue;
                     }
 
@@ -348,34 +357,35 @@ class OrderController extends Controller
                         $component_txt = $item->remarks;
                     }
 
-                    $with_vat = Utils::getWithVAT($item->itemUnitPrice, $item->pv);
+                    // old computation $with_vat = Utils::getWithVAT($item->itemUnitPrice, $item->pv);
+                    $with_vat = $item->itemUnitPrice + Utils::getTaxPerItem($item->itemUnitPrice);
                     $total_cost = Utils::getTotalCost($with_vat, $item->quantity);
 
                     $total_amount += $total_cost;
                     $order_subtotal += $item->itemUnitPrice * $item->quantity;
-                   // $with_vat = $with_vat == 0.00 ? '<span class="peso">&#8369;</span>' . $with_vat : "N/A";
                     $output .= '
                     <tr>
                         <td class="text-center">' . $item->quantity . '</td>
                         <td>' . $component_txt . " " . $item->partNumber . '</td>
                         <td>' . $item->name . '</td>
-                        <td class="text-right">' . Utils::toFixed($item->pv) . '</td>
-                        <td class="text-right"><span class="peso">&#8369;</span> ' . Utils::toFixed($item->itemUnitPrice) . '</td>
-                        <td class="text-right"><span class="peso">&#8369;</span> ' . Utils::getTaxPerItem($item->itemUnitPrice) . '</td>
-                        <td class="text-right"><span class="peso">&#8369;</span>' . $with_vat . '</td>
-                        <td class="text-right"><span class="peso">&#8369;</span> ' . $total_cost . '</td>
+                        <td class="text-right">' . number_format(Utils::toFixed($item->pv), 2, '.', ',') . '</td>
+                        <td class="text-right"><span class="peso">&#8369;</span> ' . number_format(Utils::toFixed($item->itemUnitPrice), 2, '.', ',') . '</td>
+                        <td class="text-right"><span class="peso">&#8369;</span> ' . number_format(Utils::getTaxPerItem($item->itemUnitPrice), 2, '.', ',') . '</td>
+                        <td class="text-right"><span class="peso">&#8369;</span>' . number_format($with_vat, 2, '.', ',') . '</td>
+                        <td class="text-right"><span class="peso">&#8369;</span> ' . number_format($total_cost, 2, '.', ',') . '</td>
                     </tr>';
                 }
                 $vatable_sales = $order_subtotal + $order_details->shippingChargeAmount;
                 $vat = Utils::toFixed($vatable_sales * 0.12);
                 $total_amount_due = $vatable_sales + $vat;
+                $total_w_vat = $total_amount;
                 $output .= '
                 </tbody>
             </table>
             <table width="100%" style="border-collapse:collapse; margin-top: 12px;" class="table-computation">
                 <thead>
                     <th></th>
-                    <th class="text-left" style="padding: 0px !important; margin: 0px !important;font-size:15px;">Total w/VAT:<span class="float-right"><span class="peso">&#8369;</span> ' . number_format($total_amount_due, 2, '.', ',') . '</span></th>
+                    <th class="text-left" style="padding: 0px !important; margin: 0px !important;font-size:15px;">Total w/VAT:<span class="float-right"><span class="peso">&#8369;</span> ' . number_format($total_w_vat, 2, '.', ',') . '</span></th>
                 </thead>  
                 <tbody>
                     <tr>
@@ -436,9 +446,10 @@ class OrderController extends Controller
                     if ($item->lineType == "PN" || $item->lineType == "N") {
                         continue;
                     }
+                    $component_txt = $item->remarks == "Component" ? '- ' . $item->remarks . " " : "";
                     $output .= '
                     <tr>
-                        <td class="text-center">' . $item->quantity . '</td>
+                        <td class="text-center">' . $component_txt . $item->quantity . '</td>
                         <td class="text-center">' . $item->partNumber . '</td>
                         <td class="text-center">' . $item->name . '</td>
                     </tr>';
@@ -459,6 +470,8 @@ class OrderController extends Controller
         $total_amount_due = $order_details->packageTotal;
         
         $currency  = $total_amount_due > 0 ? "pesos" : "peso"; 
+        $invoice = new Invoice;
+        $sales_invoice_no = $invoice->getInvoiceNo($order_details->shipmentId, 2);
 
         $output = $this->invoiceStyle();
         $output .= 
@@ -479,7 +492,7 @@ class OrderController extends Controller
                 </thead>
                 <tbody>
                 <tr>
-                    <td class="text-info border-l">'.request()->invoice_no.'</td>
+                    <td class="text-info border-l">'.$sales_invoice_no.'</td>
                     <td class="text-info">'.$order_details->orderId.'</td>
                     <td class="text-info border-r text-right">P '.number_format((float)$total_amount_due, 2, '.', ',').'</td>
                 </tr>

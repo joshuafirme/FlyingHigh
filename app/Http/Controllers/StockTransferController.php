@@ -37,10 +37,11 @@ class StockTransferController extends Controller
         return PurchaseOrder::where('transactionReferenceNumber', $trasaction_ref)->where('status', 1)->get();
     }
 
-    public function search(StockTransfer $tr) 
+    public function search() 
     {
-        $transfer_request = $tr->search();
-        return view('stock-transfer.index', compact('transfer_request'));
+        $purchase_orders = PurchaseOrder::where('transactionReferenceNumber', 'LIKE', '%' . request()->key . '%')->paginate(10);
+        $po_transaction = Transaction::select('transactionReferenceNumber')->where('transactionType', 'PO')->get();
+        return view('stock-transfer.index', compact('purchase_orders', 'po_transaction'));
     }
 
     public function filter(StockTransfer $tr) 
@@ -63,12 +64,11 @@ class StockTransferController extends Controller
 
                 // TO ASK: how to identify uniqueness if lot.
                 if ($lot->isLotCodeExists(
-                        $item->itemNumber, $item->lotNumber, $item->lotExp, $item->unitOfMeasure)) {
+                        $item->itemNumber, $item->lotNumber, $item->unitOfMeasure)) {
                             
                     LotCode::where([
                         ['sku', '=', $item->itemNumber],
                         ['lot_code', '=', $item->lotNumber],
-                        ['expiration', '=', $item->lotExp],
                         ['uom', '=', $item->unitOfMeasure],
                     ])->increment('stock', $item->quantityOrdered);
                 }

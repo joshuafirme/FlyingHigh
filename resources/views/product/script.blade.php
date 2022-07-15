@@ -279,6 +279,30 @@
                         if (key == 'qty') {
                             modal.find('[name=' + key + ']').prop('readonly', true);
                         }
+                        if (key=='food' && data[key] == 'T') {
+                            modal.find('[name=' + key + ']').prop('checked', true);
+                            continue;
+                        }
+                        if (key=='refrigerated' && data[key] == 'T') {
+                            modal.find('[name=' + key + ']').prop('checked', true);
+                            continue;
+                        }
+                        if (key=='willMelt' && data[key] == 'Y') {
+                            modal.find('[name=' + key + ']').prop('checked', true);
+                            continue;
+                        }
+                        if (key=='willFreeze' && data[key] == 'Y') {
+                            modal.find('[name=' + key + ']').prop('checked', true);
+                            continue;
+                        }
+                        if (key=='isBarcoded' && data[key] == 'Y') {
+                            modal.find('[name=' + key + ']').prop('checked', true);
+                            continue;
+                        }
+                        if (key=='isLotControlled' && data[key] == 'T') {
+                            modal.find('[name=' + key + ']').prop('checked', true);
+                            continue;
+                        }
                         modal.find('[name=' + key + ']').val(data[key]);
                     }
                     getLotCodes(data.itemNumber);

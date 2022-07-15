@@ -13,17 +13,41 @@ $status = request()->status;
             <div class="page-title-box">
                 <h4 class="page-title">Orders</h4>
             </div>
-
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="mt-3 mb-3">
-                                <div class="float-right">
+                            <div class="mb-4 mt-2 d-md-flex flex-md-wrap">
+                                @php
+                                    $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d');
+                                    $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
+                                @endphp
+                                <form class="form-inline" action="{{ url('/orders/filter') }}"
+                                    method="get">
+                                    <div class="form-group mr-2 col-12 col-md-auto">
+                                        <label>Date from</label>
+                                        <input type="date" class="form-control ml-0 ml-sm-2" name="date_from"
+                                            value="{{ $date_from }}" required>
+                                    </div>
+                                    <div class="form-group mr-2 col-12 col-md-auto">
+                                        <label>Date to</label>
+                                        <input type="date" class="form-control ml-0 ml-sm-2" name="date_to"
+                                            value="{{ $date_to }}" required>
+                                    </div>
+                                    <div class="form-group ml-1">
+                                        <button class="btn btn-sm btn-primary" type="submit">Filter</button>
+                                    </div>
+                                    <div class="form-group ml-1">
+                                        <a class="btn btn-sm btn-primary" href="{{ url('/reports/expired') }}"><i
+                                                class="fa fa-sync" aria-hidden="true"></i> Refresh</a>
+                                    </div>
+                                </form>
+                                <div class="ml-auto mt-4 mt-sm-2">
+                                    
                                     <form action="{{ url('/orders/search') }}" method="get">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" name="key" style="width: 280px;"
-                                                placeholder="Search by Shipment ID or Order ID"
+                                            <input type="text" class="form-control" name="key"
+                                                style="width: 280px;" placeholder="Search by Shipment ID or Order ID"
                                                 value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">
@@ -41,6 +65,7 @@ $status = request()->status;
                                             <th scope="col">Shipment Id</th>
                                             <th scope="col">OrderID</th>
                                             <th scope="col">Customer</th>
+                                            <th scope="col">Order Source</th>
                                             <th scope="col">Date time submitted</th>
                                             <th scope="col">Action</th>
                                         </tr>
@@ -58,6 +83,7 @@ $status = request()->status;
                                                     <td>
                                                         {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
                                                     </td>
+                                                    <td>{{ $item->orderSource }}</td>
                                                     <td>{{ $item->dateTimeSubmittedIso }}</td>
                                                     <td>
                                                         <div class="dropdown float-left m-1">
@@ -91,8 +117,8 @@ $status = request()->status;
                                                     <div class="alert alert-danger alert-dismissible fade show"
                                                         role="alert">
                                                         No data found.
-                                                        <button type="button" class="close"
-                                                            data-dismiss="modal" aria-label="Close">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>

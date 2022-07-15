@@ -33,6 +33,7 @@ Route::get('lotcode/{sku}', [LotCodeApi::class, 'getLotCode']);
 Route::post('sync-skumasters', [YLApiController::class, 'syncSkuMasters']);
 Route::post('purchase-orders', [YLApiController::class, 'postPurchaseOrders']);
 Route::post('confirm-purchase-orders/{transac_ref}', [YLApiController::class, 'confirmPurchaseOrders']);
+Route::post('product/send-stock-status', [YLApiController::class, 'sendStockStatus']);
 
 Route::middleware('client')->group(function () {
     Route::get('get-yl-access-token', [YLApiController::class, 'getAccessToken']);

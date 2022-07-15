@@ -65,13 +65,12 @@ class Order extends Model
             ->paginate($per_page);
     }
 
-    public function filterPaginate($per_page, $status) {
+    public function filterPaginate($per_page) {
         return self::select('orders.*','orders.status','orders.updated_at','hubs.name as hub','return_reasons.reason')
             ->leftJoin('hubs', 'hubs.id', '=', 'orders.hub_id')
             ->leftJoin('return_reasons', 'return_reasons.id', '=', 'orders.return_reason')
-            ->orderBy('orders.updated_at', 'desc')
-            ->where('orders.status', $status)
-            ->whereBetween(DB::raw('DATE(orders.updated_at)'), [request()->date_from, request()->date_to])
+            ->orderBy('dateTimeSubmittedIso', 'desc')
+            ->whereBetween(DB::raw('DATE(orders.dateTimeSubmittedIso)'), [request()->date_from, request()->date_to])
             ->paginate($per_page);
     }
 
@@ -91,6 +90,8 @@ class Order extends Model
         return self::select('orders.*','orders.status','orders.updated_at','hubs.name as hub','return_reasons.reason')
             ->leftJoin('hubs', 'hubs.id', '=', 'orders.hub_id')
             ->leftJoin('return_reasons', 'return_reasons.id', '=', 'orders.return_reason')
+            ->where(DB::raw('DATE(orders.dateTimeSubmittedIso)'), date('Y-m-d'))
+            ->orderBy('dateTimeSubmittedIso', 'desc')
             ->paginate($per_page);
     }
     

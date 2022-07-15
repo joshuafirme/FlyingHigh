@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-line-items/{orderId}', [OrderController::class, 'getLineItems']);
     
     Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/filter', [OrderController::class, 'filterPaginate']);
     Route::get('/orders/search', [OrderController::class, 'search']);
 
     Route::post('/order/do-ship', [OrderController::class, 'doShip']);

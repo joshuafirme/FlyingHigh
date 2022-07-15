@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\PurchaseOrder;
 use App\Models\POLineItems;
+use App\Models\LotCode;
 use DB;
 use Cache;
 use Utils;
@@ -21,7 +22,7 @@ class YLApiController extends Controller
         try {
             DB::beginTransaction();
             
-            $token = $this->getAccessToken($request)->access_token;
+            $token = Utils::getAccessToken($request)->access_token;
             $url = "https://lf-gateway-stage.awsvodev.youngliving.com/inventory/skumasters";
             
             $header = [
@@ -110,7 +111,7 @@ class YLApiController extends Controller
                 ], 200);
             }
 
-            $token = $this->getAccessToken($request)->access_token;
+            $token = Utils::getAccessToken($request)->access_token;
 
             $data = [];
             $data['TransactionType'] = '3P';
@@ -138,7 +139,7 @@ class YLApiController extends Controller
                         "LineNumber" => $item->lineNumber,
                         "LotNumber" => $item->lotNumber,
                         "LotExpiration" => $item->lotExp,
-                        "ReceiptDate" => "2022-03-21T12:00:00",
+                        "ReceiptDate" => $order->receiptDate,
                         "Location" => $item->location
                     ]);
                 }
@@ -154,6 +155,8 @@ class YLApiController extends Controller
             $url = "https://lf-gateway-stage.awsvodev.youngliving.com/inventory/asn";
             
             $headers = ["Content-Type: application/json", "Authorization: Bearer {$token}"];
+
+            //return $data;
             
             $confirmation_response = Utils::curlPost($url, $headers, $data);
             
@@ -181,7 +184,7 @@ class YLApiController extends Controller
 
             DB::beginTransaction();
 
-            $token = $this->getAccessToken($request)->access_token;
+            $token = Utils::getAccessToken($request)->access_token;
 
             $url = "https://lf-gateway-stage.awsvodev.youngliving.com/inventory/asn";
 
@@ -235,26 +238,92 @@ class YLApiController extends Controller
      //   }
     }
 
-    public function getAccessToken($request) 
-    {
-        $url = "https://auth-stage.youngliving.com/connect/token";
-        $data  = [
-            'grant_type' => 'client_credentials',
-            'client_id' => $request->client_id,
-            'client_secret' => $request->client_secret,
-            'scope' => 'lf-manila'
-        ];
+    
+    public function sendStockStatus(Request $request) {
 
-        $header = "Content-type: application/x-www-form-urlencoded\r\n";
-        
-        $response = Utils::httpRequest($header, "POST", http_build_query($data), $url);
-       
-        if ($response && $response->access_token) {
-            return $response;
+        try {
+            DB::beginTransaction();
+
+            $token = Utils::getAccessToken($request)->access_token;
+            $transaction_id = Transaction::where('transactionType', '3P')->latest()->value('id');
+            $transaction_prefix = 'P' . date('Ymd');
+            
+            $transaction_ref = $transaction_prefix . ($transaction_id + 10);
+            
+            $lot_codes = LotCode::get();
+          
+            $body = [];
+            $body['StockStatusDate'] = date("Y-m-d\TH:i:s", time());
+            $body['TransactionReferenceNumber'] = $transaction_ref;
+            $body['TransactionType'] = '3P';
+            $body['MessageCount'] = count($lot_codes);
+            $body['Sender'] = 4803;
+            $body['Receiver'] = 1001;
+            $body['StockStatusDetails'] = [];
+ 
+            if (count($lot_codes) < 1) {
+                return response()->json([
+                    "success" => false, 
+                    "transactionReferenceNumber"=> $transaction_ref,
+                    "message" => "No data found.",
+                ], 200);
+            }
+
+            foreach ($lot_codes as $item) {
+                array_push($body['StockStatusDetails'], [
+                    "ItemNumber" => $item->sku,
+                    "Location" => $item->location == 'WS' ? 'AV' : $item->location,
+                    "LotStatus" => "",
+                    "QuantityOnHand" => $item->stock,
+                    "UnitOfMeasure" => $item->uom,
+                    "LotExpiration" => $item->expiration,
+                    "LotNumber" => $item->lot_code,
+                ]);
+            }
+
+            $url = "https://lf-gateway-stage.awsvodev.youngliving.com/inventory/stockstatus";
+            
+            $headers = ["Content-Type: application/json", "Authorization: Bearer {$token}"];
+             
+            $confirmation_response = Utils::curlPost($url, $headers, $body);
+  
+            if ($confirmation_response->message == "Ok") {
+                $trans = [];
+                $trans['transactionReferenceNumber'] = $transaction_ref;
+                $trans['transactionType'] = "3P";
+                $trans['messageCount'] = count($lot_codes);
+                $trans['sender'] = 4803;
+                $trans['receiver'] = 1001;
+                $t = new Transaction;
+              
+                $t->saveTransaction(json_decode(json_encode($trans)));
+
+                DB::commit(); 
+                
+                return response()->json([
+                    "success" => true, 
+                    "transactionReferenceNumber"=> $transaction_ref,
+                    "confirmation_response" => $confirmation_response,
+                ], 200);
+            }
+            else {
+                return response()->json([
+                    "success" => false, 
+                    "transactionReferenceNumber"=> $transaction_ref,
+                    "confirmation_response" => $confirmation_response,
+                ], 200);
+            }
+            
+        } catch (\Exception $e) {
+            
+            DB::rollback();
+
+            return response()->json([
+                "success" => false,
+                "exceptionMessage" => $e->getMessage(),    
+            ], 200);
         }
-        return json_encode([
-            'success' => false,
-            'message' => 'Error occured, can\'t get access token.'
-        ]);
     }
+    
+
 }
