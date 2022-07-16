@@ -27,28 +27,47 @@
                     <input type="number" class="form-control" name="bufferStock" required>
                 </div>
                 <div class="col-md-3 mt-3">
-                    <label class="form-label">Action Code</label>
-                    <input type="text" class="form-control" name="actionCode">
+                    <label class="form-label">Base UOM</label>
+                    <select class="form-control" name="baseUOM" required>
+                        <option selected disabled value="">Choose...</option>
+                        @foreach ($attribute->where('type', 'baseUOM')->get() as $item)
+                            <option value="{{ $item->name }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-md-3 mt-3">
-                    <label class="form-label">Base UOM</label>
-                    <input type="text" class="form-control" name="baseUOM">
+                    <label class="form-label">Weight Unit</label>
+                    <select class="form-control" name="weightUnit" required>
+                        <option selected disabled value="">Choose...</option>
+                        @foreach ($attribute->where('type', 'weightUnit')->get() as $item)
+                            <option value="{{ $item->name }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="form-label">Volume Uom</label>
+                    <select class="form-control" name="volumeUom" required>
+                        <option selected disabled value="">Choose...</option>
+                        @foreach ($attribute->where('type', 'volumeUom')->get() as $item)
+                            <option value="{{ $item->name }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-md-3 mt-3">
                     <label class="form-label">Conversion Factor</label>
-                    <input type="text" class="form-control" name="conversionFactor">
+                    <input type="text" class="form-control" name="conversionFactor" required>
                 </div>
                 <div class="col-md-3 mt-3">
                     <label class="form-label">Height</label>
-                    <input type="text" class="form-control" name="height">
+                    <input type="text" class="form-control" name="height" required>
                 </div>
                 <div class="col-md-3 mt-3">
                     <label class="form-label">Width</label>
-                    <input type="text" class="form-control" name="width">
+                    <input type="text" class="form-control" name="width" required>
                 </div>
                 <div class="col-md-3 mt-3">
                     <label class="form-label">Depth</label>
-                    <input type="text" class="form-control" name="depth">
+                    <input type="text" class="form-control" name="depth" required>
                 </div>
                 <div class="col-md-3 mt-3">
                     <label class="form-label">Item Demention Unit</label>
@@ -56,19 +75,15 @@
                 </div>
                 <div class="col-md-3 mt-3">
                     <label class="form-label">Weight</label>
-                    <input type="text" class="form-control" name="weight">
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label class="form-label">Weight Unit</label>
-                    <input type="text" class="form-control" name="weightUnit">
+                    <input type="text" class="form-control" name="weight" required>
                 </div>
                 <div class="col-md-3 mt-3">
                     <label class="form-label">Volume</label>
                     <input type="text" class="form-control" name="volume">
                 </div>
                 <div class="col-md-3 mt-3">
-                    <label class="form-label">Volume Uom</label>
-                    <input type="text" class="form-control" name="volumeUom">
+                    <label class="form-label">Action Code</label>
+                    <input type="text" class="form-control" name="actionCode">
                 </div>
                 <div class="col-md-3 mt-3">
                     <label class="form-label">Harmonized Code</label>
@@ -80,7 +95,7 @@
                 </div>
                 <div class="col-md-3 mt-3">
                     <label class="form-label">Retail Price</label>
-                    <input type="text" class="form-control" name="retailPrice">
+                    <input type="text" class="form-control" name="retailPrice" required>
                 </div>
                 <div class="col-md-3 mt-3">
                     <label class="form-label">Special Shipping Code</label>
@@ -345,7 +360,7 @@
                 </div>
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Lot Code</label>
-                    <select class="form-control" name="lot_code" id="lot_codes" required>
+                    <select class="form-control" name="lot_code" id="lot_codes">
                     </select>
                 </div>
                 <div class="col-md-6 mt-3">
@@ -483,17 +498,7 @@
                 </button>
             </div>
             <div class="modal-body row g-3 mb-3">
-                <div class="col-12">
-                    <table class="table table-bordered table-hover tbl-product-details">
-                        <thead>
-                            <th>Attributes</th>
-                            <th>Value</th>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-sm-12 col-md-12 mt-4">
+                <div class="col-sm-12 col-md-12 mb-2">
                     <table class="table table-hover pb-3">
                         <thead>
                             <th>JDE Lot Code</th>
@@ -501,6 +506,16 @@
                             <th>Expiration</th>
                         </thead>
                         <tbody class="tbl-lot-codes">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-12">
+                    <table class="table table-bordered table-hover tbl-product-details">
+                        <thead>
+                            <th>Attributes</th>
+                            <th>Value</th>
+                        </thead>
+                        <tbody>
                         </tbody>
                     </table>
                 </div>

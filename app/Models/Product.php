@@ -136,8 +136,11 @@ class Product extends Model
         ]);
     }
 
-    public function isSkuExists($sku) {
-        $res = self::where('sku', $sku)->get();
+    public function isSkuExists($sku, $baseUOM) {
+        $res = self::where([
+            ['itemNumber', '=', $sku],
+            ['baseUOM', '=', $baseUOM],
+        ])->get();
         return count($res) > 0 ? true : false;
     }
 

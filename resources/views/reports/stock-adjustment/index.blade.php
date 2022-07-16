@@ -96,7 +96,7 @@
                                                 <tr>
                                                     <td>{{ $item->sku }}</td>
                                                     <td>{{ $item->lot_code ? $item->lot_code : 'N/A' }}</td>
-                                                    <td>{{ $item->description }}</td>
+                                                    <td>{{ $item->productDescription }}</td>
                                                     <td>{{ $item->action }}</td>
                                                     <td>{{ $item->qty_adjusted }}</td>
                                                     <td>{{ $item->adjusted_by }}</td>

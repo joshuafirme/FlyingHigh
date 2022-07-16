@@ -73,13 +73,13 @@
                     }
 
                     __this.find('[type="submit"]').html("Send")
-                    __this.prop("disabled", false)
+                    __this.find('[type="submit"]').prop("disabled", false)
                 })
                 .fail(function() {
                     swalError(data.exceptionMessage);
 
                     __this.find('[type="submit"]').html("Send")
-                    __this.prop("disabled", false)
+                    __this.find('[type="submit"]').prop("disabled", false)
                 });
 
             return false;

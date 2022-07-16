@@ -20,7 +20,7 @@ class StockTransferController extends Controller
 {
     public function index() 
     {
-        $purchase_orders = PurchaseOrder::paginate(10);
+        $purchase_orders = PurchaseOrder::orderBy('orderDate', 'desc')->paginate(10);
         $po_transaction = Transaction::select('transactionReferenceNumber')->where('transactionType', 'PO')->get();
         return view('stock-transfer.index', compact('purchase_orders', 'po_transaction'));
     }
@@ -34,7 +34,10 @@ class StockTransferController extends Controller
 
     public function getPOListByTransaction($trasaction_ref) 
     {
-        return PurchaseOrder::where('transactionReferenceNumber', $trasaction_ref)->where('status', 0)->get();
+        return PurchaseOrder::where('transactionReferenceNumber', $trasaction_ref)
+            ->where('status', 0)
+            ->orderBy('orderDate', 'desc')
+            ->get();
     }
 
     public function search() 

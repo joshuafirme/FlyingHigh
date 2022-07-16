@@ -26,19 +26,6 @@
                                     <a class="btn btn-sm btn-primary"><i class="fas fa-sync"></i> Sync ASN</a>
                                     <a data-target="#confirmModal" data-toggle="modal" class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i> Send Confirmation to YL</a>
 
-                                    <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#importModal"><i
-                                            class="fas fa-file-import"></i>
-                                        Import Excel
-                                    </a>
-                                    <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/stock-transfer/export/' . $date_from . '/' . $date_to) }}"
-                                        target="_blank"><i class="fas fa-file-export"></i> Export Excel</a>
-                                    <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/stock-transfer/download/' . $date_from . '/' . $date_to) }}"
-                                        target="_blank"><i class="fa fa-download"></i> Download PDF</a>
-                                    <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/stock-transfer/preview/' . $date_from . '/' . $date_to) }}"
-                                        target="_blank"><i class="fa fa-print"></i> Print</a>
                                 </div>
                                 <form action="{{ url('/stock-transfer/search') }}" method="get" class="ml-4">
                                     <div class="input-group mb-3">

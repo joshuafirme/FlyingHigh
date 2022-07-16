@@ -148,6 +148,7 @@
             $.each(inputs, function(i, v) {
                 if (i > 1) {
                     if ($(v).attr('type') == 'checkbox') {
+                        modal.find('input[type="checkbox"]').prop('checked', false);
                         return;
                     }
                     $(v).val('');
@@ -223,7 +224,7 @@
                     console.log(data)
                     mdl.find('[name=lot_code]').html('');
                     for (let item of data) {
-                        let html = `<option exp="${item.expiration}" value="${item.lot_code}">${item.lot_code == 0 ? 'N/A' : item.lot_code}</option>`
+                        let html = `<option exp="${item.expiration}" value="${item.lot_code}">${item.lot_code == null ? 'N/A' : item.lot_code}</option>`
                         mdl.find('[name=lot_code]').append(html);
                     }
                     let exp = mdl.find("[name=lot_code] option:selected").attr('exp');
@@ -321,6 +322,7 @@
             $('.btn-view-detail').click(function() {
                 let data = JSON.parse($(this).attr('data-info'));
                 let modal = $('#detailModal');
+                modal.modal('show')
                 let tbl = $('.tbl-product-details');
                 tbl.find('tbody').empty()
                 for (var key of Object.keys(data)) {
@@ -367,9 +369,38 @@
                 });
             });
 
+            $(document).on('click', '.btn-delete', function() {
+                let id = $(this).attr('data-id');
+                Swal.fire({
+                    title: 'Confirmation',
+                    text: "You are going to delete this data. All contents related with this data will be lost. Do you want to delete it?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                                type: 'POST',
+                                url: "/product/delete/"+id
+                            })
+
+                            .done(function(data) {
+                                $('#' + id).remove();
+                                swalSuccess(data.message)
+                            })
+                            .fail(function() {
+                                swalSuccess("Error occured. Please try again.");
+                            });
+                    }
+                })
+            });
+
             $(document).on('click', '.btn-hubs-stock', function() {
                 let sku = $(this).attr('data-sku');
                 let desc = $(this).attr('data-desc');
+                $('#hubsStockModal').modal('show')
                 $('#tbl-hubs-stock').html('');
                 $('#sku-text').html(sku); 
                 $('#description-text').html(desc); 
@@ -479,6 +510,7 @@
                 let description = v.attr('data-desc');
                 let stock = v.attr('data-stock');
                 let mdl = $('#stockAdjustmentModal');
+                mdl.modal('show');
                 mdl.find('[name=sku]').val(sku);
                 mdl.find('[name=description]').val(description);
                 mdl.find('[name=stock]').val(stock);

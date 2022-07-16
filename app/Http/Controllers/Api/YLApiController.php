@@ -191,12 +191,20 @@ class YLApiController extends Controller
 
     public function transferByOrderNo($orderNumber, $receiptDate) 
     {
-        
         $line_items = POLineItems::where('orderNumber', $orderNumber)->get();
 
         foreach ($line_items as $item) {
             
             $lot = new LotCode; 
+            $product = new Product; 
+            
+            if ( ! $product->isItemExists($item)) {
+                $product->itemNumber = $item->itemNumber;
+                $product->baseUOM = $item->unitOfMeasure;
+                $product->lotCode = $item->lotNumber;
+                $product->productDescription = $item->description;
+                $product->save();
+            }
 
             if ($lot->isLotCodeExists(
                 $item->itemNumber, $item->lotNumber, $item->unitOfMeasure)) {

@@ -25,8 +25,10 @@ class InboundTransferController extends Controller
 
     public function filter(InboundTransfer $trans) 
     {
-        $transfers = $trans->filterPaginate(10);
-        return view('reports.inbound-transfer.index', compact('transfers'));
+        $purchase_orders = PurchaseOrder::whereBetween(DB::raw('DATE(receiptDate)'), [request()->date_from, request()->date_to])
+            ->orderBy('receiptDate', 'desc')
+            ->paginate(15);
+        return view('reports.inbound-transfer.index', compact('purchase_orders'));
     }
 
     public function previewReport($date_from, $date_to, InboundTransfer $trans){

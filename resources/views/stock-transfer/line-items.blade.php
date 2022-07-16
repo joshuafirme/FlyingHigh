@@ -31,6 +31,17 @@
                                         <h4><strong>Purchase Order</strong></h4>
                                     </div>
                                     <hr>
+                                    <div class="form-group ml-auto mt-4 mt-sm-2">
+                                        <a class="btn btn-sm btn-primary"
+                                            href="{{ url('/reports/inbound-transfer/preview/') }}" target="_blank"><i
+                                                class="fa fa-print"></i> Print</a>
+                                        <a class="btn btn-sm btn-primary"
+                                            href="{{ url('/reports/inbound-transfer/download/') }}" target="_blank"><i
+                                                class="fa fa-download"></i> Download PDF</a>
+                                        <a class="btn btn-sm btn-primary"
+                                            href="{{ url('/reports/inbound-transfer/export/') }}" target="_blank"><i
+                                                class="fas fa-file-export"></i> Export Excel</a>
+                                    </div>
                                     <div>
                                         <div class="ic-responsive-invoice">
                                             <table width="100%" cellpadding="0" cellspaceing="0">
@@ -40,6 +51,13 @@
                                                             <address class="ic-invoice-addess">
                                                                 <strong>Order Number:
                                                                     {{ $purchase_order->orderNumber }}</strong><br>
+                                                                <p class="mb-0">Status:
+                                                                    @if ($purchase_order->status == 1)
+                                                                        <span class="badge badge-pill badge-success">Received</span>
+                                                                    @else
+                                                                        <span class="badge badge-pill badge-info">Pending</span>
+                                                                    @endif
+                                                                </p>
                                                                 <p class="mb-0">Transaction Reference #:
                                                                     {{ $purchase_order->transactionReferenceNumber }}
                                                                 </p>
@@ -77,7 +95,6 @@
                                                     <th scope="col">Description</th>
                                                     <th scope="col">Qty Ordered</th>
                                                     <th scope="col">Qty Open</th>
-                                                    <th scope="col">Qty Transferred</th>
                                                     <th scope="col">Ship Date</th>
                                                     <th scope="col">UOM</th>
                                                     <th scope="col">Location</th>
@@ -104,7 +121,6 @@
                                                         <td>{{ $item->description }}</td>
                                                         <td>{{ $item->quantityOrdered }}</td>
                                                         <td>{{ $item->quantityOpen }}</td>
-                                                        <td>{{ $item->quantityTransferred }}</td>
                                                         <td>{{ $item->shipDate }}</td>
                                                         <td>{{ $item->unitOfMeasure }}</td>
                                                         <td>{{ $item->location }}</td>

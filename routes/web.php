@@ -15,6 +15,7 @@ use App\Http\Controllers\AdjustmentRemarksController;
 use App\Http\Controllers\ReturnReasonController;
 use App\Http\Controllers\StockTransferController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\Reports\StockAdjustmentController;
 use App\Http\Controllers\Reports\HubTransferController;
 use App\Http\Controllers\Reports\PickupReportController;
@@ -45,6 +46,11 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/role', RoleController::class);
     Route::post('/role/update/{id}', [RoleController::class, 'update']);
+
+    
+    Route::resource('/attributes', AttributeController::class);
+    Route::post('/attributes/update/{id}', [AttributeController::class, 'update']);
+    Route::post('/attributes/delete/{id}', [AttributeController::class, 'delete']);
 
     Route::get('/hubs/{hub_id}/search', [HubInventoryController::class, 'searchProduct'])->name('searchProductHub');
     Route::get('/hubs/{receiver}', [HubInventoryController::class, 'hubInventory']);
@@ -103,6 +109,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/product/transfer', [ProductController::class, 'transfer']);
     Route::post('/product/bulk-transfer', [ProductController::class, 'bulkTransfer']);
     Route::post('/product/update/{id}', [ProductController::class, 'update']);
+    Route::post('/product/delete/{id}', [ProductController::class, 'delete']);
     Route::get('/product/search', [ProductController::class, 'search'])->name('searchProduct');
     Route::resource('/product', ProductController::class);
 
@@ -144,7 +151,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/stock-transfer', [StockTransferController::class, 'index']);
     Route::get('/stock-transfer/asn/{orderNumber}', [StockTransferController::class, 'readOneOrder']);
-    Route::get('/stock-transfer/received-list/{transactionRef}', [StockTransferController::class, 'getPOListByTransaction']);
+    Route::get('/stock-transfer/po-list/{transactionRef}', [StockTransferController::class, 'getPOListByTransaction']);
     Route::get('/stock-transfer/search', [StockTransferController::class, 'search']);
     Route::get('/stock-transfer/filter', [StockTransferController::class, 'filter']);
     Route::post('/stock-transfer/transfer', [StockTransferController::class, 'transfer']);

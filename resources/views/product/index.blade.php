@@ -145,7 +145,7 @@
                                                     }
                                                     $date_now = date('Y-m-d');
                                                 @endphp
-                                                <tr>
+                                                <tr id="{{ $item->id }}">
                                                     <td><a class="btn-view-detail" href="#"
                                                             data-target="#detailModal" data-toggle="modal"
                                                             data-info="{{ json_encode($item) }}">
@@ -160,26 +160,28 @@
                                                         <a class="btn btn-sm btn-primary open-modal"
                                                             modal-type="update" data-info="{{ $item }}"
                                                             data-toggle="tooltip" data-placement="top" title="Edit"
-                                                            data-desc="{{ $item->description }}"><i
+                                                            data-desc="{{ $item->productDescription }}"><i
                                                                 class="fa fa-edit"></i></a>
-                                                        <a class="btn btn-sm btn-primary btn-hubs-stock"
-                                                            data-target="#hubsStockModal" data-toggle="modal"
-                                                            data-itemNumber="{{ $item->itemNumber }}"
-                                                            data-desc="{{ $item->description }}"><i
-                                                                class="fa fa-warehouse"></i> Hubs
-                                                            Stock</a>
+                                                        <a class="btn btn-sm btn-primary btn-view-detail"
+                                                            data-toggle="tooltip" data-placement="top" title="Product Details / Lot Codes"
+                                                            data-info="{{ json_encode($item) }}">
+                                                            <i class="fa fa-eye"></i></a>
                                                         <a class="btn btn-sm btn-primary btn-stock-adjustment"
-                                                            data-target="#stockAdjustmentModal" data-toggle="modal"
+                                                            data-toggle="tooltip" data-placement="top" title="Stock Adjustment"
                                                             data-sku="{{ $item->itemNumber }}"
                                                             data-stock="{{ $stock }}"
-                                                            data-desc="{{ $item->description }}"
+                                                            data-desc="{{ $item->productDescription }}"
                                                             data-backdrop="static" data-keyboard="false"><i
-                                                                class="fas fa-sort-amount-up"></i></i> Stock
-                                                            Adjustment</a>
-                                                        <a class="btn btn-sm btn-primary btn-view-detail"
-                                                            data-target="#detailModal" data-toggle="modal"
-                                                            data-info="{{ json_encode($item) }}">
-                                                            <i class="fa fa-eye"></i> Details</a>
+                                                                class="fas fa-sort-amount-up"></i></i></a>
+                                                        <a class="btn btn-sm btn-primary btn-hubs-stock"
+                                                            data-toggle="tooltip" data-placement="top" title="Hub Stocks"
+                                                            data-itemNumber="{{ $item->itemNumber }}"
+                                                            data-desc="{{ $item->productDescription }}"><i
+                                                                class="fa fa-warehouse"></i></a>
+                                                        <a class="btn btn-sm btn-danger btn-delete"
+                                                            data-toggle="tooltip" data-placement="top" title="Delete"
+                                                            data-id="{{ $item->id }}">
+                                                            <i class="fa fa-trash"></i></a>
 
                                                         <!--<a href="#" class="btn btn-dark btn-sm"
                                                                 data-toggle="dropdown" data-backdrop="static"
@@ -191,7 +193,7 @@
                                                                     data-backdrop="static" data-keyboard="false"
                                                                     data-target="#transferModal" data-toggle="modal"
                                                                     data-itemNumber="{{ $item->itemNumber }}"
-                                                                    data-desc="{{ $item->description }}"
+                                                                    data-desc="{{ $item->productDescription }}"
                                                                     data-stock="{{ $stock }}"><i
                                                                         class="fa fa-exchange-alt"></i> Hub Transfer</a>-->
                             </div>

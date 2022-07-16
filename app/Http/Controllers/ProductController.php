@@ -16,6 +16,7 @@ use App\Models\AdjustmentRemarks;
 use App\Models\StockAdjustment;
 use App\Models\User;
 use App\Models\LotCode;
+use App\Models\Attribute;
 use Utils;
 use DB;
 use Cache;
@@ -34,12 +35,141 @@ class ProductController extends Controller
     
     public function index() 
     {
-        $products = Product::orderBy('created_at','desc')->paginate(20);
+        $products = Product::orderBy('created_at','desc')->where('status', 1)->paginate(20);
         $remarks = AdjustmentRemarks::where('status', 1)->get();
         $product_count = Product::count('id');
         $lot_code = new LotCode;
+        $attribute = new Attribute;
         $hubs = Hub::where('status', 1)->get();
-        return view('product.index', compact('remarks', 'products', 'hubs', 'product_count', 'lot_code'));
+        return view('product.index', compact('remarks', 'products', 'hubs', 'product_count', 'lot_code', 'attribute'));
+    }
+
+    public function search()
+    {
+        $key = isset(request()->key) ? request()->key : "";
+        $products = Product::where('itemNumber', 'LIKE', '%' . $key . '%')
+                    ->orWhere('productDescription', 'LIKE', '%' . $key . '%')
+                    ->paginate(50);
+        $remarks = AdjustmentRemarks::where('status', 1)->get();
+        $hubs = Hub::where('status', 1)->get();
+        $product_count = Product::count('id');
+        $page_title = "products";
+        $lot_code = new LotCode;
+        $attribute = new Attribute;
+        return view('product.index', compact('page_title', 'products', 'hubs', 'product_count', 'remarks', 'lot_code', 'attribute'));
+    }
+
+    public function store(Request $request, Product $product)
+    { 
+        Cache::forget('all_sku_cache');
+
+        $add_lot_code = json_decode($this->addLotCode($request, $action = 'store'));
+
+        if ($add_lot_code->success == false) {
+            return redirect()->back()->with('danger', $add_lot_code->lot_codes . ' lot code'.$add_lot_code->is_are.' already exists.');
+        }
+        
+        if ($product->isSkuExists($request->sku, $request->baseUOM)) {
+            return redirect()->back()->with('danger', 'SKU is already exists.');
+        }
+
+        $inputs = $request->except('lot_code', 'stock', 'expiration');
+
+        $data = array_merge($inputs, [
+            'food' => $request->food ? 'T' : 'F',
+            'refrigerated' => $request->refrigerated ? 'T' : 'F',
+            'willMelt' => $request->willMelt ? 'Y' : 'N',
+            'willFreeze' => $request->willFreeze ? 'Y' : 'N',
+            'isBarcoded' => $request->isBarcoded ? 'Y' : 'N',
+            'isLotControlled' => $request->isLotControlled ? 'T' : 'F'
+        ]);
+        
+        Product::create($data);
+
+        return redirect()->back()->with('success', 'Product was successfully added.');
+    }
+
+    public function update(Request $request, $id)
+    {  
+        Cache::forget('all_sku_cache');
+        
+        $except_values = ['_token','search_terms','lot_code','lot_code','stock','expiration'];
+
+        $data = $request->except($except_values);
+
+        $data = array_merge($data, [
+            'food' => $request->food ? 'T' : 'F',
+            'refrigerated' => $request->refrigerated ? 'T' : 'F',
+            'willMelt' => $request->willMelt ? 'Y' : 'N',
+            'willFreeze' => $request->willFreeze ? 'Y' : 'N',
+            'isBarcoded' => $request->isBarcoded ? 'Y' : 'N',
+            'isLotControlled' => $request->isLotControlled ? 'T' : 'F'
+        ]);
+        
+        Product::where('id',$id)->update($data);
+
+        if ($request['lot_code']) {
+            foreach ($request['lot_code'] as $key => $lot_code) {
+                $expiration = $request->expiration[$key];
+                $lc = new LotCode;
+                $lc->where('lot_code', $lot_code)->update(['expiration' => $expiration]);
+            }
+        }
+        
+        $add_lot_code = json_decode($this->addLotCode($request, $action = 'update'));
+        
+        if ($add_lot_code->success == false) {
+            //return redirect()->back()->with('danger', $add_lot_code->lot_codes . ' lot code'.$add_lot_code->is_are.' already exists.');
+        }
+
+        return redirect()->back()->with('success', 'Product was updated successfully.');
+    }
+
+    public function addLotCode($request, $action) {
+        $lc = new LotCode;
+        $lot_codes = [];
+        $lot_code_count = 0;
+        $ctr = 0;
+        $current_lot_code_count = 0;
+        if ($action == 'update') {
+            $current_lot_code_count = count($lc->getLotCode($request->sku));
+        }
+        if (isset($request['lot_code']) && count($request['lot_code']) > 0) {
+            foreach ($request['lot_code'] as $key => $lot_code) {
+                $lot_code = $lot_code ? $lot_code : 0;
+                if ($current_lot_code_count > 0 && $current_lot_code_count <= $key) {
+                    if ($lc->isLotCodeExists($request->sku, $lot_code)) {
+                        array_push($lot_codes, $lot_code);
+                    }
+                    else {
+                        $expiration = $request->expiration[$key];
+                        $lc->createLotCode($request->sku, $lot_code, $expiration, null);
+                    }
+                    $ctr++;
+                }
+                else {
+                    if ($lc->isLotCodeExists($request->sku, $lot_code)) {
+                        array_push($lot_codes, $lot_code);
+                    }
+                    else {
+                        $expiration = $request->expiration[$key];
+                        $lc->createLotCode($request->sku, $lot_code, $expiration, null);
+                    }
+                }
+        }
+        }
+        if (count($lot_codes) > 0) {
+            $is_are = count($lot_codes) > 1 ? 's are' : ' is';
+            $lot_codes = implode(', ', $lot_codes);     
+            return json_encode([
+                'success' => false,
+                'lot_codes' => $lot_codes,
+                'is_are' => $is_are
+            ]);
+        }
+        return json_encode([
+            'success' => true
+        ]);
     }
 
     public function archiveLotCode($id, LotCode $lc)
@@ -206,133 +336,6 @@ class ProductController extends Controller
         }
     }
 
-    public function search()
-    {
-        $key = isset(request()->key) ? request()->key : "";
-        $products = Product::where('itemNumber', 'LIKE', '%' . $key . '%')
-                    ->orWhere('productDescription', 'LIKE', '%' . $key . '%')
-                    ->paginate(50);
-        $remarks = AdjustmentRemarks::where('status', 1)->get();
-        $hubs = Hub::where('status', 1)->get();
-        $product_count = Product::count('id');
-        $page_title = "products";
-        $lot_code = new LotCode;
-        return view('product.index', compact('page_title', 'products', 'hubs', 'product_count', 'remarks', 'lot_code'));
-    }
-
-    public function store(Request $request, Product $product)
-    { 
-        Cache::forget('all_sku_cache');
-
-        $add_lot_code = json_decode($this->addLotCode($request, $action = 'store'));
-
-        if ($add_lot_code->success == false) {
-            return redirect()->back()->with('danger', $add_lot_code->lot_codes . ' lot code'.$add_lot_code->is_are.' already exists.');
-        }
-        
-        if ($product->isSkuExists($request->sku)) {
-            return redirect()->back()->with('danger', 'SKU is already exists.');
-        }
-
-        $inputs = $request->except('lot_code', 'stock', 'expiration');
-
-        $data = array_merge($inputs, [
-            'food' => $request->food ? 'T' : 'F',
-            'refrigerated' => $request->refrigerated ? 'T' : 'F',
-            'willMelt' => $request->willMelt ? 'Y' : 'N',
-            'willFreeze' => $request->willFreeze ? 'Y' : 'N',
-            'isBarcoded' => $request->isBarcoded ? 'Y' : 'N',
-            'isLotControlled' => $request->isLotControlled ? 'T' : 'F'
-        ]);
-        
-        Product::create($data);
-
-        return redirect()->back()->with('success', 'Product was successfully added.');
-    }
-
-    public function update(Request $request, $id)
-    {  
-        Cache::forget('all_sku_cache');
-        
-        $except_values = ['_token','search_terms','lot_code','lot_code','stock','expiration'];
-
-        $data = $request->except($except_values);
-
-        $data = array_merge($data, [
-            'food' => $request->food ? 'T' : 'F',
-            'refrigerated' => $request->refrigerated ? 'T' : 'F',
-            'willMelt' => $request->willMelt ? 'Y' : 'N',
-            'willFreeze' => $request->willFreeze ? 'Y' : 'N',
-            'isBarcoded' => $request->isBarcoded ? 'Y' : 'N',
-            'isLotControlled' => $request->isLotControlled ? 'T' : 'F'
-        ]);
-        
-        Product::where('id',$id)->update($data);
-
-        if ($request['lot_code']) {
-            foreach ($request['lot_code'] as $key => $lot_code) {
-                $expiration = $request->expiration[$key];
-                $lc = new LotCode;
-                $lc->where('lot_code', $lot_code)->update(['expiration' => $expiration]);
-            }
-        }
-        
-        $add_lot_code = json_decode($this->addLotCode($request, $action = 'update'));
-        
-        if ($add_lot_code->success == false) {
-            //return redirect()->back()->with('danger', $add_lot_code->lot_codes . ' lot code'.$add_lot_code->is_are.' already exists.');
-        }
-
-        return redirect()->back()->with('success', 'Product was updated successfully.');
-    }
-
-    public function addLotCode($request, $action) {
-        $lc = new LotCode;
-        $lot_codes = [];
-        $lot_code_count = 0;
-        $ctr = 0;
-        $current_lot_code_count = 0;
-        if ($action == 'update') {
-            $current_lot_code_count = count($lc->getLotCode($request->sku));
-        }
-        if (isset($request['lot_code']) && count($request['lot_code']) > 0) {
-            foreach ($request['lot_code'] as $key => $lot_code) {
-                $lot_code = $lot_code ? $lot_code : 0;
-                if ($current_lot_code_count > 0 && $current_lot_code_count <= $key) {
-                    if ($lc->isLotCodeExists($request->sku, $lot_code)) {
-                        array_push($lot_codes, $lot_code);
-                    }
-                    else {
-                        $expiration = $request->expiration[$key];
-                        $lc->createLotCode($request->sku, $lot_code, $expiration, 0);
-                    }
-                    $ctr++;
-                }
-                else {
-                    if ($lc->isLotCodeExists($request->sku, $lot_code)) {
-                        array_push($lot_codes, $lot_code);
-                    }
-                    else {
-                        $expiration = $request->expiration[$key];
-                        $lc->createLotCode($request->sku, $lot_code, $expiration, 0);
-                    }
-                }
-        }
-        }
-        if (count($lot_codes) > 0) {
-            $is_are = count($lot_codes) > 1 ? 's are' : ' is';
-            $lot_codes = implode(', ', $lot_codes);     
-            return json_encode([
-                'success' => false,
-                'lot_codes' => $lot_codes,
-                'is_are' => $is_are
-            ]);
-        }
-        return json_encode([
-            'success' => true
-        ]);
-    }
-
     public function adjustStock(Request $request, StockAdjustment $stock_adjustment, LotCode $lot_code) {
         $sku = $request->sku;
         $lot_number = $request->lot_code;
@@ -360,19 +363,12 @@ class ProductController extends Controller
         ], 200);
     }
 
-    public function destroy(Product $product)
+    public function delete($id)
     {
-        Cache::forget('all_sku_cache');
-        if ($product->delete()) {
-            return response()->json([
-                'status' =>  'success',
-                'message' => 'Product was deleted.'
-            ], 200);
-        }
-
+        Product::where('id', $id)->update(['status' => 0]);
         return response()->json([
-            'status' =>  'error',
-            'message' => 'Deleting Product failed.'
+            'status' =>  true,
+            'message' => 'Product was deleted.'
         ], 200);
     }
 

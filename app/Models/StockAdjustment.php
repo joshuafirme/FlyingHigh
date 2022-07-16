@@ -28,7 +28,7 @@ class StockAdjustment extends Model
     }
 
      public function getColumns() {
-        return ['sku', 'lot_code', 'description', 'action', 'qty_adjusted', 'adjusted_by', 'remarks', 'created_at'];
+        return ['itemNumber', 'lot_code', 'productDescription', 'action', 'qty_adjusted', 'adjusted_by', 'remarks', 'created_at'];
     }
 
     public function record($sku, $lot_code, $qty, $action, $remarks_id) {
@@ -45,7 +45,7 @@ class StockAdjustment extends Model
     public function getAllPaginate($per_page) {
         return self::select('stock_adjustment.*', 'P.productDescription', 'AR.name as remarks', 'U.name as adjusted_by')
             ->leftJoin('users as U', 'U.id', '=', 'stock_adjustment.user_id')
-            ->leftJoin('products as P', 'P.lineNumber', '=', 'stock_adjustment.lineNumber')
+            ->leftJoin('products as P', 'P.itemNumber', '=', 'stock_adjustment.sku')
             ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
             ->orderBy('stock_adjustment.created_at', 'desc')
             ->whereDate('stock_adjustment.created_at', date('Y-m-d'))
@@ -59,7 +59,7 @@ class StockAdjustment extends Model
         }
         return self::select('stock_adjustment.*', 'P.productDescription', 'AR.name as remarks', 'U.name as adjusted_by')
             ->leftJoin('users as U', 'U.id', '=', 'stock_adjustment.user_id')
-            ->leftJoin('products as P', 'P.lineNumber', '=', 'stock_adjustment.lineNumber')
+            ->leftJoin('products as P', 'P.itemNumber', '=', 'stock_adjustment.sku')
             ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
             ->orderBy('stock_adjustment.created_at', 'desc')
             ->whereBetween(DB::raw('DATE(stock_adjustment.created_at)'), [request()->date_from, request()->date_to])
@@ -74,9 +74,9 @@ class StockAdjustment extends Model
         if (!request()->remarks_id) {
             $remarks = AdjustmentRemarks::select('id')->where('status', 1)->get();
         }
-        return self::select('P.lineNumber', 'P.productDescription', 'action', 'qty_adjusted', 'AR.name as remarks', 'stock_adjustment.created_at', 'U.name as adjusted_by', 'stock_adjustment.lot_code')
+        return self::select('P.itemNumber', 'P.productDescription', 'action', 'qty_adjusted', 'AR.name as remarks', 'stock_adjustment.created_at', 'U.name as adjusted_by', 'stock_adjustment.lot_code')
             ->leftJoin('users as U', 'U.id', '=', 'stock_adjustment.user_id')
-            ->leftJoin('products as P', 'P.lineNumber', '=', 'stock_adjustment.lineNumber')
+            ->leftJoin('products as P', 'P.itemNumber', '=', 'stock_adjustment.sku')
             ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
             ->orderBy('stock_adjustment.created_at', 'desc')
             ->whereBetween(DB::raw('DATE(stock_adjustment.created_at)'), [$date_from, $date_to])

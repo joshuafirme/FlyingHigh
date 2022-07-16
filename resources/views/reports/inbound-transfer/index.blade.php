@@ -47,18 +47,6 @@
                                                 aria-hidden="true"></i> Refresh</a>
                                     </div>
                                 </form>
-
-                                <div class="form-group ml-auto mt-4 mt-sm-2">
-                                    <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/inbound-transfer/export/' . $date_from . '/' . $date_to) }}"
-                                        target="_blank"><i class="fas fa-file-export"></i> Export Excel</a>
-                                    <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/inbound-transfer/download/' . $date_from . '/' . $date_to) }}"
-                                        target="_blank"><i class="fa fa-download"></i> Download PDF</a>
-                                    <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/inbound-transfer/preview/' . $date_from . '/' . $date_to) }}"
-                                        target="_blank"><i class="fa fa-print"></i> Print</a>
-                                </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-borderless table-hover">
@@ -93,8 +81,8 @@
                                                     <td>
                                                         <a href="{{ url('/stock-transfer/asn/' . $item->orderNumber) }}"
                                                             target="_blank" class="btn btn-primary btn-sm btn-transfer"
-                                                            data-obj="{{ json_encode($item) }}">
-                                                            Line Items</a>
+                                                            data-toggle="tooltip" data-placement="top" title="View">
+                                                            <i class="fa fa-eye"></i></a>
                                                     </td>
                                                 </tr>
                                             @endforeach
