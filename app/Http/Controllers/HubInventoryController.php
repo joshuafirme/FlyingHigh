@@ -29,12 +29,12 @@ class HubInventoryController extends Controller
 
     public function hubInventory($receiver, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
     {
-        $deliveries = $shipment->getDeliveredByReceiver($receiver, 10);
+        $shipments = $shipment->getDeliveredByReceiver($receiver, 10);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
 
         $hub_name = $hub->getHubName($receiver);
-        return view('hubs-inventory.index', compact('deliveries', 'hub_name', 'receiver', 'hub_inv'));
+        return view('hubs-inventory.index', compact('shipments', 'hub_name', 'receiver', 'hub_inv'));
     }
 
     public function pickup($receiver, $shipmentId, HubInventory $hub_inv, Hub $hub, Shipment $shipment, LineItem $line_item)

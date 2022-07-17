@@ -51,6 +51,17 @@ class OrderController extends Controller
         return view('orders.index', compact('orders', 'hubs','reasons', 'invoice'));
     }
 
+    public function getOneOrder($shipmentId, LineItem $lineItem) 
+    {
+        $order_details = Order::where('shipmentId', $shipmentId)->first();
+        $lineItems =  $lineItem->getLineItems($order_details->orderId);
+
+        return response()->json([
+            'order_details' => $order_details,
+            'lineItems' => $lineItems
+        ], 200);
+    }
+    
     public function getLineItems($orderId, LineItem $lineItem) 
     {
         return $lineItem->getLineItems($orderId);

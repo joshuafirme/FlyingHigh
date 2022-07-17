@@ -84,6 +84,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/search', [OrderController::class, 'search']);
 
     Route::post('/order/do-ship', [OrderController::class, 'doShip']);
+    Route::get('/order/{shipmentId}', [OrderController::class, 'getOneOrder']);
+    
 
     Route::get('/shipments', [ShipmentsController::class, 'index']);
     Route::get('/shipments/search', [ShipmentsController::class, 'search']);
