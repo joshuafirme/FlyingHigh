@@ -13,6 +13,7 @@ use App\Models\ReturnReason;
 use App\Models\LotCode;
 use App\Models\Shipment;
 use App\Models\ShipmentLineItem;
+use App\Models\Attribute;
 use Utils;
 
 class OrderController extends Controller
@@ -54,9 +55,17 @@ class OrderController extends Controller
     public function getOneOrder($shipmentId, LineItem $lineItem) 
     {
         $order_details = Order::where('shipmentId', $shipmentId)->first();
-        $lineItems =  $lineItem->getLineItems($order_details->orderId);
 
+        if ( ! isset($order_details->orderId)) {        
+            return response()->json([
+                'success' => false,
+                'message' => "Shipment not found."
+            ], 200);
+        }
+        $lineItems =  $lineItem->getLineItems($order_details->orderId);
+        
         return response()->json([
+            'success' => true,
             'order_details' => $order_details,
             'lineItems' => $lineItems
         ], 200);
@@ -275,8 +284,9 @@ class OrderController extends Controller
                     $shipment->freightCharges =  $request->freightCharges;
                     $shipment->qtyPackages =  $request->qtyPackages;
                     $shipment->weightUoM =  $request->weightUoM;
+                    $shipment->trackingNo = $request->trackingNo;
                     // shipped
-                    $shipment->status =  1;
+                    $shipment->status =  0;
                     $shipment->currCode =  "PHP";
                     $shipment->save();
 
@@ -292,18 +302,18 @@ class OrderController extends Controller
                         $lineItem->partNumber = $item->partNumber;
                         $lineItem->trackingNo = $request->trackingNo;
                         $lineItem->qtyOrdered = $item->quantity;
-                        $lineItem->qtyShipped = $item->quantity;
+                        $lineItem->qtyShipped = 0;
                         $lineItem->reasonCode = "";
-                        $lineItem->shipDateTime = date('Y-m-d') . 'T' . date('h:m:s');
-                        $lineItem->lotNumber = $request->lot_code[$ctr];
+                        $lineItem->shipDateTime = "";
+                        $lineItem->lotNumber = "";//$request->lot_code[$ctr];
                         $lineItem->save();
 
-                        $lc->decrementStock($item->partNumber,$request->lot_code[$ctr],$item->quantity);
+                       // $lc->decrementStock($item->partNumber,$request->lot_code[$ctr],$item->quantity);
                     }
                 }
         }
 
-        $orders->changeStatus($request->shipmentId, $status);
+        $orders->changeStatus($request->shipmentId, $status, $request->receiver);
 
         return response()->json([
             'success' => true

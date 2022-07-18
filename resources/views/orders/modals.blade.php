@@ -142,19 +142,19 @@
                 </button>
             </div>
             <div class="modal-body row g-3">
-                <div class="col-md-12 mb-2">
+                <div class="col-md-4 mb-2">
                     <label class="col-form-label">Shiment ID</label>
                     <input type="number" class="form-control" name="shipmentId" readonly>
                 </div>
-                <div class="col-md-12 mb-2">
+                <div class="col-md-4 mb-2">
                     <label class="col-form-label">Order ID</label>
                     <input type="number" class="form-control" name="orderId" readonly>
                 </div>
-                <div class="col-md-12 mb-2">
+                <div class="col-md-4 mb-2">
                     <label class="col-form-label">Total Weight</label>
-                    <input type="number" step=".01" class="form-control" name="totalWeight">
+                    <input type="number" step=".01" class="form-control" name="totalWeight" required>
                 </div>
-                <div class="col-md-12 mb-2">
+                <div class="col-md-4 mb-2">
                     <label class="col-form-label">Weight Unit of measure</label>
                     <select class="form-control" name="weightUoM" required>
                         @php
@@ -165,19 +165,100 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-12 mb-2">
+                <div class="col-md-4 mb-2">
                     <label class="col-form-label">Freight Charges</label>
-                    <input type="number" step=".01" class="form-control" name="freightCharges">
+                    <input type="number" step=".01" class="form-control" name="freightCharges" required>
                 </div>
-                <div class="col-md-12 mb-2">
+                <div class="col-md-4 mb-2">
                     <label class="col-form-label">Qty Packages</label>
-                    <input type="number" class="form-control" name="qtyPackages">
+                    <input type="number" class="form-control" name="qtyPackages" required>
                 </div>
-                <div class="col-md-12 mb-2">
+                <div class="col-md-4 mb-2">
                     <label class="col-form-label">Tracking #</label>
-                    <input type="number" class="form-control" name="trackingNo">
+                    <input type="number" class="form-control" name="trackingNo" required>
                 </div>
+                <div class="col-md-12 mt-2 mb-2">
+                    <div id="order-info-container">
+                        <div class="ic-responsive-invoice">
+                            <table width="100%" cellpadding="0" cellspaceing="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <address class="ic-invoice-addess"><strong>Customer
+                                                    Info:</strong><br>
+                                                <p class="mb-0">
+                                                    <span id="custName"></span>
+                                                </p>
+                                                <p class="mb-0">
+                                                    <span id="customerEmail"></span>
+                                                </p>
+                                                <p class="mb-0">TIN:
+                                                    <span id="customerTIN"></span>
+                                                </p>
+                                                <p class="mb-0">Shipping Address:
+                                                    <span id="shipAddr1"></span>
+                                                </p>
+                                                <p class="mb-0">Phone:
+                                                    <span id="shipPhone"></span>
+                                                </p>
+                                                </p>
+                                            </address>
+                                        </td>
+                                        <td>
+                                            <address class="ic-invoice-addess ic-right-content">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <th>Payment Method
+                                                        </th>
+                                                        <th>Amount</th>
+                                                    </thead>
+                                                    <tbody id="tbl-payment-method">
 
+                                                    </tbody>
+                                                </table>
+                                                <p class="mb-0">Shipping Charge Amount:
+                                                    ₱
+                                                    <span id="shippingChargeAmount"></span>
+                                                </p>
+                                                <p class="mb-0">Sales Tax Amount:
+                                                    ₱
+                                                    <span id="salesTaxAmount"></span>
+                                                </p>
+                                                <p class="mb-0">Shipping Tax Total Amount:
+                                                    ₱
+                                                    <span id="shippingTaxTotalAmount"></span>
+                                                </p>
+                                                <p class="mb-0">Package Total:
+                                                    ₱
+                                                    <span id="packageTotal"></span>
+                                                </p>
+                                            </address>
+                                        </td>
+                                        <td>
+                                            <address class="ic-invoice-addess ic-right-content">
+                                                <p class="mb-0">Shipment ID:
+                                                    <span id="shipmentId"></span>
+                                                </p>
+                                                <p class="mb-0">Order Type:
+                                                    <span id="orderSource"></span>
+                                                </p>
+                                                <p class="mb-0">Ship Method:
+                                                    <span id="shipMethod"></span>
+                                                </p>
+                                                <p class="mb-0">Ship Carrier:
+                                                    <span id="shipCarrier"></span>
+                                                </p>
+                                                <p class="mb-0">Date Time Submitted:
+                                                    <span id="dateTimeSubmittedIso"></span>
+                                                </p>
+                                            </address>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-md-12 mb-2">
                     <h4 class="page-title">Line Items</h4>
                     <table class="table table-hover">
@@ -192,8 +273,8 @@
                                 <th>Sales Price</th>
                                 <th>Taxable Amount</th>
                                 <th>Line Item Total</th>
-                              <!--  <th>Qty To Ship</th>-->
-                                <th>Lot Code</th>
+                              <!--  <th>Qty To Ship</th>
+                                <th>Lot Code</th>-->
                             </tr>
                         </thead>
                         <tbody class="tbl-ship-items">

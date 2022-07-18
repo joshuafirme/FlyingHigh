@@ -22,8 +22,7 @@ $status = request()->status;
                                     $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d');
                                     $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
                                 @endphp
-                                <form class="form-inline" action="{{ url('/orders/filter') }}"
-                                    method="get">
+                                <form class="form-inline" action="{{ url('/orders/filter') }}" method="get">
                                     <div class="form-group mr-2 col-12 col-md-auto">
                                         <label>Date from</label>
                                         <input type="date" class="form-control ml-0 ml-sm-2" name="date_from"
@@ -43,7 +42,7 @@ $status = request()->status;
                                     </div>
                                 </form>
                                 <div class="ml-auto mt-4 mt-sm-2">
-                                    
+
                                     <form action="{{ url('/orders/search') }}" method="get">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="key"
@@ -94,20 +93,23 @@ $status = request()->status;
                                                             </button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="dropdownMenuButton">
-                                                                @foreach ($invoice->getInvoiceDetails($item->shipmentId) as $item)
+                                                                @foreach ($invoice->getInvoiceDetails($item->shipmentId) as $invoice)
                                                                     @php
                                                                         $invoice_name = 'Sales Invoice';
-                                                                        if ($item->invoiceType == 3) {
+                                                                        if ($invoice->invoiceType == 3) {
                                                                             $invoice_name = 'Delivery Receipt';
-                                                                        } elseif ($item->invoiceType == 4) {
+                                                                        } elseif ($invoice->invoiceType == 4) {
                                                                             $invoice_name = 'Collection Receipt';
                                                                         }
                                                                     @endphp
                                                                     <a class="dropdown-item" target="_blank"
-                                                                        href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=' . $item->invoiceType . '&invoice_no=' . $item->invoiceDetail) }}">{{ $invoice_name }}</a>
+                                                                        href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=' . $invoice->invoiceType . '&invoice_no=' . $invoice->invoiceDetail) }}">{{ $invoice_name }}</a>
                                                                 @endforeach
                                                             </div>
+
                                                         </div>
+                                                        <a class="btn btn-sm btn-primary btn-ship float-left m-1"
+                                                            data-order-details="{{ $item }}"> Assign Hub </a>
                                                     </td>
                                                 </tr>
                                             @endforeach

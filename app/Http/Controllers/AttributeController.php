@@ -13,7 +13,7 @@ class AttributeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $attributes = Attribute::paginate(10);
+        $attributes = Attribute::orderBy('type')->paginate(10);
 
         return view('attributes.index', compact('attributes'));
     }

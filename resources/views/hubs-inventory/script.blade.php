@@ -13,11 +13,11 @@
         }
 
         $(document).on('keyup', '#shipmentId-input', function(e) {
-
-            console.log(e.keyCode)
+            
             let mdl = $('#addPickupModal')
 
-            if (e.keyCode == 86) {
+            if ($(this).val() && $(this).val().length > 11) {
+
                 let __this = $(this);
                 let shipmentId = __this.val();
                 let url = `/order/${shipmentId}`;
@@ -27,37 +27,45 @@
                     .then(data => {
                         console.log(data)
 
-                        for (var key of Object.keys(data.order_details)) {
-                            mdl.find('[name=' + key + ']').val(data.order_details[key]);
-                            mdl.find('#' + key).text(data.order_details[key]);
+                        if (data.success) {
+                            for (var key of Object.keys(data.order_details)) {
+                                mdl.find('[name=' + key + ']').val(data.order_details[key]);
+                                mdl.find('#' + key).text(data.order_details[key]);
+                            }
+                            
+                            $('.alert-message').remove();
+                            $('#tbl-pickup-items').html('');
+                            let html = "";
+                            for (let item of data.lineItems) {
+                                if (item.lineType == 'PN' || item.lineType == 'N') {
+                                    continue;
+                                }
+                                let component_text = '';
+                                if (item.remarks == 'Component') {
+                                    component_text = item.remarks;
+                                }
+                                let html = '<tr>';
+
+                                html += '<td>' + item.lineNumber + '</td>';
+                                html += '<td>' + component_text + ' ' +
+                                    item.partNumber + '<br>' +
+                                    item.name + '<br>' +
+                                    'Parent Kit: ' + item.parentKitItem + '</td>';
+                                html += '<td>' + item.quantity + '</td>';
+                                html += '<td>';                    
+                                html += '<select class="form-control" name="lot_codes" required>';
+                                html += '</select></td>';
+                                html += '<td><input style="width: 80px;" type="number" class="form-control" name="qtyShipped"></td>';
+                                html += '<td><input style="width: 140px;" type="datetime-local" class="form-control" value="{{ date("Y-m-d") }}"></td>';
+                                html += '<td></td>';
+                                html += '</tr>';
+                                $('#tbl-pickup-items').append(html)
+                            }
+                        } 
+                        else {
+                            responseMessage(data.message, "danger")
                         }
 
-
-                        $('#tbl-pickup-items').html('');
-                        let html = "";
-                        for (let item of data.lineItems) {
-                            if (item.lineType == 'PN' || item.lineType == 'N') {
-                                continue;
-                            }
-                            let component_text = '';
-                            if (item.remarks == 'Component') {
-                                component_text = item.remarks;
-                            }
-                            let html = '<tr>';
-
-                            html += '<td>' + item.lineNumber + '</td>';
-                            html += '<td>' + component_text + ' ' +
-                                item.partNumber + '<br>' +
-                                item.name + '<br>' +
-                                'Parent Kit: ' + item.parentKitItem + '</td>';
-                            html += '<td>' + item.quantity + '</td>';
-                            html += '<td></td>';
-                            html += '<td></td>';
-                            html += '<td></td>';
-                            html += '<td></td>';
-                            html += '</tr>';
-                            $('#tbl-pickup-items').append(html)
-                        }
                     });
 
                 return false;
@@ -115,7 +123,13 @@
             return false;
         });
 
-
+        function responseMessage(message, alert_class) {
+            $('.alert-message').empty();
+            let alert = `<div class="alert alert-${alert_class}" role="alert">`;
+            alert += message;
+            alert += `</div>`;
+            $('.alert-message').append(alert)
+        }
 
         function swalSuccess(message) {
             Swal.fire(

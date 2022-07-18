@@ -113,12 +113,11 @@ class Order extends Model
         return self::where('shipmentId', $shipmentId)->value('orderId');
     }
 
-    public function changeStatus($shipmentId, $status, $reason="", $hub_id = 0) {
+    public function changeStatus($shipmentId, $status, $hub_id = 0) {
         self::where('shipmentId', $shipmentId)
         ->update([
             'hub_id' => $hub_id,
             'status' => $status,
-            'return_reason' => $reason
         ]);
     }
 

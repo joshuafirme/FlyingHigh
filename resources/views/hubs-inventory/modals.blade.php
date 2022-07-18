@@ -42,7 +42,7 @@
         <form id="pickup-form" class="modal-content" action="#" autocomplete="off">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title">Confirm Pick-up</h5>
+                <h5 class="modal-title">Add Shipment</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -50,8 +50,10 @@
             <div class="modal-body row g-3">
                 <div class="col-md-4 mb-2">
                     <label class="col-form-label">Shiment ID</label>
-                    <input type="number" class="form-control" name="shipmentId" id="shipmentId-input"
+                    <input type="text" class="form-control" name="shipmentId" id="shipmentId-input"
                         placeholder="Enter Shiment ID">
+                </div>
+                <div class="col-md-12 mt-2 mb-2 alert-message">
                 </div>
                 <div class="col-md-12 mb-2">
                     <hr>
@@ -64,10 +66,10 @@
                     <label class="col-form-label">Weight Unit of measure</label>
                     <select class="form-control" name="weightUoM" required>
                         @php
-                            $weights = ['MG', 'CG', 'DG', 'G', 'DAG', 'HG', 'KG', 'T'];
+                            $weights = $attribute->where('type', 'weightUnit')->get();
                         @endphp
                         @foreach ($weights as $item)
-                            <option value="{{ $item }}">{{ $item }}</option>
+                            <option value="{{ $item->name }}">{{ $item->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -170,12 +172,12 @@
                 <div class="col-md-12 mt-2  mb-2">
                     <b>Line Items</b>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th width="2%" scope="col">Line #</th>
                                     <th scope="col">SKU</th>
-                                    <th scope="col">Qty Ordered</th>
+                                    <th width="5%" scope="col">Qty Ordered</th>
                                     <th scope="col">Lot Number</th>
                                     <th scope="col">Qty Shipped</th>
                                     <th scope="col">Ship Date Time</th>
@@ -188,10 +190,11 @@
                         </table>
                     </div>
                 </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
-                <button class="btn btn-sm btn-primary" type="submit">Confirm Pick-up</button>
+                <button class="btn btn-sm btn-primary" type="submit">Add</button>
             </div>
         </form>
     </div>

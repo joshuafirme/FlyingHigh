@@ -127,6 +127,7 @@
 
             for (var key of Object.keys(order_details)) {
                 mdl.find('[name=' + key + ']').val(order_details[key]);
+                mdl.find('#' + key).text(order_details[key]);
             }
 
              fetch("/get-line-items/" + order_details.orderId)
@@ -150,7 +151,7 @@
                         html += '<td>' + item.taxableAmount + '</td>';
                         html += '<td>' + item.lineItemTotal + '</td>';
                      //   html += '<td><input name="qtyShipped[]" class="form-control" type="number" max="'+item.quantity+'" required></td>';  
-                            html += '<td><select name="lot_code[]" class="form-control lot-code-'+item.partNumber+'" required></select></td>';
+                        //    html += '<td><select name="lot_code[]" class="form-control lot-code-'+item.partNumber+'" required></select></td>';
                         html += '</tr>';
                         $('.tbl-ship-items').append(html)
 
@@ -164,7 +165,7 @@
             let _this = $(this);
             Swal.fire({
                 title: 'Are you sure?',
-                text: "Do you want to tag this as Shipped?",
+                text: `Do you want to assign this shipment to ${$('[name="receiver"] option:selected').text()}?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

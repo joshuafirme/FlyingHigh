@@ -13,6 +13,7 @@ use App\Models\ReturnReason;
 use App\Models\Order;
 use App\Models\LineItem;
 use App\Models\Invoice;
+use App\Models\Attribute;
 use Utils;
 
 class HubInventoryController extends Controller
@@ -32,10 +33,24 @@ class HubInventoryController extends Controller
         $shipments = $shipment->getDeliveredByReceiver($receiver, 10);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
+        $attribute = new Attribute;
 
         $hub_name = $hub->getHubName($receiver);
-        return view('hubs-inventory.index', compact('shipments', 'hub_name', 'receiver', 'hub_inv'));
+        return view('hubs-inventory.index', compact('shipments', 'hub_name', 'receiver', 'hub_inv', 'attribute'));
     }
+
+    public function searchShipment($receiver, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
+    {
+        $key = isset(request()->key) ? request()->key : "";
+        $shipments = $shipment->searchShipment($receiver, $key, 10);
+        $hubs = Hub::where('status', 1)->get();
+        $reasons = ReturnReason::where('status', 1)->get();
+        $attribute = new Attribute;
+
+        $hub_name = $hub->getHubName($receiver);
+        return view('hubs-inventory.index', compact('shipments', 'hub_name', 'receiver', 'hub_inv', 'attribute'));
+    }
+
 
     public function pickup($receiver, $shipmentId, HubInventory $hub_inv, Hub $hub, Shipment $shipment, LineItem $line_item)
     {
@@ -46,6 +61,7 @@ class HubInventoryController extends Controller
         $reasons = ReturnReason::where('status', 1)->get();
         $invoice = new Invoice;
         $package_details = $shipment->readOne($shipmentId);
+        $attribute = new Attribute;
 
         $hub_name = $hub->getHubName($receiver);
         return view('hubs-inventory.pickup', 
@@ -56,7 +72,8 @@ class HubInventoryController extends Controller
                 'receiver',
                 'order_details',
                 'package_details', 
-                'invoice'
+                'invoice',
+                'attribute'
             )
         );
     }

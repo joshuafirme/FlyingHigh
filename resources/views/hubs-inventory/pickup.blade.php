@@ -134,7 +134,7 @@
                                         {{ $order_details->dateTimeSubmittedIso }}
                                     </p>
                                     <p class="mb-0">Status: <span
-                                            class="badge badge-info badge-pill">Unclaimed</span>
+                                            class="badge badge-info badge-pill">Pending</span>
                                     </p>
                                 </address>
                             </td>
