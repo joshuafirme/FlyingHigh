@@ -584,7 +584,7 @@ class OrderController extends Controller
             </div>
             <div class="text-info">
                 <div>Sold To: <span style="margin-left:37px;">' . $order_details->custName . '</span></div>
-                <div style="margin-top: 25px;">Address: <span style="margin-left:34px;">' . $order_details->shipAddr1 . '</span></div>
+                <div style="margin-top: 25px;">Address: <span style="margin-left:34px;">' . $order_details->shipAddr1 . " " . $order_details->shipAddr2 .'</span></div>
                 <div class="mt-2">TIN: <span style="margin-left:60px;">' . Utils::separateString($order_details->customerTIN) . '</span></div>
             </div>
             ';
@@ -592,7 +592,8 @@ class OrderController extends Controller
 
     function getInvoiceFooter() {
         $output = 
-            '<table width="100%" style="border-collapse:collapse;" class="table-footer mt-1">
+            '<footer>
+            <table width="100%" style="border-collapse:collapse;" class="table-footer mt-1">
                 <td class="text-left">Prepared by:</td>
                 <td class="text-left">Received by:</td> 
                 <td class="text-left">Date:</td> 
@@ -604,10 +605,10 @@ class OrderController extends Controller
                 Acknowledgement Certificate No.: AC-044-10-2021-0014 <br>
                 <span class="mr-1">Date issued: FEBRUARY 15, 2022 </span> Valid Until: FEBRUARY 14, 2027 <br>
                 Approved Series No.: 000001 to 999999
-            </div>
-        ';
+            </div>';
 
         $output .= '<div class="phrase mt-4 text-center">THIS INVOICE/RECEIPT SHALL BE VALID FOR FIVE (5) YEARS FROM THE DATE OF THE ACKNOWLEDGEMENT CERTIFICATE</div>';
+        $output .= '</footer>';
         return $output;
     }
 
@@ -670,6 +671,13 @@ class OrderController extends Controller
             .border-r { border-right: 1px solid black; }
             span.peso {
                 font-family: DejaVu Sans; sans-serif;
+            }
+            footer {
+                position: fixed;
+                bottom: 0px;
+                left: 0px;
+                right: 0px;
+                margin-bottom: 0px;
             }
         </style>";
     }
