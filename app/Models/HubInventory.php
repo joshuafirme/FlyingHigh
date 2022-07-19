@@ -31,16 +31,16 @@ class HubInventory extends Model
         ]);
     }
 
-     public function getAllStock($sku, $hub_id) {
+    public function getAllStock($sku, $hub_id) {
         return self::where('sku', $sku)->where('hub_id', $hub_id)->sum('stock');
     }
 
     public function getByHub($hub_id, $per_page) 
     {
         return self::select('P.*', $this->table . '.stock', $this->table . '.lot_code', 'hub_id', $this->table . '.updated_at')
-            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.itemNumber')
-            ->where($this->table . '.receiver', $receiver)
-            ->orderBy($this->table . '.itemNumber', 'desc')
+            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.sku')
+            ->where($this->table . '.hub_id', $hub_id)
+            ->orderBy('P.itemNumber', 'desc')
             ->paginate($per_page);
     }
 

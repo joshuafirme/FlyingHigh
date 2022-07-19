@@ -304,10 +304,8 @@ class OrderController extends Controller
                         $lineItem->qtyShipped = 0;
                         $lineItem->reasonCode = "";
                         $lineItem->shipDateTime = "";
-                        $lineItem->lotNumber = "";//$request->lot_code[$ctr];
+                        $lineItem->lotNumber = "";
                         $lineItem->save();
-
-                       // $lc->decrementStock($item->partNumber,$request->lot_code[$ctr],$item->quantity);
                     }
                 }
         }
