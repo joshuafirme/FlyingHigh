@@ -46,11 +46,11 @@
                 .then(data => data.json())
                 .then(data => {
                     console.log(data)
-                    mdl.find('.lot-code-'+sku).html('');
+                    mdl.find('.lot-code-' + sku).html('');
                     for (let item of data) {
                         let html =
                             `<option exp="${item.expiration}" value="${item.lot_code}">${item.lot_code == 0 ? 'N/A' : item.lot_code}</option>`
-                        mdl.find('.lot-code-'+sku).append(html);
+                        mdl.find('.lot-code-' + sku).append(html);
                     }
                 });
         }
@@ -130,7 +130,7 @@
                 mdl.find('#' + key).text(order_details[key]);
             }
 
-             fetch("/get-line-items/" + order_details.orderId)
+            fetch("/get-line-items/" + order_details.orderId)
                 .then(data => data.json())
                 .then(data => {
                     $('.tbl-ship-items').html('');
@@ -150,7 +150,7 @@
                         html += '<td>' + item.salesPrice + '</td>';
                         html += '<td>' + item.taxableAmount + '</td>';
                         html += '<td>' + item.lineItemTotal + '</td>';
-                     //   html += '<td><input name="qtyShipped[]" class="form-control" type="number" max="'+item.quantity+'" required></td>';  
+                        //   html += '<td><input name="qtyShipped[]" class="form-control" type="number" max="'+item.quantity+'" required></td>';  
                         //    html += '<td><select name="lot_code[]" class="form-control lot-code-'+item.partNumber+'" required></select></td>';
                         html += '</tr>';
                         $('.tbl-ship-items').append(html)
@@ -179,17 +179,18 @@
                             data: $(this).serialize()
                         })
                         .done(function(data) {
-
                             if (data.success) {
-                                swalSuccess('Order was successfully Shipped');
-                            } 
-                            else if (data.success == false) {
+                                swalSuccess(
+                                    `Order ship was successfully assigned to ${$('[name="receiver"] option:selected').text()}`
+                                );
+                            } else if (data.success == false) {
                                 swalError(data.message);
-                            }
-                            else {
+                                setTimeout(function() {
+                                    location.reload()
+                                }, 1500)
+                            } else {
                                 swalError('Error occured, please contact support!');
                             }
-
                             _this.find('button[type=submit]').prop('disabled', true);
                         })
                         .fail(function() {
@@ -199,6 +200,25 @@
             })
             return false;
         });
+
+
+        $(document).on('click', '.shipmentId-txt', function() {
+
+            let element = $(this).attr('data-id');
+            $('.shipmentId-txt').attr('data-original-title', 'Copy');
+            copyText(element);
+            $(this).attr('data-original-title', 'Copied!').tooltip('show');
+        });
+
+        function copyText(element) {
+
+            var copyText = document.getElementById(element);
+
+            copyText.select();
+
+            /* Copy the text inside the text field */
+            navigator.clipboard.writeText(copyText.value);
+        }
 
 
 

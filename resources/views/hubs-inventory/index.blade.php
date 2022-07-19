@@ -117,7 +117,7 @@
                                                                 @php
                                                                     $order_details = $order->getOrderDetails($item->shipmentId);
                                                                 @endphp
-                                                                <div class="dropdown float-left m-1">
+                                                                <div class="dropdown float-left m-1" data-toggle="tooltip" data-placement="top" title="Print Invoice / Receipt">
                                                                     <button
                                                                         class="btn btn-sm btn-outline-primary dropdown-toggle"
                                                                         data-toggle="dropdown" aria-haspopup="true"
@@ -141,10 +141,6 @@
                                                                         @endforeach
                                                                     </div>
                                                                 </div>
-                                                                <a class="btn btn-sm btn-outline-primary float-left m-1"
-                                                                    href="https://app.flyinghighenergyexpress.com/catalog/tracking/view/{{ $item->trackingNo }}"
-                                                                    target="_blank">Shipment History >
-                                                                </a>
                                                                 <a class="btn btn-sm btn-outline-primary float-left m-1"
                                                                     href="{{ url('/hubs/' . $receiver . '/pickup/' . $item->shipmentId) }}"
                                                                     target="_blank">Pickup >

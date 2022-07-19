@@ -59,6 +59,10 @@
                     <hr>
                 </div>
                 <div class="col-md-4 mb-2">
+                    <label class="col-form-label">Order ID</label>
+                    <input type="number" class="form-control" name="orderId" readonly>
+                </div>
+                <div class="col-md-4 mb-2">
                     <label class="col-form-label">Total Weight</label>
                     <input type="number" step=".01" class="form-control" name="totalWeight" required>
                 </div>
@@ -85,6 +89,9 @@
                     <label class="col-form-label">Tracking #</label>
                     <input type="number" class="form-control" name="trackingNo">
                 </div>
+
+                <!-- RECEIVER -->
+                <input type="hidden" name="receiver" value="{{ $receiver }}">
 
                 <div class="col-md-12 mt-2 mb-2">
                     <div id="order-info-container">
@@ -177,11 +184,8 @@
                                 <tr>
                                     <th width="2%" scope="col">Line #</th>
                                     <th scope="col">SKU</th>
+                                    <th scope="col">Description</th>
                                     <th width="5%" scope="col">Qty Ordered</th>
-                                    <th scope="col">Lot Number</th>
-                                    <th scope="col">Qty Shipped</th>
-                                    <th scope="col">Ship Date Time</th>
-                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl-pickup-items">

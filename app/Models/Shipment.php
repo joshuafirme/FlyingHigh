@@ -62,8 +62,8 @@ class Shipment extends Model
             ->paginate($per_page);
     }
 
-    public function isShipmentExists($shipmentId) {
-        $res = self::where('shipmentId', $shipmentId)->get();
+    public function isShipmentExists($shipmentId, $receiver) {
+        $res = self::where('shipmentId', $shipmentId, $receiver)->get();
         return count($res) > 0 ? true : false;
     }
 

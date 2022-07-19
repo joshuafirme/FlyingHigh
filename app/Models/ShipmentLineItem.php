@@ -45,6 +45,7 @@ class ShipmentLineItem extends Model
                 )
         ->leftJoin('products as P', 'P.itemNumber', '=', $this->table.'.partNumber')
         ->where('shipmentId', $shipmentId)
+        ->distinct('P.itemNumber')
         ->get();
             
     }

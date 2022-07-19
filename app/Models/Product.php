@@ -87,6 +87,16 @@ class Product extends Model
             'buffer_stock' => 0
         ]);
     }
+        
+    public function isLotControlled($sku) {
+        $res = self::where('itemNumber', $sku)->limit(1)->value('isLotControlled');
+        if ($res) {
+            return $res == 'T' ? true : false;
+        }
+        else {
+            return "SKU not found.";
+        }
+    }
 
     public function getAll() {
         $data = self::select('sku','description','buffer_stock')->where('status', 1)->get();
@@ -178,7 +188,7 @@ class Product extends Model
         return $data_arr;
     }
 
-        public function getExpiration($lot_code) {
+    public function getExpiration($lot_code) {
         $lc = new LotCode;
         return $lc->getExpiration($lot_code);
     }

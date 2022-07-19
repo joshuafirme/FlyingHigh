@@ -13,7 +13,7 @@
         }
 
         $(document).on('keyup', '#shipmentId-input', function(e) {
-            
+
             let mdl = $('#addPickupModal')
 
             if ($(this).val() && $(this).val().length > 11) {
@@ -32,7 +32,7 @@
                                 mdl.find('[name=' + key + ']').val(data.order_details[key]);
                                 mdl.find('#' + key).text(data.order_details[key]);
                             }
-                            
+
                             $('.alert-message').remove();
                             $('#tbl-pickup-items').html('');
                             let html = "";
@@ -49,20 +49,13 @@
                                 html += '<td>' + item.lineNumber + '</td>';
                                 html += '<td>' + component_text + ' ' +
                                     item.partNumber + '<br>' +
-                                    item.name + '<br>' +
                                     'Parent Kit: ' + item.parentKitItem + '</td>';
+                                html += '<td>' + item.name + '</td>';
                                 html += '<td>' + item.quantity + '</td>';
-                                html += '<td>';                    
-                                html += '<select class="form-control" name="lot_codes" required>';
-                                html += '</select></td>';
-                                html += '<td><input style="width: 80px;" type="number" class="form-control" name="qtyShipped"></td>';
-                                html += '<td><input style="width: 140px;" type="datetime-local" class="form-control" value="{{ date("Y-m-d") }}"></td>';
-                                html += '<td></td>';
                                 html += '</tr>';
                                 $('#tbl-pickup-items').append(html)
                             }
-                        } 
-                        else {
+                        } else {
                             responseMessage(data.message, "danger")
                         }
 
@@ -73,7 +66,44 @@
         });
 
         $(document).on('submit', '#pickup-form', function(e) {
-
+            let _this = $(this);
+            _this.find('button[type=submit]').prop('disabled', true);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `Do you want to assign this shipment to ${$('[name="receiver"] option:selected').text()}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                            type: 'POST',
+                            url: '/order/do-ship',
+                            data: $(this).serialize()
+                        })
+                        .done(function(data) {
+                            if (data.success) {
+                                swalSuccess(
+                                    `Order ship was successfully added.`
+                                );
+                            } else if (data.success == false) {
+                                swalError(data.message);
+                                setTimeout(function() {
+                                    location.reload()
+                                }, 1500)
+                            } else {
+                                swalError('Error occured, please contact support!');
+                            }
+                            _this.find('button[type=submit]').prop('disabled', false);
+                        })
+                        .fail(function() {
+                            swalError('Error occured, please contact support!');
+                            _this.find('button[type=submit]').prop('disabled', false);
+                        });
+                }
+            })
             return false;
         });
 

@@ -40,6 +40,10 @@ $status = request()->status;
                                         <a class="btn btn-sm btn-primary" href="{{ url('/orders') }}"><i
                                                 class="fa fa-sync" aria-hidden="true"></i> Refresh</a>
                                     </div>
+                                    <div class="form-group ml-1">
+                                        <a class="btn btn-sm btn-primary" href="{{ url('/orders') }}"><i
+                                                class="fa fa-download" aria-hidden="true"></i> Fetch Orders</a>
+                                    </div>
                                 </form>
                                 <div class="ml-auto mt-4 mt-sm-2">
 
@@ -74,9 +78,12 @@ $status = request()->status;
                                             @foreach ($orders as $item)
                                                 <tr>
                                                     <td>
-                                                        <a href="#">
+                                                        <a href="#" class="shipmentId-txt" data-toggle="tooltip" data-placement="top" title="Copy"
+                                                            data-id="{{ $item->shipmentId }}">
                                                             <u>{{ $item->shipmentId }}</u>
                                                         </a>
+                                                        <input type="hidden" id="{{ $item->shipmentId }}"
+                                                            value="{{ $item->shipmentId }}">
                                                     </td>
                                                     <td>{{ $item->orderId }}</td>
                                                     <td>
@@ -86,7 +93,8 @@ $status = request()->status;
                                                     <td>{{ $item->dateTimeSubmittedIso }}</td>
                                                     <td>
                                                         <div class="dropdown float-left m-1">
-                                                            <button class="btn btn-sm btn-primary dropdown-toggle"
+                                                            <button
+                                                                class="btn btn-sm btn-outline-primary dropdown-toggle"
                                                                 data-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                                 <i class="fa fa-print"></i> Print
@@ -108,8 +116,13 @@ $status = request()->status;
                                                             </div>
 
                                                         </div>
-                                                        <a class="btn btn-sm btn-primary btn-ship float-left m-1"
-                                                            data-order-details="{{ $item }}"> Assign Hub </a>
+                                                        @if ($item->status == 1)
+                                                            <span class="badge badge-pill badge-success">Assigned</span>
+                                                        @else
+                                                            <a class="btn btn-sm btn-outline-primary btn-ship float-left m-1"
+                                                                data-order-details="{{ $item }}"> Assign Hub
+                                                            </a>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach

@@ -5,6 +5,10 @@
 
 @include('layouts.side-nav')
 
+@php
+    $product = new App\Models\Product;
+@endphp
+
 <div class="content-page">
     <div class="content">
         <div class="container-fluid" id="app">
@@ -155,9 +159,9 @@
                                 <tr>
                                     <th scope="col">Order ID</th>
                                     <th scope="col">SKU</th>
-                                    <th scope="col">Lot Number</th>
                                     <th scope="col">Description</th>
                                     <th scope="col">Qty Ordered</th>
+                                    <th scope="col">Lot Number</th>
                                     <th scope="col">Qty Shipped</th>
                                     <th scope="col">Ship Date Time</th>
                                     <th scope="col">Action</th>
@@ -169,11 +173,17 @@
                                         <tr>
                                             <td>{{ $item->orderId }}</td>
                                             <td>{{ $item->partNumber }}</td>
-                                            <td>{{ $item->lotNumber ? $item->lotNumber : '-' }}</td>
-                                            <td>{{ $item->description }}</td>
-                                            <td>{{ $item->qtyOrdered }}</td>
-                                            <td>{{ $item->qtyShipped }}</td>
-                                            <td>{{ $item->shipDateTime }}</td>
+                                            <td>{{ $item->productDescription }}</td>
+                                            <td class="text-center">{{ $item->qtyOrdered }}</td>
+                                            <td>
+                                                @if ($product->isLotControlled($item->partNumber))
+                                                    <input type="text" class="form-control" name="lotNumber">                                              
+                                                @else
+                                                    
+                                                @endif
+                                            </td>
+                                            <td style="width: 120px;"><input type="number" class="form-control" name="qtyShipped"></td>
+                                            <td><input type="datetime-local" class="form-control" value="{{ date('Y-m-d') }}"></td>
                                             <td>
                                                 @if ($item->status == 0)
                                                     <a class="btn btn-sm btn-primary btn-pickup"

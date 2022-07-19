@@ -263,10 +263,9 @@ class OrderController extends Controller
     {
         $status = 1;
         $line_items = $line_item->getLineItems($request->orderId);
-      
         if (count($line_items) > 0) {
                 $shipment = new Shipment;
-                if ($shipment->isShipmentExists($request->shipmentId)) {
+                if ($shipment->isShipmentExists($request->shipmentId, $request->receiver)) {
                     return response()->json([
                         'success' =>  false,
                         'message' => 'Shipment ID is already exists.'
@@ -311,6 +310,12 @@ class OrderController extends Controller
                        // $lc->decrementStock($item->partNumber,$request->lot_code[$ctr],$item->quantity);
                     }
                 }
+        }
+        else {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'No line items found with the order ID' . $request->orderId
+            ], 200);    
         }
 
         $orders->changeStatus($request->shipmentId, $status, $request->receiver);
