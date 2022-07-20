@@ -45,6 +45,15 @@
                         </li>
                     </ul>
                 </li>
+
+                <li>
+                    <a href="{{ url('/hub-transfer') }}" class="">
+                        <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABtElEQVRIie3VvY9NQRgG8N+Vq5CgURBbSXQIzVIQhWxufCQUvhK1Bn/AiihuIbKbWKVIsN1FoVkRCVFyK7sKGoWGgmyioPDRuIqZ404mc+5eu0sUnmTOmfc577zPOzPvzOEvoFHgzmBtgf+E68sl0sNkgR+v8V8Uer/JL4gVix34z4k0lzj+BDZl3EfcxpdcZBsOJo7jNUEr/iG24wLuZz77cBotfKZfLW2M4WnivCe+U67inyR2W1j2UxiJMc+hi5PpTMSB7WywjCvZosB5PIh2B4dwFteWuicVNuNelsANPEP3T1bXG1zGxHLN5DUu4mvGr8PepnBX7Y5kWlUlLuUJywF3hRthR+b7A6sa6u+qYdDBywV8epVIfvFtxOHYn8H7IQT3Ywte4VEq8uuRYBfmcTO2eewcELyBO3iOKcwKJ75KvAfv9A8e4RAdTexj+mtfQisKVEXUxFzk1+MbHMDbqFi11UmQNdm3UruSCU9F/jsulTLrxuwrHB9iJrPJTFbiReRrMSrswy1Mx/7oAP+GsAdzuBoFOpJiqvudbsCR2J/Bh0FZRbSwVaiux0P4/0cZPwEKlWDu4m2eKQAAAABJRU5ErkJggg=="><span>
+                            Hub Transfer </span>
+                    </a>
+                </li>
+
                 <li>
                     <a href="{{ url('/orders') }}" class="">
                         <img
@@ -86,7 +95,8 @@
 
             <li>
                 <a href="{{ url('/transactions') }}" class="">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAAS0lEQVRIiWNgGAWDEbAwMDC8YmBg+M/AwHAZKpYH5ZOCQ6B6tzIwMEQzMDBEQdmjgHRA7ThhYBiNE0rBaJwMPjBadg0+MJpPRiAAADoOVcsLs2lNAAAAAElFTkSuQmCC"><span>
+                    <img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAAS0lEQVRIiWNgGAWDEbAwMDC8YmBg+M/AwHAZKpYH5ZOCQ6B6tzIwMEQzMDBEQdmjgHRA7ThhYBiNE0rBaJwMPjBadg0+MJpPRiAAADoOVcsLs2lNAAAAAElFTkSuQmCC"><span>
                         Transactions </span>
                 </a>
             </li>

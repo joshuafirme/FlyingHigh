@@ -61,7 +61,7 @@
                                                 class="fas fa-file-import"></i>
                                             Import Excel
                                         </button>
-                                        <a class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto"
+                                        <a class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
                                             href="{{ url('/product/export') }}" target="_blank"><i
                                                 class="fas fa-file-export"></i> Export Excel</a>
                                         <!--<button type="button"

@@ -49,8 +49,9 @@
         el_choices_multi_sku.addEventListener(
             'addItem',
             function(event) {
-                let sku = event.detail.value;
-                fetch("/api/product/sku/" + sku)
+                let sku = event.detail.value.sku; 
+                let baseUOM = event.detail.value.baseUOM;
+                fetch(`/api/product/sku/${sku}/${baseUOM}`)
                     .then(data => data.json())
                     .then(data => {
                         console.log(data)
@@ -63,16 +64,18 @@
 
         function appendInputs(data){
             var html = '';
-            html += '<tr id="' + data.id + '_' + data.itemNumber + '">';
+            html += '<tr id="' + data.id + '_' + data.sku + '">';
             html += '<td>';
+            html += data.sku + ' ';
+            html += data.baseUOM + '<br>';
             html += data.description;
-            html += '<input type="hidden" class="form-control" name="sku[]" value="' + data.itemNumber + '">';
+            html += '<input type="hidden" class="form-control" name="sku[]" value="' + data.sku + '">';
             html += '</td>';
             html += '<td>';
             html += '<select class="form-control" name="lot_code[]" required>';
       
             for (let item of data.lot_codes) {
-                let lot_code = item.lot_code != 0 ? item.lot_code : 'N/A';
+                let lot_code = item.lot_code != null ? item.lot_code : 'N/A';
                 html += '<option value="'+ item.lot_code +'">'+ lot_code +'</option>';
             }
  
@@ -91,7 +94,7 @@
             html += '@endforeach ';
             html += '</select>';
             html += '</td>';
-            html += '<td><a class="btn btn-remove-sku" data-id="' + data.id + '_' + data.itemNumber + '"><i class="fa fa-trash"></i></a></td>';
+            html += '<td><a class="btn btn-remove-sku" data-id="' + data.id + '_' + data.sku + '"><i class="fa fa-trash"></i></a></td>';
             html += '</tr>';
             $('#inputs-container').append(html);
         }
@@ -131,9 +134,13 @@
                                     .itemNumber) != -1) {
                                 is_selected = true;
                             }
+                            let value = {
+                                'sku' : v.itemNumber,
+                                'baseUOM' : v.baseUOM
+                            }
                             return {
-                                label: v.itemNumber + ' | ' + v.description,
-                                value: v.itemNumber,
+                                label: v.itemNumber + ' | ' + v.productDescription + ' <br> ' + v.baseUOM,
+                                value: value,
                                 selected: is_selected
                             };
                         });
@@ -533,9 +540,14 @@
             });
 
             $('.btn-bulk-transfer').click(function() {
+                
                 multi_sku.clearStore();
                 $('#inputs-container').html('');
                 initChoices('choices-multiple-sku');
+
+                setTimeout(function() {
+                    $("#barcode-scan").focus();
+                },500)
             });
             
 

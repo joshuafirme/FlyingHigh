@@ -26,12 +26,12 @@ class HubTransfer extends Model
         return ['sku', 'description', 'qty_transferred', 'hub', 'created_at'];
     }
 
-    public function record($sku, $lot_code, $qty, $hub_id) {
+    public function record($sku, $request, $ctr) {
         self::create([
             'sku' => $sku,
-            'lot_code' => $lot_code,
-            'qty_transferred'=> $qty,
-            'hub_id' => $hub_id
+            'lot_code' => $request->lot_code[$ctr],
+            'qty_transferred'=> $request->qty_to_transfer[$ctr],
+            'hub_id' => $request->hub_id
         ]);
     }
 

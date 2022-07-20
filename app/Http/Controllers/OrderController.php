@@ -284,8 +284,10 @@ class OrderController extends Controller
                     $shipment->qtyPackages =  $request->qtyPackages;
                     $shipment->weightUoM =  $request->weightUoM;
                     $shipment->trackingNo = $request->trackingNo;
-                    // shipped
                     $shipment->status =  0;
+                    
+                    // TO ASSIGN HUB ID
+
                     $shipment->currCode =  "PHP";
                     $shipment->save();
 

@@ -20,6 +20,8 @@ class HubInventory extends Model
         'lot_code',
         'hub_id',
         'stock',
+        'bin',
+        'warehouse_id'
     ];
 
     public function createLotCode($sku, $lot_code, $qty, $hub_id) {
@@ -28,6 +30,7 @@ class HubInventory extends Model
             'lot_code' => $lot_code,
             'hub_id' => $hub_id,
             'stock' => $qty,
+            'warehouse_id' => "4803"
         ]);
     }
 

@@ -16,8 +16,9 @@ use App\Http\Controllers\ReturnReasonController;
 use App\Http\Controllers\StockTransferController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\HubTransferController;
 use App\Http\Controllers\Reports\StockAdjustmentController;
-use App\Http\Controllers\Reports\HubTransferController;
+use App\Http\Controllers\Reports\HubTransferReportController;
 use App\Http\Controllers\Reports\PickupReportController;
 use App\Http\Controllers\Reports\InboundTransferController;
 use App\Http\Controllers\Reports\ExpiredController;
@@ -101,7 +102,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/client/search', [ClientController::class, 'search'])->name('searchClient');
     Route::resource('/client', ClientController::class);
 
-    
+    Route::get('/hub-transfer/list', [HubTransferController::class, 'getTransferList']);
+    Route::post('/hub-transfer/{id}', [HubTransferController::class, 'remove']);
+    Route::get('/hub-transfer/search', [HubTransferController::class, 'search']);
+    Route::post('/do-transfer', [HubTransferController::class, 'transfer']);
+    Route::resource('/hub-transfer', HubTransferController::class);
+
     Route::post('/product/lotcode/archive/{id}', [ProductController::class, 'archiveLotCode']);
     Route::get('/product/export', [ProductController::class, 'export']);
     Route::get('/product/hubs/{sku}', [ProductController::class, 'getHubsStockBySku']);
@@ -116,11 +122,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('/product', ProductController::class);
 
     // Reports
-    Route::get('/reports/hub-transfer', [HubTransferController::class, 'index']);
-    Route::get('/reports/hub-transfer/filter', [HubTransferController::class, 'filterHubTransfer'])->name('filterHubTransfer');
-    Route::get('/reports/hub-transfer/preview/{date_from}/{date_to}/{hub_id}', [HubTransferController::class, 'previewReport']);
-    Route::get('/reports/hub-transfer/download/{date_from}/{date_to}/{hub_id}', [HubTransferController::class, 'downloadReport']);
-    Route::get('/reports/hub-transfer/export/{date_from}/{date_to}/{hub_id}', [HubTransferController::class, 'exportReport']);
+    Route::get('/reports/hub-transfer', [HubTransferReportController::class, 'index']);
+    Route::get('/reports/hub-transfer/filter', [HubTransferReportController::class, 'filterHubTransfer'])->name('filterHubTransfer');
+    Route::get('/reports/hub-transfer/preview/{date_from}/{date_to}/{hub_id}', [HubTransferReportController::class, 'previewReport']);
+    Route::get('/reports/hub-transfer/download/{date_from}/{date_to}/{hub_id}', [HubTransferReportController::class, 'downloadReport']);
+    Route::get('/reports/hub-transfer/export/{date_from}/{date_to}/{hub_id}', [HubTransferReportController::class, 'exportReport']);
 
     Route::get('/reports/stock-adjustment', [StockAdjustmentController::class, 'index']);
     Route::get('/reports/stock-adjustment/filter', [StockAdjustmentController::class, 'filterStockAdjustment'])->name('filterStockAdjustment');

@@ -33,9 +33,34 @@ class LotCode extends Model
     }
 
     public function getAllPaginate($per_page) {
-        return self::select($this->table . '.*', 'P.productDescription')
-            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.sku')
-            ->orderBy($this->table . '.created_at', 'desc')
+
+        $no_lot_code_list = self::select($this->table . '.*', 'productDescription')
+            ->leftJoin('products as P', DB::raw('CONCAT(P.itemNumber, P.baseUOM)'), '=', DB::raw('CONCAT(sku, uom)'))
+            ->where('expiration', null);
+
+        return self::select($this->table . '.*', 'productDescription')
+            ->leftJoin('products as P', DB::raw('CONCAT(P.itemNumber, P.baseUOM)'), '=', DB::raw('CONCAT(sku, uom)'))
+            ->orderBy($this->table . '.expiration')
+            ->whereDate('expiration', '>', date('Y-m-d'))
+            ->union($no_lot_code_list)
+            ->paginate($per_page);
+    }
+
+    public function searchPaginate($key, $per_page) {
+        
+        $no_lot_code_list = self::select($this->table . '.*', 'productDescription')
+            ->leftJoin('products as P', DB::raw('CONCAT(P.itemNumber, P.baseUOM)'), '=', DB::raw('CONCAT(sku, uom)'))
+            ->where('P.itemNumber', 'LIKE', '%' . $key . '%')
+            ->orWhere('productDescription', 'LIKE', '%' . $key . '%')
+            ->where('expiration', null);
+
+        return self::select($this->table . '.*', 'productDescription')
+            ->leftJoin('products as P', DB::raw('CONCAT(P.itemNumber, P.baseUOM)'), '=', DB::raw('CONCAT(sku, uom)'))
+            ->orderBy($this->table . '.expiration')
+            ->whereDate('expiration', '>', date('Y-m-d'))
+            ->where('P.itemNumber', 'LIKE', '%' . $key . '%')
+            ->orWhere('productDescription', 'LIKE', '%' . $key . '%')
+            ->union($no_lot_code_list)
             ->paginate($per_page);
     }
 
@@ -112,9 +137,10 @@ class LotCode extends Model
         return self::where('lot_code', $lot_code)->value('expiration');
     }
 
-    public function getLotCode($sku) {
+    public function getLotCode($sku, $uom) {
         return self::select('id', 'lot_code', 'stock', 'expiration')
             ->where('sku', $sku)
+            ->where('uom', $uom)
             ->where(function ($query) {
                $query->whereDate('expiration', '>', date('Y-m-d'))
                      ->orWhere('lot_code', null);

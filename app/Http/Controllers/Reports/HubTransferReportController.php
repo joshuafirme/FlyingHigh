@@ -10,7 +10,7 @@ use App\Exports\HubTransferExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Utils;
 
-class HubTransferController extends Controller
+class HubTransferReportController extends Controller
 {
    public function index(HubTransfer $sa) {
         $hub_transfer = $sa->getAllPaginate(10);

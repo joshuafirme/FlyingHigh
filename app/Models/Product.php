@@ -115,17 +115,7 @@ class Product extends Model
     }
 
     public function getAllSKU() {
-        $data = self::select('id','sku','description')->where('status', 1)->get();
-        $lc = new LotCode;
-        $data_arr = [];
-        foreach ($data as $item) {
-            array_push($data_arr,[
-                'id' => $item->id,
-                'sku' => $item->sku,
-                'description' => $item->description,
-            ]);
-        }
-        return $data_arr;
+        return self::select('id','itemNumber','productDescription', 'baseUOM')->where('status', 1)->get();
     }
 
     public function getByBarcode($barcode) {
@@ -134,15 +124,19 @@ class Product extends Model
                     ->where('barcode', $barcode)->first();
     }
 
-    public function getBySKU($sku) {
-        $data = self::select('id','sku','description','qty')->where('sku', $sku)->first();
+    public function getBySKU($sku, $baseUOM) {
+        $data = self::select('id','itemNumber','productDescription', 'baseUOM')
+            ->where('itemNumber', $sku)
+            ->where('baseUOM', $baseUOM)
+            ->first();
         $lc = new LotCode;
         return json_encode([
             'id' => $data->id,
-            'sku' => $data->sku,
-            'description' => $data->description,
-            'stock' => $lc->getAllStock($data->sku),
-            'lot_codes' => $lc->getLotCode($data->sku)
+            'sku' => $data->itemNumber,
+            'description' => $data->productDescription,
+            'baseUOM' => $data->baseUOM,
+            'stock' => $lc->getAllStock($data->sku, $data->baseUOM),
+            'lot_codes' => $lc->getLotCode($data->sku, $data->baseUOM)
         ]);
     }
 

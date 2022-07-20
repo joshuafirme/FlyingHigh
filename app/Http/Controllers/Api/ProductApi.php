@@ -21,8 +21,8 @@ class ProductApi extends Controller
         return response()->json($product->getByBarcode($barcode));
     }
 
-    public function getBySKU($sku, Product $product) {
-        return $product->getBySKU($sku);
+    public function getBySKU($sku, $baseUOM, Product $product) {
+        return $product->getBySKU($sku, $baseUOM);
     }
 
     public function getBundleQtyList($sku, Product $product)
