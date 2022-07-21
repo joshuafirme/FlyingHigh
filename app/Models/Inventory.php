@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
-class LotCode extends Model
+class Inventory extends Model
 {
     use HasFactory;
 
-    protected $table = 'product_lot_codes';
+    protected $table = 'inventory';
 
     protected $fillable = [
         'sku',
@@ -29,20 +29,20 @@ class LotCode extends Model
     }
 
     function getColumns() {
-        return ["sku","lot_code","description","stock","expiration"];
+        return ["sku","lot_code","productDescription","stock","expiration"];
     }
 
     public function getAllPaginate($per_page) {
 
-        $no_lot_code_list = self::select($this->table . '.*', 'productDescription')
+        $no_lot_code_list = self::select($this->table . '.*', 'productDescription', 'bufferStock')
             ->leftJoin('products as P', DB::raw('CONCAT(P.itemNumber, P.baseUOM)'), '=', DB::raw('CONCAT(sku, uom)'))
             ->where('expiration', null);
 
-        return self::select($this->table . '.*', 'productDescription')
+        return self::select($this->table . '.*', 'productDescription', 'bufferStock')
             ->leftJoin('products as P', DB::raw('CONCAT(P.itemNumber, P.baseUOM)'), '=', DB::raw('CONCAT(sku, uom)'))
-            ->orderBy($this->table . '.expiration')
             ->whereDate('expiration', '>', date('Y-m-d'))
             ->union($no_lot_code_list)
+            ->orderBy('expiration','desc')
             ->paginate($per_page);
     }
 
@@ -106,7 +106,7 @@ class LotCode extends Model
     }
 
     public function createLotCode($sku, $lot_code, $expiration, $qty) {
-         LotCode::create([
+         Inventory::create([
             'sku' => $sku,
             'lot_code' => $lot_code,
             'expiration' => $expiration,

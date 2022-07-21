@@ -116,6 +116,7 @@ $status = request()->status;
                                                             </div>
 
                                                         </div>
+                                                        <!--
                                                         @if ($item->status == 1)
                                                             <span class="badge badge-pill badge-success">Assigned</span>
                                                         @else
@@ -123,6 +124,7 @@ $status = request()->status;
                                                                 data-order-details="{{ $item }}"> Assign Hub
                                                             </a>
                                                         @endif
+                                                        -->
                                                     </td>
                                                 </tr>
                                             @endforeach

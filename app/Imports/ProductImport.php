@@ -3,7 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Product;
-use App\Models\LotCode;
+use App\Models\Inventory;
 use Maatwebsite\Excel\Concerns\ToModel;
 use DateTime;
 use Carbon;
@@ -19,7 +19,7 @@ class ProductImport implements ToModel
     public function model(array $row)
     {
         if ($row[0] != 'SKU') {
-            $lot_code = new LotCode;
+            $lot_code = new Inventory;
             $exp_date = ExcelDate::excelToDateTimeObject($row[3]);
             // lot code
             if (($row[1] != "" || $row[1] != null) && !$lot_code->isSKUAndLotCodeExists($row[0],$row[1])) {

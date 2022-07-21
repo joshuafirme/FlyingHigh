@@ -35,20 +35,20 @@ class Shipment extends Model
             ->paginate($per_page);
     }
 
-    public function getDeliveredByReceiver($receiver, $per_page) {
-        return self::where('receiver',$receiver)->whereIn('status', [0,2,3,4])->paginate($per_page);
+    public function getShipmentByHub($hub_id, $per_page) {
+        return self::where('hub_id',$hub_id)->whereIn('status', [0,2,3,4])->paginate($per_page);
     }    
     
-    public function searchShipment($receiver, $key, $per_page) {
+    public function searchShipment($hub_id, $key, $per_page) {
         
-        return self::where('receiver',$receiver)
+        return self::where('hub_id',$hub_id)
             ->whereIn('status', [0,2,3,4])
             ->where('shipmentId', 'LIKE', '%' . $key . '%')->paginate($per_page);
             
     }
 
-    public function searchDeliveredByReceiver($receiver, $key, $per_page) {
-        return self::where('receiver',$receiver) 
+    public function searchDeliveredByReceiver($hub_id, $key, $per_page) {
+        return self::where('hub_id',$hub_id) 
             ->where('status', 2)
             ->where('shipmentId', 'LIKE', '%' . $key . '%')->paginate($per_page);
     }

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\LotCode;
+use App\Models\Inventory;
 use App\Models\User;
 use Utils;
 
-class ProductLotCodesController extends Controller
+class InventoryController extends Controller
 {
-    private $page = "Lot Code List";
+       private $page = "Inventory";
 
     public function __construct()
     {
@@ -19,15 +19,15 @@ class ProductLotCodesController extends Controller
         });
     }
 
-    public function index(LotCode $lc) {
-        $products = $lc->getAllPaginate(50);
-        return view('product-lot-codes.index', compact('products'));
+    public function index(Inventory $lc) {
+        $products = $lc->getAllPaginate(15);
+        return view('inventory.index', compact('products'));
     }
 
-    public function previewReport(LotCode $lc){
+    public function previewReport(Inventory $lc){
         
         $items = Utils::objectToArray($lc->getAll());
-        $title = "Lot Code List Report";
+        $title = "Inventory Report";
         $headers = $lc->getHeaders();
         $columns = $lc->getColumns();
         
@@ -35,15 +35,15 @@ class ProductLotCodesController extends Controller
        
         $pdf = \App::make('dompdf.wrapper');
         $pdf->loadHTML($output);
-        $pdf->setPaper('A4', 'landscape');
+        $pdf->setPaper('A4', 'portrait');
     
         return $pdf->stream('report.pdf');
     }
     
-    public function downloadReport(LotCode $lc){
+    public function downloadReport(Inventory $lc){
         
         $items = Utils::objectToArray($lc->getAll());
-        $title = "Lot Code List Report";
+        $title = "Inventory Report";
         $headers = $lc->getHeaders();
         $columns = $lc->getColumns();
         

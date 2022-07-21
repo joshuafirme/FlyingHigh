@@ -4,7 +4,7 @@ namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use App\Models\LotCode;
+use App\Models\Inventory;
 
 class ExpiredExport implements FromCollection, WithHeadings
 {
@@ -13,7 +13,7 @@ class ExpiredExport implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        $lc = new LotCode;
+        $lc = new Inventory;
         return $lc->getExpiredFilter(request()->date_from, request()->date_to);
     }
 

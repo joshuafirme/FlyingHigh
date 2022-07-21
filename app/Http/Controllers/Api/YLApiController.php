@@ -8,7 +8,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\PurchaseOrder;
 use App\Models\POLineItems;
-use App\Models\LotCode;
+use App\Models\Inventory;
 use DB;
 use Cache;
 use Utils;
@@ -195,13 +195,13 @@ class YLApiController extends Controller
 
         foreach ($line_items as $item) {
             
-            $lot = new LotCode; 
+            $lot = new Inventory; 
             $product = new Product; 
             
             if ( ! $product->isItemExists($item)) {
                 $product->itemNumber = $item->itemNumber;
                 $product->baseUOM = $item->unitOfMeasure;
-                $product->lotCode = $item->lotNumber;
+             //   $product->lot_code = $item->lotNumber;
                 $product->productDescription = $item->description;
                 $product->save();
             }
@@ -209,7 +209,7 @@ class YLApiController extends Controller
             if ($lot->isLotCodeExists(
                 $item->itemNumber, $item->lotNumber, $item->unitOfMeasure)) {
                 
-                LotCode::where([
+                Inventory::where([
                     ['sku', '=', $item->itemNumber],
                     ['lot_code', '=', $item->lotNumber],
                     ['uom', '=', $item->unitOfMeasure],
@@ -307,7 +307,7 @@ class YLApiController extends Controller
             
             $transaction_ref = $transaction_prefix . ($transaction_id + 10);
             
-            $lot_codes = LotCode::get();
+            $lot_codes = Inventory::get();
           
             $body = [];
             $body['StockStatusDate'] = date("Y-m-d\TH:i:s", time());

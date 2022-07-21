@@ -5,13 +5,13 @@
         <div id="sidebar-menu">
             <!-- Left Menu Start -->
             <ul class="metismenu mt-3" id="side-menu">
-                <li>
+                <!--  <li>
                     <a href="#" class="">
                         <img
                             src="https://img.icons8.com/external-kmg-design-detailed-outline-kmg-design/25/000000/external-dashboard-user-interface-kmg-design-detailed-outline-kmg-design.png" /><span>
                             Dashboard </span>
                     </a>
-                </li>
+                </li>-->
                 <!--<li class="">
                     <a class="" href="{{ url('/product') }}" class="">
                         <img src="https://img.icons8.com/ios/25/000000/product--v1.png" />
@@ -35,37 +35,33 @@
                         </span></a>
                     <ul class="submenu">
                         <li>
-                            <a href="{{ url('/product') }}">Products</a>
+                            <a href="{{ url('/product') }}">SKU Master</a>
                         </li>
-                        <!--<li>
-                            <a href="{{ url('/product-lot-codes') }}">Lot Code List</a>
-                        </li>-->
+                        <li>
+                            <a href="{{ url('/inventory') }}">Inventory</a>
+                        </li>
                         <li>
                             <a href="{{ url('/stock-transfer') }}">Stock Transfer</a>
                         </li>
+                        <li>
+                            <a href="{{ url('/hub-transfer') }}">Pick up Location Transfer</a>
+                        </li>
+
                     </ul>
                 </li>
 
                 <li>
-                    <a href="{{ url('/hub-transfer') }}" class="">
-                        <img
-                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABtElEQVRIie3VvY9NQRgG8N+Vq5CgURBbSXQIzVIQhWxufCQUvhK1Bn/AiihuIbKbWKVIsN1FoVkRCVFyK7sKGoWGgmyioPDRuIqZ404mc+5eu0sUnmTOmfc577zPOzPvzOEvoFHgzmBtgf+E68sl0sNkgR+v8V8Uer/JL4gVix34z4k0lzj+BDZl3EfcxpdcZBsOJo7jNUEr/iG24wLuZz77cBotfKZfLW2M4WnivCe+U67inyR2W1j2UxiJMc+hi5PpTMSB7WywjCvZosB5PIh2B4dwFteWuicVNuNelsANPEP3T1bXG1zGxHLN5DUu4mvGr8PepnBX7Y5kWlUlLuUJywF3hRthR+b7A6sa6u+qYdDBywV8epVIfvFtxOHYn8H7IQT3Ywte4VEq8uuRYBfmcTO2eewcELyBO3iOKcwKJ75KvAfv9A8e4RAdTexj+mtfQisKVEXUxFzk1+MbHMDbqFi11UmQNdm3UruSCU9F/jsulTLrxuwrHB9iJrPJTFbiReRrMSrswy1Mx/7oAP+GsAdzuBoFOpJiqvudbsCR2J/Bh0FZRbSwVaiux0P4/0cZPwEKlWDu4m2eKQAAAABJRU5ErkJggg=="><span>
-                            Hub Transfer </span>
-                    </a>
-                </li>
-
-                <li>
                     <a href="{{ url('/orders') }}" class="">
-                        <img
-                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABVklEQVRIid3TP0scURQF8J+yWyyooE3wC2hnKUFsRVCSRpBAahURhVR+gSBYWNgJYmlhIyim18LKysZPENEtjCsYCG6hxdyBddmZnciQgAcO3Hvee/e8f5f3gp4Saw3jU8THuG03WcZAlyIP2MkYG8cRfkQ+i8+4aDV5xmYXk3XZJz/HFg4jn8M3TLabpPEChiL+hd0Oc9rxGx/wGHk/btAHvR0W1DAYrGUUbccVplvy6dBe4blAobw5E2hgL9jAx3Sw00n+FlWs4B5PwUZo1aK77DZnAydeX21N8tO+l2VyjZEO+ih+lmWS9et60jWVEO4KGN3lmEzhUvIWJD9zrEDNwljCGer4E6zjFIt5C9ewWtYuKhn6UIaehyr2I/6KZjpQRp+kBgeYCR5o6ZGyTOYlTbgdfAqtVJN9fJFcUTPi9OpKM8nFPzHJwqqkkd7Clf+w3/eEF1NQVOD4fG8qAAAAAElFTkSuQmCC" /><span>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAAVUlEQVRIiWNgoANgROP/p6HZVLcExRwmKhmKF9DFEhY8cg5QTCw4AMUYgC4+QQejET9CLCE3CSMn1wYsYihg+CTh0eAiyZzR4CLJnOFdrFCzxUI/AAC7xhoj77sv0QAAAABJRU5ErkJggg==">
+                        <span>
                             Orders </span>
                     </a>
                 </li>
 
                 <li>
                     <a href="#" class=""><img
-                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAA/klEQVRIie3UvUoDQRTF8Z/fiKQxvZWNhWBjaZHGJ4itpV1ImVJ7+4CvIHaWtoJ9qmAhgiCo8RlikTGwy26cWVdMkT8sA7N3zjl39+4yZzRxiY+wNmMPLkfUNHCOIbZwHNZh2G8khs2wjjO84hq7ufs7uMIbethMEV/DKZ5wh4Mf6vdCiBd0sTGreAkneMQ9jlKS4RC3eDZ5Aiv5gn0M8IBWonieVtAZBN0pF+j/UjxPP+hmpuu9ZpOpXtkIf2Jc4RoVia2WmGybDEIq46LNmI/xm7Zs6nbswbJOirhRrbuZJoWt123yL++kMguThcnf0xHxo4tglNPp1JJubvgCJ2g5VUtoVOIAAAAASUVORK5CYII=" /><span>
-                            Hub
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAABVklEQVRIid3TP0scURQF8J+yWyyooE3wC2hnKUFsRVCSRpBAahURhVR+gSBYWNgJYmlhIyim18LKysZPENEtjCsYCG6hxdyBddmZnciQgAcO3Hvee/e8f5f3gp4Saw3jU8THuG03WcZAlyIP2MkYG8cRfkQ+i8+4aDV5xmYXk3XZJz/HFg4jn8M3TLabpPEChiL+hd0Oc9rxGx/wGHk/btAHvR0W1DAYrGUUbccVplvy6dBe4blAobw5E2hgL9jAx3Sw00n+FlWs4B5PwUZo1aK77DZnAydeX21N8tO+l2VyjZEO+ih+lmWS9et60jWVEO4KGN3lmEzhUvIWJD9zrEDNwljCGer4E6zjFIt5C9ewWtYuKhn6UIaehyr2I/6KZjpQRp+kBgeYCR5o6ZGyTOYlTbgdfAqtVJN9fJFcUTPi9OpKM8nFPzHJwqqkkd7Clf+w3/eEF1NQVOD4fG8qAAAAAElFTkSuQmCC" /><span>
+                            Pick up Points
                             <span class="float-right menu-arrow">
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -85,7 +81,7 @@
                         @foreach ($hubs as $item)
                             <li class="">
                                 @if (in_array($item->name, $permissions))
-                                    <a href="{{ url('/hubs/' . $item->receiver) }}">{{ $item->name }}</a>
+                                    <a href="{{ url('/hubs/' . $item->id) }}">{{ $item->name }}</a>
                                 @endif
                             </li>
                         @endforeach
@@ -147,6 +143,7 @@
                     <li class=""><a href="{{ url('users') }}">Users</a>
                     </li>
                     <li class=""><a href="{{ url('role') }}">Roles</a></li>
+                    <li class=""><a href="{{ url('/hub') }}">Branch Plants</a></li>
             </li>
             </ul>
             </li>
@@ -166,7 +163,6 @@
                     </span>
                 </a>
                 <ul class="submenu">
-                    <li class=""><a href="{{ url('/hub') }}">Hub List</a></li>
                     <li class=""><a href="{{ url('/adjustment-remarks') }}">Adjustment Remarks</a>
                     <li class=""><a href="{{ url('/return-reason') }}">Reason for Return</a>
                     <li class=""><a href="{{ url('/attributes') }}">Attributes</a>

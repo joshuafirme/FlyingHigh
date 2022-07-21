@@ -22,12 +22,12 @@
 
             if (modal_type == 'create') {
                 $('[name=status]').val(1);
-                modal.find('.modal-title').text('Create Hub');
+                modal.find('.modal-title').text('Add Branch Plant');
 
                 modal.find('form').attr('action', "{{ route('hub.store') }}");
 
             } else {
-                modal.find('.modal-title').text('Update Hub');
+                modal.find('.modal-title').text('Update Branch Plant');
 
                 let data = JSON.parse($(this).attr('data-info'));
 

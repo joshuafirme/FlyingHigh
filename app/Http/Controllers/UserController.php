@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Hub;
 use Hash;
 use Utils;
 use Auth;
@@ -28,12 +29,13 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $users = User::select('users.*', 'user_role.name as role')
-            ->leftJoin('user_role', 'user_role.id', '=', 'users.access_level')->paginate(10);
-
+        $users = User::select('users.*', 'user_role.name as role', 'hubs.name as branch_name')
+            ->leftJoin('user_role', 'user_role.id', '=', 'users.access_level')
+            ->leftJoin('hubs', 'hubs.receiver', '=', 'users.branch_id')->paginate(10);
+        $branches = Hub::where('status', 1)->get();
         $page_title = "Users";
         $roles = Role::all();
-        return view('users.index', compact('page_title', 'users', 'roles'));
+        return view('users.index', compact('page_title', 'users', 'roles', 'branches'));
     }
 
     /**

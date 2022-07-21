@@ -8,7 +8,7 @@ use App\Imports\StockTransferImport;
 use App\Exports\StockTransferExport;
 use App\Models\StockTransfer;
 use App\Models\InboundTransfer;
-use App\Models\LotCode;
+use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\POLineItems;
@@ -63,13 +63,13 @@ class StockTransferController extends Controller
 
             foreach ($line_items as $item) {
             
-                $lot = new LotCode; 
+                $lot = new Inventory; 
 
                 // TO ASK: how to identify uniqueness if lot.
                 if ($lot->isLotCodeExists(
                         $item->itemNumber, $item->lotNumber, $item->unitOfMeasure)) {
                             
-                    LotCode::where([
+                    Inventory::where([
                         ['sku', '=', $item->itemNumber],
                         ['lot_code', '=', $item->lotNumber],
                         ['uom', '=', $item->unitOfMeasure],
@@ -113,7 +113,7 @@ class StockTransferController extends Controller
         }
     }
 
-    public function transfer(StockTransfer $tr, Product $product, LotCode $lc, InboundTransfer $inbound_transfer) 
+    public function transfer(StockTransfer $tr, Product $product, Inventory $lc, InboundTransfer $inbound_transfer) 
     { 
         $sku = request()->sku;
         $expiration = request()->expiration;

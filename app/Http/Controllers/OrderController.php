@@ -10,7 +10,7 @@ use App\Models\LineItem;
 use App\Models\HubInventory;
 use App\Models\Hub;
 use App\Models\ReturnReason;
-use App\Models\LotCode;
+use App\Models\Inventory;
 use App\Models\Shipment;
 use App\Models\ShipmentLineItem;
 use App\Models\Attribute;
@@ -220,7 +220,7 @@ class OrderController extends Controller
 
     }
 
-    public function tagAsReturned(LotCode $lc) {
+    public function tagAsReturned(Inventory $lc) {
         $sku = request()->sku;
         $lot_code = request()->lot_code;
         $orderId = request()->orderId;
@@ -259,7 +259,7 @@ class OrderController extends Controller
         ], 200);
     }
 
-    public function doShip(Request $request, Order $orders, LineItem $line_item, LotCode $lc)
+    public function doShip(Request $request, Order $orders, LineItem $line_item, Inventory $lc)
     {
         $status = 1;
         $line_items = $line_item->getLineItems($request->orderId);

@@ -9,12 +9,12 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="page-title">Hub Transfers</h4>
+                <h4 class="page-title">Pick Up Location Transfer</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Warehouse</a></li>
-                            <li class="breadcrumb-item active">Hub Transfers</li>
+                            <li class="breadcrumb-item active">Pick Up Location Transfer</li>
                         </ol>
                     </div>
                 </div>

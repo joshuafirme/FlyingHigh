@@ -21,8 +21,8 @@ class Hub extends Model
         'receiver'
     ];
 
-    public function getHubName($receiver) {
-        return self::where('receiver', $receiver)->value('name');
+    public function getHubName($hub_id) {
+        return self::where('id', $hub_id)->value('name');
     }
 
     public function isReceiverExists($receiver) {

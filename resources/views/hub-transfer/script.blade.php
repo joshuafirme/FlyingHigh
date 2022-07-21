@@ -32,6 +32,7 @@
                         let html = `<tr>`;
                         html += `<input type='hidden' name='sku[]' value='${item.sku}'>`;
                         html += `<input type='hidden' name='lot_code[]' value='${item.lot_code}'>`;
+                        html += `<input type='hidden' name='uom[]' value='${item.uom}'>`;
                         html += `<td>${item.sku}</td>`;
                         html += `<td>${item.lot_code}</td>`;
                         html += `<td>${item.stock}</td>`;

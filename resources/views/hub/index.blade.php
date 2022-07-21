@@ -14,7 +14,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Catalog</a></li>
-                            <li class="breadcrumb-item active">Hub List</li>
+                            <li class="breadcrumb-item active">Branch Plant</li>
                         </ol>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                                 <div>
                                     <button type="button" id="btn-create"
                                         class="btn btn-sm btn-primary w-auto open-modal" modal-type="create">
-                                        Create <i class="bi bi-plus"></i>
+                                        Add Branch Plant <i class="bi bi-plus"></i>
                                     </button>
                                 </div>
 
@@ -50,13 +50,12 @@
                                 <table class="table table-borderless table-hover">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Receiver</th>
-                                            <th scope="col">Name</th>
+                                            <th scope="col">Branch Plant #</th>
+                                            <th scope="col">Branch Name</th>
                                             <th scope="col">Email</th>
                                             <th scope="col">Phone</th>
                                             <th scope="col">Address</th>
                                             <th scope="col">Status</th>
-                                            <th scope="col">Created at</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
@@ -76,7 +75,6 @@
                                                             echo '<span class="badge rounded-pill bg-danger">Inactive</span>';
                                                         }
                                                     @endphp</td>
-                                                    <td>{{ Utils::formatDate($item->created_at) }}</td>
                                                     <td>
                                                         <a class="btn btn-edit open-modal" modal-type="update"
                                                             data-info="{{ json_encode($item) }} "><i

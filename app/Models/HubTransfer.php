@@ -15,7 +15,9 @@ class HubTransfer extends Model
     protected $fillable = [
         'sku',
         'qty_transferred',
-        'hub_id'
+        'hub_id',
+        'lot_code',
+        'warehouse_id'
     ];
 
     public function getHeaders() {
@@ -31,7 +33,8 @@ class HubTransfer extends Model
             'sku' => $sku,
             'lot_code' => $request->lot_code[$ctr],
             'qty_transferred'=> $request->qty_to_transfer[$ctr],
-            'hub_id' => $request->hub_id
+            'hub_id' => $request->hub_id,
+            'warehouse_id' => "4803"
         ]);
     }
 

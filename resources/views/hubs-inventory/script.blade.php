@@ -70,7 +70,7 @@
             _this.find('button[type=submit]').prop('disabled', true);
             Swal.fire({
                 title: 'Are you sure?',
-                text: `Do you want to assign this shipment to ${$('[name="receiver"] option:selected').text()}?`,
+                text: `Do you want to assign this shipment to ${$('[name="hub_id"] option:selected').text()}?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

@@ -15,7 +15,7 @@ use App\Models\TransactionLineItems;
 use App\Models\AdjustmentRemarks;
 use App\Models\StockAdjustment;
 use App\Models\User;
-use App\Models\LotCode;
+use App\Models\Inventory;
 use App\Models\Attribute;
 use Utils;
 use DB;
@@ -38,7 +38,7 @@ class ProductController extends Controller
         $products = Product::orderBy('created_at','desc')->where('status', 1)->paginate(20);
         $remarks = AdjustmentRemarks::where('status', 1)->get();
         $product_count = Product::count('id');
-        $lot_code = new LotCode;
+        $lot_code = new Inventory;
         $attribute = new Attribute;
         $hubs = Hub::where('status', 1)->get();
         return view('product.index', compact('remarks', 'products', 'hubs', 'product_count', 'lot_code', 'attribute'));
@@ -54,7 +54,7 @@ class ProductController extends Controller
         $hubs = Hub::where('status', 1)->get();
         $product_count = Product::count('id');
         $page_title = "products";
-        $lot_code = new LotCode;
+        $lot_code = new Inventory;
         $attribute = new Attribute;
         return view('product.index', compact('page_title', 'products', 'hubs', 'product_count', 'remarks', 'lot_code', 'attribute'));
     }
@@ -111,7 +111,7 @@ class ProductController extends Controller
         if ($request['lot_code']) {
             foreach ($request['lot_code'] as $key => $lot_code) {
                 $expiration = $request->expiration[$key];
-                $lc = new LotCode;
+                $lc = new Inventory;
                 $lc->where('lot_code', $lot_code)->update(['expiration' => $expiration]);
             }
         }
@@ -126,7 +126,7 @@ class ProductController extends Controller
     }
 
     public function addLotCode($request, $action) {
-        $lc = new LotCode;
+        $lc = new Inventory;
         $lot_codes = [];
         $lot_code_count = 0;
         $ctr = 0;
@@ -172,7 +172,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function archiveLotCode($id, LotCode $lc)
+    public function archiveLotCode($id, Inventory $lc)
     {
         return $lc->archiveLotCode($id);
     }
@@ -183,7 +183,7 @@ class ProductController extends Controller
     }
 
 
-    public function importAPI(Request $request, Transaction $trans, Product $product, LotCode $lot_code) 
+    public function importAPI(Request $request, Transaction $trans, Product $product, Inventory $lot_code) 
     {
         $path = public_path() . '/purchase_order.json';
         $data = json_decode(file_get_contents($path));
@@ -266,7 +266,7 @@ class ProductController extends Controller
         return back();
     }
 
-    public function transfer(Product $product, HubInventory $hub, HubTransfer $hub_transfer, LotCode $lc)
+    public function transfer(Product $product, HubInventory $hub, HubTransfer $hub_transfer, Inventory $lc)
     {
         $sku = request()->sku;
         $lot_code = request()->lot_code;
@@ -300,7 +300,7 @@ class ProductController extends Controller
         Product $product, 
         HubInventory $hub, 
         HubTransfer $hub_transfer, 
-        LotCode $lc
+        Inventory $lc
     )
     {
         $all_sku = $request->sku;
@@ -336,7 +336,7 @@ class ProductController extends Controller
         }
     }
 
-    public function adjustStock(Request $request, StockAdjustment $stock_adjustment, LotCode $lot_code) {
+    public function adjustStock(Request $request, StockAdjustment $stock_adjustment, Inventory $lot_code) {
         $sku = $request->sku;
         $lot_number = $request->lot_code;
         $qty = $request->qty;

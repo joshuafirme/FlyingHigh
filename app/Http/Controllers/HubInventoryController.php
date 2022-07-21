@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\HubInventory;
 use App\Models\Shipment;
 use App\Models\ShipmentLineItem;
-use App\Models\LotCode;
+use App\Models\Inventory;
 use App\Models\ReturnReason;
 use App\Models\Order;
 use App\Models\LineItem;
@@ -28,32 +28,32 @@ class HubInventoryController extends Controller
         });
     }
 
-    public function hubInventory($receiver, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
+    public function hubInventory($hub_id, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
     {
-        $shipments = $shipment->getDeliveredByReceiver($receiver, 10);
-        $inventory = $hub_inv->getByHub($receiver, 15);
+        $shipments = $shipment->getShipmentByHub($hub_id, 10);
+        $inventory = $hub_inv->getByHub($hub_id, 15);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
         $attribute = new Attribute;
 
-        $hub_name = $hub->getHubName($receiver);
-        return view('hubs-inventory.index', compact('shipments', 'hub_name', 'receiver', 'inventory', 'attribute', 'hub_inv'));
+        $hub_name = $hub->getHubName($hub_id);
+        return view('hubs-inventory.index', compact('shipments', 'hub_name', 'hub_id', 'inventory', 'attribute', 'hub_inv'));
     }
 
-    public function searchShipment($receiver, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
+    public function searchShipment($hub_id, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
     {
         $key = isset(request()->key) ? request()->key : "";
-        $shipments = $shipment->searchShipment($receiver, $key, 10);
+        $shipments = $shipment->searchShipment($hub_id, $key, 10);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
         $attribute = new Attribute;
 
-        $hub_name = $hub->getHubName($receiver);
-        return view('hubs-inventory.index', compact('shipments', 'hub_name', 'receiver', 'hub_inv', 'attribute'));
+        $hub_name = $hub->getHubName($hub_id);
+        return view('hubs-inventory.index', compact('shipments', 'hub_name', 'hub_id', 'hub_inv', 'attribute'));
     }
 
 
-    public function pickup($receiver, $shipmentId, HubInventory $hub_inv, Hub $hub, Shipment $shipment, LineItem $line_item)
+    public function pickup($hub_id, $shipmentId, HubInventory $hub_inv, Hub $hub, Shipment $shipment, LineItem $line_item)
     {
         $order_details = $this->getOrderDetails($shipmentId);
         $order_line_items = $line_item->getLineItems($order_details->orderId);
@@ -64,13 +64,13 @@ class HubInventoryController extends Controller
         $package_details = $shipment->readOne($shipmentId);
         $attribute = new Attribute;
 
-        $hub_name = $hub->getHubName($receiver);
+        $hub_name = $hub->getHubName($hub_id);
         return view('hubs-inventory.pickup', 
             compact(
                 'order_line_items',
                 'line_items',
                 'hub_name', 
-                'receiver',
+                'hub_id',
                 'order_details',
                 'package_details', 
                 'invoice',
@@ -94,16 +94,16 @@ class HubInventoryController extends Controller
         return $hub_inv->getAllStock($sku);
     }
 
-    public function searchProduct($receiver, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
+    public function searchProduct($hub_id, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
     {
         $key = isset(request()->key) ? request()->key : "";
 
-        $deliveries = $shipment->searchDeliveredByReceiver($receiver, $key, 10);
+        $deliveries = $shipment->searchDeliveredByhub_id($hub_id, $key, 10);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
 
-        $hub_name = $hub->getHubName($receiver);
-        return view('hubs-inventory.index', compact('deliveries', 'hub_name', 'receiver', 'hub_inv'));
+        $hub_name = $hub->getHubName($hub_id);
+        return view('hubs-inventory.index', compact('deliveries', 'hub_name', 'hub_id', 'hub_inv'));
         return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id', 'hub_inv'));
     }
 }

@@ -249,11 +249,17 @@ class Utils
             }else {
                 $date = date("F j, Y", strtotime($date_from)) .' - '. date("F j, Y", strtotime($date_to));
             }
+
+        $output = '';
+        $output .= self::invoiceStyle();
+
+        $output .= '<img class="logo" src="' . public_path() . "/assets/yl_logo_hd.png" . '" width="200" alt="" />
+            <div class="head-2">' . $title . '</div>
+            <div class="head-1">YOUNG LIVING PHILIPPINES LLC</div>
+            <div class="head-2"> YOUNG LIVING PHILIPPINES LLC - PHILIPPINE BRANCH</div>';
         
-        $output = '
+        $output .= '
         <div style="width:100%">
-        <h1 style="text-align:center;">Flying High Energy Express</h1>
-        <h2 style="text-align:center;">'. $title .'</h2>
         
         <p style="text-align:left;">Date: '. $date .'</p>
         <table width="100%" style="border-collapse:collapse; border: 1px solid;">
@@ -431,6 +437,76 @@ class Utils
     }
 
 
+    static function invoiceStyle() {
+        return "<style>
+            @page { margin: 18px 38px 15px 38px; }
+            * { font-family: Calibri, sans-serif; }
+            .text-left { text-align:left; }
+            .text-center { text-align: center; }
+            .text-right { text-align: right; }
+            .text-bold { font-style: bold; }
+            .phrase { font-size: 12px; }
+            .head-3 { font-size: 14px; }
+            .head-2 { font-size: 12px; font-style:bold; text-transform: uppercase; }
+            .head-1 { font-size: 15px; font-style:bold; margin-top: 5px; }
+            .logo { 
+                object-fit: cover;
+                position: absolute;
+                right: 0;
+                top: 1px;
+            }
+            .serial-number { 
+                font-style: bold;
+                font-size: 24px;
+                position: absolute;
+                right: 13px;
+                top: 58px;
+                color: #FF0000; 
+            }
+            .text-info { 
+                margin-top: 3px; 
+                font-size: 12px;
+            }
+            .mb-1 { margin-bottom:10px; }
+            .ml-1 { margin-left:10px; }
+            .ml-2 { margin-left:20px; }
+            .ml-3 { margin-left:30px; }
+            .mr-2 { margin-right:20px; }
+            .mr-3 { margin-right:30px; }
+            .mr-100 { margin-right:100px; }
+            .mt-08 { margin-top:8px; }
+            .mt-1 { margin-top:10px; }
+            .mt-2 { margin-top:20px; }
+            .mt-3 { margin-top:30px; }
+            .mt-4 { margin-top:40px !important; }
+            .mt-5 { margin-top:50px; }
+            .mt-100 { margin-top:100px; }
+            .float-right { float:right; }
+            table { font-size: 12px; }
+            td, th { padding: 2px !important; }
+            th { border: 1px solid; }
+            .table-computation td, th, .table-items th { padding: 2px !important; margin: 2px !important; }
+            .table-footer td, th { padding: 10px !important; border: 1px solid; }
+            .border-solid { border: 1px solid; }
+            .border-bl { border-bottom: 1px solid black; border-left: 1px solid black; }
+            .border-br { border-bottom: 1px solid black; border-right: 1px solid black; }
+            .border-b { border-bottom: 1px solid black; }
+            .border-lr { border-left: 1px solid black; border-right: 1px solid black; }
+            .border-l { border-left: 1px solid black; }
+            .border-r { border-right: 1px solid black; }
+            span.peso {
+                font-family: DejaVu Sans; sans-serif;
+            }
+            footer {
+                position: fixed;
+                bottom: 0px;
+                left: 0px;
+                right: 0px;
+                margin-bottom: 0px;
+            }
+        </style>";
+    }
+
     public function fileUpdoad($request, $folder_to_save = "img", $root = "assets/", $file_name = "") 
     {
         $img_path = "";
@@ -454,9 +530,12 @@ class Utils
         return 'file_not_exists.';
     }
 
-    public function formatDate($date) 
+    public function formatDate($date, $format_time = true) 
     {
-        return date('M d, Y h:i a', strtotime($date));
+        if ($format_time) {
+            return date('M d, Y H:i', strtotime($date));
+        }
+        return date('M d, Y', strtotime($date));
     }
 
     public static function CSVExporter($data, $type)

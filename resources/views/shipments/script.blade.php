@@ -155,7 +155,7 @@
                             else if (data.sku_list && data.sku_list.length > 0) {
                                 let html ='Some of stocks are not enough, please check the SKU below.<br>';
                                 for (let item of data.sku_list) {
-                                    html += '<a target="_blank">SKU: ' + item.sku + '<br> LotCode: ' + item.lot_code + 
+                                    html += '<a target="_blank">SKU: ' + item.sku + '<br> Inventory: ' + item.lot_code + 
                                         '</a><br><hr>';
                                 }
                                 swalError(html);

@@ -30,21 +30,21 @@ $invoice = new App\Models\Invoice();
                     <div class="card">
                         <div class="card-body">
                             @php
-                                $tab = isset($_GET['tab']) ? $_GET['tab'] : "shipments";
+                                $tab = isset($_GET['tab']) ? $_GET['tab'] : 'shipments';
                             @endphp
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link {{ $tab == "shipments" ? "active" : "" }}"
-                                        href="{{ url("/hubs/$receiver?tab=shipments") }}">Shipments</a>
+                                    <a class="nav-link {{ $tab == 'shipments' ? 'active' : '' }}"
+                                        href="{{ url("/hubs/$hub_id?tab=shipments") }}">Shipments</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link {{ $tab == "inventory" ? "active" : "" }}"
-                                        href="{{ url("/hubs/$receiver?tab=inventory") }}">Inventory</a>
+                                    <a class="nav-link {{ $tab == 'inventory' ? 'active' : '' }}"
+                                        href="{{ url("/hubs/$hub_id?tab=inventory") }}">Inventory</a>
                                 </li>
                             </ul>
 
 
-                            @if ( ! isset($_GET['tab']) || $_GET['tab'] == "shipments")
+                            @if (!isset($_GET['tab']) || $_GET['tab'] == 'shipments')
 
                                 <div class="mb-4 mt-2 d-md-flex flex-md-wrap">
                                     <div class="mt-3 mb-3">
@@ -57,7 +57,7 @@ $invoice = new App\Models\Invoice();
 
                                     <div class="ml-auto mt-4 mt-sm-2">
 
-                                        <form action="{{ url("/hubs/{$receiver}/shipment") }}" method="get">
+                                        <form action="{{ url("/hubs/{$hub_id}/shipment") }}" method="get">
                                             <div class="input-group">
                                                 <input type="text" class="form-control" name="key"
                                                     style="width: 280px;"
@@ -141,7 +141,7 @@ $invoice = new App\Models\Invoice();
                                                                 </div>
                                                             </div>
                                                             <a class="btn btn-sm btn-outline-primary float-left m-1"
-                                                                href="{{ url('/hubs/' . $receiver . '/pickup/' . $item->shipmentId) }}"
+                                                                href="{{ url('/hubs/' . $hub_id . '/pickup/' . $item->shipmentId) }}"
                                                                 target="_blank">Pickup >
                                                             </a>
                                                             <a class="btn btn-sm btn-outline-danger float-left m-1"
@@ -178,7 +178,7 @@ $invoice = new App\Models\Invoice();
                                             <tr>
                                                 <th scope="col">SKU</th>
                                                 <th scope="col">Description</th>
-                                                <th scope="col">Bin location</th>
+                                                <th scope="col">BIN Location</th>
                                                 <th scope="col">Lot Code</th>
                                                 <th scope="col">Expiration</th>
                                                 <th scope="col">Stock</th>
@@ -192,13 +192,17 @@ $invoice = new App\Models\Invoice();
                                                         $expiration = $hub_inv->getExpiration($item->lot_code);
                                                     @endphp
                                                     <tr>
-                                                        <td>{{ $item->itemNumber }}</td>
+                                                        <td>{{ $item->sku }}</td>
                                                         <td>{{ $item->productDescription }}</td>
                                                         <td>{{ $item->bin }}</td>
                                                         <td>{{ $item->lot_code }}</td>
                                                         <td>{{ $expiration }}</td>
                                                         <td>{{ $item->stock }}</td>
-                                                        <td></td>
+                                                        <td>
+                                                            <a class="btn btn-sm btn-outline-danger float-left m-1"
+                                                                href="#">
+                                                            </a>
+                                                        </td>
 
                                                     </tr>
                                                 @endforeach

@@ -52,6 +52,7 @@
                                         <th scope="col">Name</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Role</th>
+                                        <th scope="col">Assigned Branch</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Created at</th>
                                         <th scope="col">Action</th>
@@ -66,6 +67,7 @@
                                                 <td><span
                                                         class="badge rounded-pill bg-primary">{{ $item->role }}</span>
                                                 </td>
+                                                <td>{{ $item->branch_name }}</td>
                                                 <td>@php
                                                     if ($item->status == 1) {
                                                         echo '<span class="badge rounded-pill bg-success">Active</span>';

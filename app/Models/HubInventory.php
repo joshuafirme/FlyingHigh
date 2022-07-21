@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
-use App\Models\LotCode;
+use App\Models\Inventory;
 use App\Models\LineItem;
 use DB;
 
@@ -21,15 +21,17 @@ class HubInventory extends Model
         'hub_id',
         'stock',
         'bin',
-        'warehouse_id'
+        'warehouse_id',
+        'uom'
     ];
 
-    public function createLotCode($sku, $lot_code, $qty, $hub_id) {
+    public function createLotCode($sku, $lot_code, $uom, $qty, $hub_id) {
          self::create([
             'sku' => $sku,
             'lot_code' => $lot_code,
             'hub_id' => $hub_id,
             'stock' => $qty,
+            'uom' => $uom,
             'warehouse_id' => "4803"
         ]);
     }
@@ -40,11 +42,20 @@ class HubInventory extends Model
 
     public function getByHub($hub_id, $per_page) 
     {
-        return self::select('P.*', $this->table . '.stock', $this->table . '.lot_code', 'hub_id', $this->table . '.updated_at')
-            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.sku')
+        $no_lot_code_list = self::select($this->table . '.*', 'productDescription')
+            ->leftJoin('products as P', DB::raw('CONCAT(P.itemNumber, P.baseUOM)'), '=', DB::raw('CONCAT(hub_inventory.sku, hub_inventory.uom)'))
+            ->leftJoin('inventory as lc', 'lc.lot_code', '=', 'hub_inventory.lot_code')
+            ->where('expiration', null);
+
+        return self::select('hub_inventory.*', 'productDescription')
+            ->leftJoin('products as P', DB::raw('CONCAT(P.itemNumber, P.baseUOM)'), '=', DB::raw('CONCAT(hub_inventory.sku, hub_inventory.uom)'))
+            ->leftJoin('inventory as lc', 'lc.lot_code', '=', 'hub_inventory.lot_code')
             ->where($this->table . '.hub_id', $hub_id)
-            ->orderBy('P.itemNumber', 'desc')
+            ->orderBy('lc.expiration')
+            ->union($no_lot_code_list)
             ->paginate($per_page);
+
+
     }
 
     public function searchByHub($hub_id, $per_page) 
@@ -187,7 +198,7 @@ class HubInventory extends Model
     }
 
     public function getExpiration($lot_code) {
-        $lc = new LotCode;
+        $lc = new Inventory;
         return $lc->getExpiration($lot_code);
     }
 }

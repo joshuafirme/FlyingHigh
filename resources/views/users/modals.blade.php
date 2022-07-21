@@ -14,8 +14,8 @@
                     <input type="text" class="form-control" name="name" required>
                 </div>
                 <div class="col-md-12 mt-3">
-                    <label for="validationCustom04" class="form-label">Role</label>
-                    <select class="form-control" name="access_level" id="validationCustom04" required>
+                    <label class="form-label">Role</label>
+                    <select class="form-control" name="access_level" required>
                         <option selected disabled value="">Choose...</option>
                         @foreach ($roles as $item)
                             <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -25,12 +25,22 @@
                         Please select a valid state.
                     </div>
                 </div>
+
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">Assigned Branch Plant</label>
+                    <select class="form-control" name="branch_id" required>
+                        <option selected disabled value="">Choose...</option>
+                        @foreach ($branches as $item)
+                            <option value="{{ $item->receiver }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="col-md-12 mt-3">
                     <label for="validationCustom02" class="form-label">Email</label>
                     <input type="text" class="form-control" name="email" required>
                 </div>
                 <div class="col-md-12 mt-3">
-                    <label for="validationCustom04" class="form-label">Status</label>
+                    <label class="form-label">Status</label>
                     <select class="form-control" name="status" required>
                         <option selected disabled value="">Choose...</option>
                         <option value="1">Active</option>

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Shipment;
 use App\Models\ShipmentLineItem;
-use App\Models\LotCode;
+use App\Models\Inventory;
 use App\Models\HubInventory;
 use App\Models\Hub;
 use App\Models\ReturnReason;
@@ -40,7 +40,7 @@ class ShipmentsController extends Controller
     {
         $shipment = new Shipment; 
         $shipment_line_items = new ShipmentLineItem; 
-        $lc = new LotCode;
+        $lc = new Inventory;
         $pickup = new Pickup;
         $line_items = $this->getLineItems($shipmentId);
 
@@ -77,7 +77,7 @@ class ShipmentsController extends Controller
     public function doDelivered($shipmentId) {
         $shipment = new Shipment; 
         $shipment_line_items = new ShipmentLineItem; 
-        $lc = new LotCode;
+        $lc = new Inventory;
         $pickup = new Pickup;
         $line_items = $this->getLineItems($shipmentId);
 
@@ -101,7 +101,7 @@ class ShipmentsController extends Controller
     public function doPickup() {
         $shipment = new Shipment; 
         $shipment_line_items = new ShipmentLineItem; 
-        $lc = new LotCode;
+        $lc = new Inventory;
         $pickup = new Pickup;
 
         $shipmentId = request()->shipmentId;

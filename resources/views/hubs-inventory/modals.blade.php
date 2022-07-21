@@ -90,8 +90,8 @@
                     <input type="number" class="form-control" name="trackingNo">
                 </div>
 
-                <!-- RECEIVER -->
-                <input type="hidden" name="receiver" value="{{ $receiver }}">
+                <!-- hub_id -->
+                <input type="hidden" name="hub_id" value="{{ $hub_id }}">
 
                 <div class="col-md-12 mt-2 mb-2">
                     <div id="order-info-container">

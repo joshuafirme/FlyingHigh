@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use Utils;
-use App\Models\LotCode;
+use App\Models\Inventory;
 
 class Product extends Model
 {
@@ -100,7 +100,7 @@ class Product extends Model
 
     public function getAll() {
         $data = self::select('sku','description','buffer_stock')->where('status', 1)->get();
-        $lc = new LotCode;
+        $lc = new Inventory;
         $data_arr = [];
         foreach ($data as $item) {
             $stock = $lc->getAllStock($item->sku);
@@ -129,7 +129,7 @@ class Product extends Model
             ->where('itemNumber', $sku)
             ->where('baseUOM', $baseUOM)
             ->first();
-        $lc = new LotCode;
+        $lc = new Inventory;
         return json_encode([
             'id' => $data->id,
             'sku' => $data->itemNumber,
@@ -183,7 +183,7 @@ class Product extends Model
     }
 
     public function getExpiration($lot_code) {
-        $lc = new LotCode;
+        $lc = new Inventory;
         return $lc->getExpiration($lot_code);
     }
 

@@ -7,7 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\HubController;
 use App\Http\Controllers\HubInventoryController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductLotCodesController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShipmentsController;
@@ -152,10 +152,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/expired/download/{date_from}/{date_to}', [ExpiredController::class, 'downloadReport']);
     Route::get('/reports/expired/export/{date_from}/{date_to}', [ExpiredController::class, 'exportReport']);
 
-    Route::get('/product-lot-codes', [ProductLotCodesController::class, 'index']);
-    Route::get('/product-lot-codes/preview', [ProductLotCodesController::class, 'previewReport']);
-    Route::get('/product-lot-codes/download', [ProductLotCodesController::class, 'downloadReport']);
-    Route::get('/product-lot-codes/export', [ProductLotCodesController::class, 'exportReport']);
+    Route::get('/inventory', [InventoryController::class, 'index']);
+    Route::get('/inventory/preview', [InventoryController::class, 'previewReport']);
+    Route::get('/inventory/download', [InventoryController::class, 'downloadReport']);
+    Route::get('/inventory/export', [InventoryController::class, 'exportReport']);
 
     Route::get('/stock-transfer', [StockTransferController::class, 'index']);
     Route::get('/stock-transfer/asn/{orderNumber}', [StockTransferController::class, 'readOneOrder']);

@@ -10,11 +10,11 @@
             </div>
             <div class="modal-body row g-3">
                 <div class="col-md-12">
-                    <label for="validationCustom01" class="form-label">Hub name</label>
+                    <label for="validationCustom01" class="form-label">Branch name</label>
                     <input type="text" class="form-control" name="name" required>
                 </div>
                 <div class="col-md-12 mt-3">
-                    <label for="validationCustom01" class="form-label">Receiver</label>
+                    <label for="validationCustom01" class="form-label">Branch Plant #</label>
                     <input type="text" class="form-control" name="receiver" required>
                 </div>
                 <div class="col-md-12 mt-3">

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddFieldsToHubInventoryTable extends Migration
+class AddFieldsToHubTransferTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class AddFieldsToHubInventoryTable extends Migration
      */
     public function up()
     {
-        Schema::table('hub_inventory', function (Blueprint $table) {
-            $table->string('warehouse_id')->after('stock');
-            $table->string('bin')->nullable()->after('stock');
-            $table->string('uom')->after('stock');
+        Schema::table('hub_transfer', function (Blueprint $table) {
+         
+            $table->string('lot_code')->nullable()->after('sku');
+            $table->string('warehouse_id')->after('hub_id');
         });
     }
 
@@ -27,7 +27,7 @@ class AddFieldsToHubInventoryTable extends Migration
      */
     public function down()
     {
-        Schema::table('hub_inventory', function (Blueprint $table) {
+        Schema::table('hub_transfer', function (Blueprint $table) {
             //
         });
     }

@@ -6,7 +6,7 @@
 @include('layouts.side-nav')
 
 @php
-    $product = new App\Models\Product;
+$product = new App\Models\Product();
 @endphp
 
 <div class="content-page">
@@ -18,7 +18,8 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item">Hub</li>
-                            <li class="breadcrumb-item active"><a href="{{ url('/hubs/1001/pickup/' . $receiver) }}" class="ic-javascriptVoid">{{ $hub_name }}</a></li>      
+                            <li class="breadcrumb-item active"><a href="{{ url('/hubs/1001/pickup/' . $hub_id) }}"
+                                    class="ic-javascriptVoid">{{ $hub_name }}</a></li>
                             <li class="breadcrumb-item">Pick up</li>
                         </ol>
                     </div>
@@ -35,7 +36,7 @@
                                     <div class="col-12">
                                         <div>
                                             <div class="dropdown float-right m-1">
-                                                <button class="btn btn-sm btn-primary dropdown-toggle"
+                                                <button class="btn btn-sm btn-outline-primary dropdown-toggle"
                                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i class="fa fa-print"></i> Print
                                                 </button>
@@ -137,8 +138,7 @@
                                     <p class="mb-0">Date Time Submitted:
                                         {{ $order_details->dateTimeSubmittedIso }}
                                     </p>
-                                    <p class="mb-0">Status: <span
-                                            class="badge badge-info badge-pill">Pending</span>
+                                    <p class="mb-0">Status: <span class="badge badge-info badge-pill">Pending</span>
                                     </p>
                                 </address>
                             </td>
@@ -177,17 +177,19 @@
                                             <td class="text-center">{{ $item->qtyOrdered }}</td>
                                             <td>
                                                 @if ($product->isLotControlled($item->partNumber))
-                                                    <input type="text" class="form-control" name="lotNumber">                                              
+                                                    <input type="text" class="form-control" name="lotNumber">
                                                 @else
-                                                    
                                                 @endif
                                             </td>
-                                            <td style="width: 120px;"><input type="number" class="form-control" name="qtyShipped"></td>
-                                            <td><input type="datetime-local" class="form-control" value="{{ date('Y-m-d') }}"></td>
+                                            <td style="width: 120px;"><input type="number" class="form-control"
+                                                    name="qtyShipped"></td>
+                                            <td><input type="datetime-local" class="form-control"
+                                                    value="{{ date('Y-m-d') }}"></td>
                                             <td>
                                                 @if ($item->status == 0)
-                                                    <a class="btn btn-sm btn-primary btn-pickup"
-                                                     data-orderId="{{ $item->orderId }}" data-partNumber="{{ $item->partNumber }}" >Pickup
+                                                    <a class="btn btn-sm btn-outline-primary btn-pickup"
+                                                        data-orderId="{{ $item->orderId }}"
+                                                        data-partNumber="{{ $item->partNumber }}">Pickup
                                                     </a>
                                                 @elseif ($item->status == 1)
                                                     <span class="badge badge-pill badge-success">Picked up</span>
