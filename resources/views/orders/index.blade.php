@@ -22,7 +22,7 @@ $status = request()->status;
                                     $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : date('Y-m-d');
                                     $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : date('Y-m-d');
                                 @endphp
-                                <form class="form-inline" action="{{ url('/orders/filter') }}" method="get">
+                                <form class="form-inline" action="{{ url('/orders/filter/'.$branch_id) }}" method="get">
                                     <div class="form-group mr-2 col-12 col-md-auto">
                                         <label>Date from</label>
                                         <input type="date" class="form-control ml-0 ml-sm-2" name="date_from"
@@ -41,16 +41,16 @@ $status = request()->status;
                                                 class="fa fa-sync" aria-hidden="true"></i> Refresh</a>
                                     </div>
                                     <div class="form-group ml-1">
-                                        <a class="btn btn-sm btn-primary" href="{{ url('/orders') }}"><i
-                                                class="fa fa-download" aria-hidden="true"></i> Fetch Orders</a>
+                                        <button class="btn btn-sm btn-primary" id="btn-show-fetch-modal"><i
+                                                class="fa fa-download" aria-hidden="true"></i> Fetch Orders</button>
                                     </div>
                                 </form>
                                 <div class="ml-auto mt-4 mt-sm-2">
 
-                                    <form action="{{ url('/orders/search') }}" method="get">
+                                    <form action="{{ url('/orders/search/'.$branch_id) }}" method="get">
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="key"
-                                                style="width: 280px;" placeholder="Search by Shipment ID or Order ID"
+                                                style="width: 370px;" placeholder="Search by Shipment ID, Order ID or Customer Email"
                                                 value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">
@@ -65,12 +65,13 @@ $status = request()->status;
                                 <table class="table table-borderless table-hover">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Shipment Id</th>
-                                            <th scope="col">OrderID</th>
-                                            <th scope="col">Customer</th>
-                                            <th scope="col">Order Source</th>
-                                            <th scope="col">Date time submitted</th>
-                                            <th scope="col">Action</th>
+                                            <th>Shipment Id</th>
+                                            <th>OrderID</th>
+                                            <th>Customer</th>
+                                            <th>Order Source</th>
+                                            <th class="text-right">Package Total</th>
+                                            <th>Date time submitted</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -90,6 +91,7 @@ $status = request()->status;
                                                         {!! $item->custName . '<br>' . '<a href="mailto:' . $item->customerEmail . '">' . $item->customerEmail . '</a>' !!}
                                                     </td>
                                                     <td>{{ $item->orderSource }}</td>
+                                                    <td class="text-right">{{ $item->packageTotal }}</td>
                                                     <td>{{ $item->dateTimeSubmittedIso }}</td>
                                                     <td>
                                                         <div class="dropdown float-left m-1">
@@ -114,17 +116,16 @@ $status = request()->status;
                                                                         href="{{ url('/order/generate/' . $item->shipmentId . '/' . $item->orderId . '?type=' . $invoice->invoiceType . '&invoice_no=' . $invoice->invoiceDetail) }}">{{ $invoice_name }}</a>
                                                                 @endforeach
                                                             </div>
-
                                                         </div>
-                                                        <!--
-                                                        @if ($item->status == 1)
-                                                            <span class="badge badge-pill badge-success">Assigned</span>
-                                                        @else
-                                                            <a class="btn btn-sm btn-outline-primary btn-ship float-left m-1"
-                                                                data-order-details="{{ $item }}"> Assign Hub
+                                                        
+                                                            <a class="btn btn-sm btn-outline-primary float-left m-1"
+                                                                href='{{ url("/order/pickup/$branch_id/$item->shipmentId") }}'
+                                                                target="_blank">Pickup >
                                                             </a>
-                                                        @endif
-                                                        -->
+                                                            <a class="btn btn-sm btn-outline-danger float-left m-1 btn-cancel"
+                                                                data-shipmentId="{{ $item->shipmentId }}"
+                                                                href="#">Cancel
+                                                            </a>
                                                     </td>
                                                 </tr>
                                             @endforeach

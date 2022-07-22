@@ -49,9 +49,11 @@
 
                     </ul>
                 </li>
-
+                @php
+                    $branch_id = Auth::user()->branch_id;
+                @endphp
                 <li>
-                    <a href="{{ url('/orders') }}" class="">
+                    <a href="{{ url('/orders/'.$branch_id) }}" class="">
                         <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAAVUlEQVRIiWNgoANgROP/p6HZVLcExRwmKhmKF9DFEhY8cg5QTCw4AMUYgC4+QQejET9CLCE3CSMn1wYsYihg+CTh0eAiyZzR4CLJnOFdrFCzxUI/AAC7xhoj77sv0QAAAABJRU5ErkJggg==">
                         <span>
                             Orders </span>
@@ -118,6 +120,9 @@
                     </li>
                     <li>
                         <a href="{{ url('/reports/stock-adjustment') }}">Stock Adjustment</a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/reports/near-expiry') }}">Near Expiry</a>
                     </li>
                     <li>
                         <a href="{{ url('/reports/expired') }}">Expired List</a>

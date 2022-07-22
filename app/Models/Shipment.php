@@ -36,8 +36,12 @@ class Shipment extends Model
     }
 
     public function getShipmentByHub($hub_id, $per_page) {
-        return self::where('hub_id',$hub_id)->whereIn('status', [0,2,3,4])->paginate($per_page);
-    }    
+        return self::where('hub_id',$hub_id)->whereIn('status', [0])->paginate($per_page);
+    }  
+    
+    public function getCancelledShipmentByHub($hub_id, $per_page) {
+        return self::where('hub_id',$hub_id)->whereIn('status', [2])->paginate($per_page);
+    } 
     
     public function searchShipment($hub_id, $key, $per_page) {
         
@@ -62,8 +66,8 @@ class Shipment extends Model
             ->paginate($per_page);
     }
 
-    public function isShipmentExists($shipmentId, $receiver) {
-        $res = self::where('shipmentId', $shipmentId, $receiver)->get();
+    public function isShipmentExists($shipmentId, $branch_id) {
+        $res = self::where('shipmentId', $shipmentId)->where('hub_id', $branch_id)->get();
         return count($res) > 0 ? true : false;
     }
 

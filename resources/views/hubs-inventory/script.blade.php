@@ -29,6 +29,9 @@
 
                         if (data.success) {
                             for (var key of Object.keys(data.order_details)) {
+                                if (key == 'hub_id') {
+                                    continue;
+                                }
                                 mdl.find('[name=' + key + ']').val(data.order_details[key]);
                                 mdl.find('#' + key).text(data.order_details[key]);
                             }
@@ -70,7 +73,7 @@
             _this.find('button[type=submit]').prop('disabled', true);
             Swal.fire({
                 title: 'Are you sure?',
-                text: `Do you want to assign this shipment to ${$('[name="hub_id"] option:selected').text()}?`,
+                text: `Please confirm`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -152,6 +155,9 @@
 
             return false;
         });
+
+        
+
 
         function responseMessage(message, alert_class) {
             $('.alert-message').empty();

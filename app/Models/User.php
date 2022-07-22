@@ -40,8 +40,8 @@ class User extends Authenticatable
                 
                 $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                 
-                $location_id = substr($current_url, strpos($current_url, "pickup-locations/")+17);
-                $hub_name = $location->getLocationName($location_id);
+                $branch_id = substr($current_url, strpos($current_url, "pickup-locations/")+17);
+                $hub_name = $location->getLocationName($branch_id);
                 
                 if (in_array($hub_name, $permissions)) {
                     return true;

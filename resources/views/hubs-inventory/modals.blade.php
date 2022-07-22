@@ -91,7 +91,7 @@
                 </div>
 
                 <!-- hub_id -->
-                <input type="hidden" name="hub_id" value="{{ $hub_id }}">
+                <input type="hidden" name="hub_id" value="{{ $branch_id }}">
 
                 <div class="col-md-12 mt-2 mb-2">
                     <div id="order-info-container">

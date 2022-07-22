@@ -9,6 +9,9 @@ use App\Models\Transaction;
 use App\Models\PurchaseOrder;
 use App\Models\POLineItems;
 use App\Models\Inventory;
+use App\Models\Order;
+use App\Models\Invoice;
+use App\Models\LineItem;
 use DB;
 use Cache;
 use Utils;
@@ -379,6 +382,95 @@ class YLApiController extends Controller
                 "success" => false,
                 "exceptionMessage" => $e->getMessage(),    
             ], 200);
+        }
+    }
+
+
+    public function getShipment($shipmentId = null, Request $request) 
+    {
+        $path = public_path() . '/payloads/182223459.json';
+        $data = json_decode(file_get_contents($path));
+       // $url = "https://lf-gateway-stage.awsvodev.youngliving.com/shipment?numberOfShipments=10";
+
+       // $header = [
+       //     'Authorization: Bearer ' . $token,
+       // ];
+            
+       // $data = Utils::curlRequestWithHeaders($url, $header);
+       // $data = json_decode($data);
+
+        if ($data->shipmentsToShip) {
+            foreach ($data->shipmentsToShip as $shipment) {
+                $orders = new Order;
+                if ($orders->isOrderExists($shipment->orderId)) {
+                    //
+                }
+                else {
+                    foreach ($shipment->lineItems as $item) {
+                        $lineItem = new LineItem;
+                        $lineItem->lineNumber = $item->lineNumber;
+                        $lineItem->orderId = $item->orderId;
+                        $lineItem->partNumber = $item->partNumber;
+                        $lineItem->quantity = $item->quantity;
+                        $lineItem->name = $item->name;
+                        $lineItem->lineType = $item->lineType;
+                        $lineItem->parentKitItem = $item->parentKitItem;
+                        $lineItem->remarks = $item->remarks;
+                        $lineItem->pv = $item->pv;
+                        $lineItem->itemUnitPrice = $item->itemUnitPrice;
+                        $lineItem->itemExtendedPrice = $item->itemExtendedPrice;
+                        $lineItem->salesPrice = $item->salesPrice;
+                        $lineItem->taxableAmount = $item->taxableAmount;
+                        $lineItem->lineItemTotal = $item->lineItemTotal;
+                        $lineItem->save();
+                    }
+                    $orders->shipmentId = $shipment->shipmentId;
+                    $orders->customerEmail = $shipment->customerEmail;
+                    $orders->custId = $shipment->custId;
+                    $orders->custName = $shipment->custName;
+                    $orders->shipPhone = $shipment->shipPhone;
+                    $orders->shipName = $shipment->shipName;
+                    $orders->shipAddr1 = $shipment->shipAddr1;
+                    $orders->shipAddr2 = $shipment->shipAddr2;
+                    $orders->shipAddr3 = $shipment->shipAddr3;
+                    $orders->shipAddr4 = $shipment->shipAddr4;
+                    $orders->shipCity = $shipment->shipCity;
+                    $orders->shipState = $shipment->shipState;
+                    $orders->shipZip = $shipment->shipZip;
+                    $orders->shipCountryIso = $shipment->shipCountryIso;
+                    $orders->shipMethod = $shipment->shipMethod;
+                    $orders->shipCarrier = $shipment->shipCarrier;
+                    $orders->batchId = $shipment->batchId;
+                    $orders->contractDate = $shipment->contractDate;
+                    $orders->orderId = $shipment->orderId;
+                    $orders->govInvoiceNumber = $shipment->govInvoiceNumber;
+                    $orders->dateTimeSubmittedIso = $shipment->dateTimeSubmittedIso;
+                    $orders->shippingChargeAmount = $shipment->shippingChargeAmount;
+                    $orders->customerTIN = $shipment->customerTIN ;
+                    $orders->salesTaxAmount = $shipment->salesTaxAmount;
+                    $orders->shippingTaxTotalAmount = $shipment->shippingTaxTotalAmount;
+                    $orders->packageTotal = $shipment->packageTotal;
+                    $orders->orderSource = $shipment->orderSource;
+                    $orders->save();
+
+                    foreach ($shipment->invoices as $invoice_item) {
+                        $invoice = new Invoice;
+                        $invoice->invoiceType = $invoice_item->invoiceType;
+                        $invoice->invoiceDetail = $invoice_item->invoiceDetail;
+                        $invoice->shipmentId = $shipment->shipmentId;
+                        $invoice->orderId = $shipment->orderId;
+                        $invoice->save();
+                    }
+                }
+
+            }
+                return response()->json([
+                    'success' =>  true,
+                    'message' => 'Order was fetched successfully.',
+                    "unbatchedShipmentsCount" => 0,
+                    "unacknowledgedShipmentsCount" => 0,
+                    'shipmentsToShip' => []
+                ], 200);
         }
     }
     

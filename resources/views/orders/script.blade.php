@@ -61,6 +61,67 @@
             mdl.find('[name=expiration]').val(exp);
         });
 
+        $('#btn-show-fetch-modal').click(function() {
+            let mdl = $('#fetchOrderModal');
+            mdl.modal('show')
+
+            return false;
+        });
+
+        $('#btn-bulk-fetch').click(function() {
+            let btn = $(this);
+            let shipment_count = $('input[name="shipment_count"]').val();
+            if (!shipment_count) {
+                swalError('Please enter the number of shipment.')
+                return;
+            }
+            btn.html('Fetching <i class="fas fa-circle-notch fa-spin"></i>');
+
+            fetchShipment(btn);
+        });
+
+        $('#btn-single-fetch').click(function() {
+            let btn = $(this);
+            let shipmentId = $('#fetchOrderModal input[name="shipmentId"]').val();
+            if (!shipmentId) {
+                swalError('Please enter the Shipment ID.')
+                return;
+            }
+            btn.html('Fetching <i class="fas fa-circle-notch fa-spin"></i>');
+
+            fetchShipment(btn, shipmentId);
+        });
+
+        function fetchShipment(btn, shipmentId = null) {
+
+            let url = `/api/shipment`;
+            if (shipmentId) {
+                url = `/api/shipment/${shipmentId}`;
+            }
+            $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'client_id': "{{ env('LF_CLIENT_ID') }}",
+                        'client_secret': "{{ env('LF_CLIENT_SECRET') }}"
+                    },
+                }).done(function(response) {
+                    console.log(response)
+                    if (response.success) {
+                        swalSuccess(response.message);
+                    } else {
+                        swalError(response.message);
+                    }
+                    btn.html('Fetch');
+                    btn.prop("disabled", false);
+                })
+                .fail(function(e) {
+                    swalError(e.responseJSON.message);
+                    btn.html('Fetch');
+                    btn.prop("disabled", false);
+                });
+        }
+
         function changeStatus(shipmentId, status) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -200,6 +261,89 @@
             })
             return false;
         });
+
+        $(document).on('click', '.btn-cancel', function() {
+            let btn = $(this);
+            let shipmentId = btn.attr('data-shipmentId');
+            let url = '/order/cancel/' + shipmentId;
+
+            Swal.fire({
+                text: "You are canceling this order ship " + shipmentId +
+                    ", which is not irreversible. Do you wish to proceed?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                            type: 'POST',
+                            _token: '{{ csrf_token() }}',
+                            url: url
+                        })
+
+                        .done(function(data) {
+
+                            if (data.success) {
+                                swalSuccess(data.message);
+                                setTimeout(() => {
+                                    location.reload()
+                                }, 1800);
+                            } else {
+                                swalError('Error occured, please contact support!');
+                            }
+                        })
+                        .fail(function() {
+                            swalError('Error occured, please contact support!');
+                        });
+                }
+            })
+
+            return false;
+        });
+
+
+        $(document).on('click', '#release-form', function() {
+            let btn = $(this);
+            let shipmentId = "";
+            let url = '/order/cancel/' + shipmentId;
+
+            Swal.fire({
+                text: "This trigger will also notify YL that the shipment has been picked up. Do you want to continue?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                            type: 'POST',
+                            _token: '{{ csrf_token() }}',
+                            url: url
+                        })
+
+                        .done(function(data) {
+
+                            if (data.success) {
+                                swalSuccess(data.message);
+                                setTimeout(() => {
+                                    location.reload()
+                                }, 1800);
+                            } else {
+                                swalError('Error occured, please contact support!');
+                            }
+                        })
+                        .fail(function() {
+                            swalError('Error occured, please contact support!');
+                        });
+                }
+            })
+
+            return false;
+        });
+
 
 
         $(document).on('click', '.shipmentId-txt', function() {
@@ -483,7 +627,7 @@
 
         function swalError(html) {
             Swal.fire({
-                icon: 'error',
+                icon: 'warning',
                 title: 'Oops...',
                 html: html,
             })

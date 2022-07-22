@@ -95,17 +95,6 @@
                     </table>
                 </div>
             </div>
-            <form id="orders-form" class="modal-footer" method="POST">
-                @csrf
-                <select class="form-control float-right" style="width:200px" name="hub_id" required>
-                    <option value="" disabled selected>Choose hub</option>
-                    @foreach ($hubs as $item)
-                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                    @endforeach
-                </select>
-                <button class="btn btn-sm btn-primary" id="btn-pickedup" type="submit">Tag All as
-                    Picked Up</button>
-            </form>
         </div>
     </div>
 </div><!-- End orders modal -->
@@ -158,7 +147,7 @@
                     <label class="col-form-label">Weight Unit of measure</label>
                     <select class="form-control" name="weightUoM" required>
                         @php
-                            $weights = ["MG","CG","DG","G","DAG","HG","KG","T"];
+                            $weights = ['MG', 'CG', 'DG', 'G', 'DAG', 'HG', 'KG', 'T'];
                         @endphp
                         @foreach ($weights as $item)
                             <option value="{{ $item }}">{{ $item }}</option>
@@ -273,7 +262,7 @@
                                 <th>Sales Price</th>
                                 <th>Taxable Amount</th>
                                 <th>Line Item Total</th>
-                              <!--  <th>Qty To Ship</th>
+                                <!--  <th>Qty To Ship</th>
                                 <th>Lot Code</th>-->
                             </tr>
                         </thead>
@@ -283,15 +272,6 @@
                     </table>
                 </div>
 
-                <div class="col-md-12 mb-2">
-                    <label class="col-form-label">Hub</label>
-                    <select class="form-control" name="receiver" required>
-                        <option value="" disabled selected>Choose hub</option>
-                        @foreach ($hubs as $item)
-                            <option value="{{ $item->receiver }}">{{ $item->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
@@ -373,5 +353,57 @@
                 <button class="btn btn-sm btn-primary" type="submit">Return</button>
             </div>
         </form>
+    </div>
+</div>
+
+
+<div class="modal fade" id="fetchOrderModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Fetch Order</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row g-3">
+                <div class="col-12">
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home"
+                                role="tab" aria-controls="nav-home" aria-selected="true">Shipments</a>
+                            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile"
+                                role="tab" aria-controls="nav-profile" aria-selected="false">Single Shipment</a>
+                        </div>
+                    </nav>
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active row" id="nav-home" role="tabpanel"
+                            aria-labelledby="nav-home-tab">
+                            <div class="col-md-6 mt-3 mb-3">
+                                <label class="col-form-label">Number of Shipment</label>
+                                <input type="number" class="form-control" name="shipment_count" min="1">
+                            </div>
+                            <div class="col-md-6 mt-3 mb-3">
+                                <button class="btn btn-sm btn-outline-primary" id="btn-bulk-fetch">Fetch</button>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade row" id="nav-profile" role="tabpanel"
+                            aria-labelledby="nav-profile-tab">
+                            <div class="col-md-6 mt-3 mb-3">
+                                <label class="col-form-label">Shipment ID</label>
+                                <input type="text" class="form-control" name="shipmentId">
+                            </div>
+                            <div class="col-md-6 mt-3 mb-3">
+                                <button class="btn btn-sm btn-outline-primary" id="btn-single-fetch">Fetch</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
 </div>

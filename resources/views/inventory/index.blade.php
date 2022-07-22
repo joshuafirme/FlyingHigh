@@ -95,16 +95,6 @@
                                                             title="Stock Adjustment" data-item="{{ $item }}"
                                                             data-backdrop="static" data-keyboard="false"><i
                                                                 class="fas fa-sort-amount-up"></i></i></a>
-                                                        <a class="btn btn-sm btn-outline-primary btn-hubs-stock"
-                                                            data-toggle="tooltip" data-placement="top"
-                                                            title="Hub Stocks"
-                                                            data-itemNumber="{{ $item->itemNumber }}"
-                                                            data-desc="{{ $item->productDescription }}"><i
-                                                                class="fa fa-warehouse"></i></a>
-                                                        <a class="btn btn-sm btn-outline-danger btn-delete"
-                                                            data-toggle="tooltip" data-placement="top" title="Delete"
-                                                            data-id="{{ $item->id }}">
-                                                            <i class="fa fa-trash"></i></a>
                                                     </td>
                                                 </tr>
                                             @endforeach

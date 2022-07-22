@@ -35,11 +35,15 @@ $invoice = new App\Models\Invoice();
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link {{ $tab == 'shipments' ? 'active' : '' }}"
-                                        href="{{ url("/pickup-locations/$hub_id?tab=shipments") }}">Shipments</a>
+                                        href="{{ url("/pickup-locations/$branch_id?tab=shipments") }}">Shipments</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ $tab == 'cancelled' ? 'active' : '' }}"
+                                        href="{{ url("/pickup-locations/$branch_id?tab=cancelled") }}">Cancelled</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {{ $tab == 'inventory' ? 'active' : '' }}"
-                                        href="{{ url("/pickup-locations/$hub_id?tab=inventory") }}">Inventory</a>
+                                        href="{{ url("/pickup-locations/$branch_id?tab=inventory") }}">Inventory</a>
                                 </li>
                             </ul>
 
@@ -57,7 +61,8 @@ $invoice = new App\Models\Invoice();
 
                                     <div class="ml-auto mt-4 mt-sm-2">
 
-                                        <form action="{{ url("/pickup-locations/{$hub_id}/shipment") }}" method="get">
+                                        <form action="{{ url("/pickup-locations/{$branch_id}/shipment") }}"
+                                            method="get">
                                             <div class="input-group">
                                                 <input type="text" class="form-control" name="key"
                                                     style="width: 280px;"
@@ -141,10 +146,11 @@ $invoice = new App\Models\Invoice();
                                                                 </div>
                                                             </div>
                                                             <a class="btn btn-sm btn-outline-primary float-left m-1"
-                                                                href="{{ url('/pickup-locations/' . $hub_id . '/pickup/' . $item->shipmentId) }}"
+                                                                href="{{ url('/pickup-locations/' . $branch_id . '/pickup/' . $item->shipmentId) }}"
                                                                 target="_blank">Pickup >
                                                             </a>
-                                                            <a class="btn btn-sm btn-outline-danger float-left m-1"
+                                                            <a class="btn btn-sm btn-outline-danger float-left m-1 btn-cancel"
+                                                                data-shipmentId="{{ $item->shipmentId }}"
                                                                 href="#">Cancel
                                                             </a>
                                                         </td>
@@ -158,6 +164,93 @@ $invoice = new App\Models\Invoice();
                                                             No shipment found.
                                                             <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
+
+                                        </tbody>
+                                    </table>
+                                    @php
+                                        echo $shipments->appends(request()->query())->links('pagination::bootstrap-4');
+                                    @endphp
+                                </div>
+                            @elseif (!isset($_GET['tab']) || $_GET['tab'] == 'cancelled')
+                                <div class="mb-4 mt-2 d-md-flex flex-md-wrap">
+                                    <div class="mt-3 mb-3">
+                                        <button type="button" id="btn-create"
+                                            class="btn btn-sm btn-primary w-auto open-modal" data-toggle="modal"
+                                            data-target="#addPickupModal">
+                                            Add Shipment
+                                        </button>
+                                    </div>
+
+                                    <div class="ml-auto mt-4 mt-sm-2">
+
+                                        <form action="{{ url("/pickup-locations/{$branch_id}/shipment") }}"
+                                            method="get">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="key"
+                                                    style="width: 280px;"
+                                                    placeholder="Search by Shipment ID or Tracking #"
+                                                    value="{{ isset($_GET['key']) ? $_GET['key'] : '' }}">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary" type="submit">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-borderless table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Shipment Id</th>
+                                                <th scope="col">Tracking #</th>
+                                                <th scope="col">Ship Carrier</th>
+                                                <th scope="col">Ship Method</th>
+                                                <th scope="col">Total Weight</th>
+                                                <th scope="col">Freight Charges</th>
+                                                <th scope="col">Qty Packages</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Date time cancelled</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (count($shipments))
+                                                @foreach ($shipments as $item)
+                                                    <tr>
+                                                        <td>{{ $item->shipmentId }}</td>
+                                                        <td>
+                                                            <a href="https://app.flyinghighenergyexpress.com/catalog/tracking/view/{{ $item->trackingNo }}"
+                                                                target="_blank"><u>{{ $item->trackingNo }}</u></a>
+                                                        </td>
+                                                        <td>{{ $item->shipCarrier }}</td>
+                                                        <td>{{ $item->shipMethod }}</td>
+                                                        <td>{{ $item->totalWeight . ' ' . $item->weightUoM }}</td>
+                                                        <td>{{ $item->freightCharges . ' ' . $item->currCode }}
+                                                        </td>
+                                                        <td>{{ $item->qtyPackages }}</td>
+                                                        <td>
+                                                            <span class="badge badge-pill badge-danger">Cancelled</span>
+                                                        </td>
+                                                        <td>
+                                                            {{ Utils::formatDate($item->updated_at) }}
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td colspan="10">
+                                                        <div class="alert alert-danger alert-dismissible fade show"
+                                                            role="alert">
+                                                            No shipment found.
+                                                            <button type="button" class="close"
+                                                                data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
@@ -199,9 +292,18 @@ $invoice = new App\Models\Invoice();
                                                         <td>{{ $expiration }}</td>
                                                         <td>{{ $item->stock }}</td>
                                                         <td>
-                                                            <a class="btn btn-sm btn-outline-danger float-left m-1"
-                                                                href="#">
-                                                            </a>
+                                                            <a class="btn btn-sm btn-outline-primary btn-stock-adjustment"
+                                                                data-toggle="tooltip" data-placement="top"
+                                                                title="Stock Adjustment"
+                                                                data-item="{{ $item }}"
+                                                                data-backdrop="static" data-keyboard="false"><i
+                                                                    class="fas fa-sort-amount-up"></i></i></a>
+                                                            <a class="btn btn-sm btn-outline-primary btn-hubs-stock"
+                                                                data-toggle="tooltip" data-placement="top"
+                                                                title="Assign BIN location"
+                                                                data-itemNumber="{{ $item->itemNumber }}"
+                                                                data-desc="{{ $item->productDescription }}"><i
+                                                                    class="fa fa-warehouse"></i></a>
                                                         </td>
 
                                                     </tr>

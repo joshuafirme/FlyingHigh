@@ -23,6 +23,7 @@ use App\Http\Controllers\Reports\HubTransferReportController;
 use App\Http\Controllers\Reports\PickupReportController;
 use App\Http\Controllers\Reports\InboundTransferController;
 use App\Http\Controllers\Reports\ExpiredController;
+use App\Http\Controllers\Reports\NearExpiryController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -54,11 +55,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/attributes/update/{id}', [AttributeController::class, 'update']);
     Route::post('/attributes/delete/{id}', [AttributeController::class, 'delete']);
 
-    Route::get('/pickup-locations/{location_id}/search', [HubInventoryController::class, 'searchProduct'])->name('searchProductHub');
-    Route::get('/pickup-locations/{location_id}', [HubInventoryController::class, 'hubInventory']);
-    Route::get('/pickup-locations/{location_id}/pickup/{shipmentId}', [HubInventoryController::class, 'pickup']);
-    Route::get('/pickup-locations/{location_id}/shipment', [HubInventoryController::class, 'searchShipment']);
-
     Route::post('/hub/update/{id}', [HubController::class, 'update']);
     Route::get('/hub/search', [HubController::class, 'search'])->name('searchHub');
     Route::resource('/hub', HubController::class);
@@ -86,11 +82,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/returned', [OrderController::class, 'getReturnedList']);
     Route::get('/get-line-items/{orderId}', [OrderController::class, 'getLineItems']);
     
-    Route::get('/orders', [OrderController::class, 'index']);
-    Route::get('/orders/filter', [OrderController::class, 'filterPaginate']);
-    Route::get('/orders/search', [OrderController::class, 'search']);
+    Route::get('/orders/{branch_id}', [OrderController::class, 'index']);
+    Route::get('/orders/filter/{branch_id}', [OrderController::class, 'filterPaginate']);
+    Route::get('/orders/search/{branch_id}', [OrderController::class, 'search']);
+    Route::get('/order/pickup/{branch_id}/{shipmentId}', [OrderController::class, 'pickup']);
 
     Route::post('/order/do-ship', [OrderController::class, 'doShip']);
+    Route::post('/order/cancel/{shipmentId}', [OrderController::class, 'cancelOrder']);
     Route::get('/order/{shipmentId}', [OrderController::class, 'getOneOrder']);
     
 
@@ -157,6 +155,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/expired/preview/{date_from}/{date_to}', [ExpiredController::class, 'previewReport']);
     Route::get('/reports/expired/download/{date_from}/{date_to}', [ExpiredController::class, 'downloadReport']);
     Route::get('/reports/expired/export/{date_from}/{date_to}', [ExpiredController::class, 'exportReport']);
+    Route::get('/reports/expired', [ExpiredController::class, 'index']);
+
+    Route::get('/reports/near-expiry', [NearExpiryController::class, 'index']);
+    Route::get('/reports/near-expiry/preview', [NearExpiryController::class, 'previewReport']);
+    Route::get('/reports/near-expiry/download', [NearExpiryController::class, 'downloadReport']);
+    Route::get('/reports/near-expiry/export', [NearExpiryController::class, 'exportReport']);
 
     Route::get('/inventory', [InventoryController::class, 'index']);
     Route::get('/inventory/search', [InventoryController::class, 'search']);

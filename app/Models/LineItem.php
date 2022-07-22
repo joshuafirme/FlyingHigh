@@ -34,7 +34,7 @@ class LineItem extends Model
     ];
 
     public function getLineItems($orderId) {
-        return self::where('orderId', $orderId)->get();
+        return self::where('orderId', $orderId)->orderBy('lineNumber')->get();
     }
 
     

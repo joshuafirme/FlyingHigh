@@ -35,6 +35,8 @@ Route::post('purchase-orders', [YLApiController::class, 'postPurchaseOrders']);
 Route::post('confirm-purchase-orders/{transac_ref}', [YLApiController::class, 'confirmPurchaseOrders']);
 Route::post('product/send-stock-status', [YLApiController::class, 'sendStockStatus']);
 
+Route::post('shipment/{shipmentId?}', [YLApiController::class, 'getShipment']);
+
 Route::middleware('client')->group(function () {
     Route::get('get-yl-access-token', [YLApiController::class, 'getAccessToken']);
 });  

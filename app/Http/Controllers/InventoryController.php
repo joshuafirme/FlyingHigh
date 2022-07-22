@@ -11,7 +11,7 @@ use Utils;
 
 class InventoryController extends Controller
 {
-       private $page = "Inventory";
+    private $page = "Inventory";
 
     public function __construct()
     {

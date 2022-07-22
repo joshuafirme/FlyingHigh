@@ -18,22 +18,22 @@ use Utils;
 
 class OrderController extends Controller
 {
-    public function index(Order $orders) 
+    public function index($branch_id, Order $orders) 
     {
         $orders = $orders->getOrder(10);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
         $invoice = new Invoice;
-        return view('orders.index', compact('orders', 'hubs', 'reasons', 'invoice'));
+        return view('orders.index', compact('orders', 'branch_id', 'reasons', 'invoice'));
     }
 
-    public function filterPaginate(Order $orders) 
+    public function filterPaginate($branch_id, Order $orders) 
     {
         $orders = $orders->filterPaginate(10);
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
         $invoice = new Invoice;
-        return view('orders.index', compact('orders', 'hubs', 'reasons', 'invoice'));
+        return view('orders.index', compact('orders', 'branch_id', 'reasons', 'invoice'));
     }
 
     public function getReturnedList(LineItem $line_item) 
@@ -71,9 +71,48 @@ class OrderController extends Controller
         ], 200);
     }
     
-    public function getLineItems($orderId, LineItem $lineItem) 
+    public function getLineItems($orderId) 
     {
+        $lineItem = new LineItem;
         return $lineItem->getLineItems($orderId);
+    }
+
+    public function cancelOrder($shipmentId)
+    {
+        // 2 = Cancelled
+        Shipment::where('shipmentId', $shipmentId)->update([
+            'status' => 2
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => "Order Shipment was cancelled successfully.",
+        ], 200);
+    }
+
+    public function getOrderDetails($shipmentId)
+    {
+        $order = new Order;
+        return $order->getOrderDetails($shipmentId);
+    }
+    
+    public function pickup($branch_id, $shipmentId, Order $order, LineItem $line_item)
+    {
+        $order_details = $this->getOrderDetails($shipmentId); 
+        $line_items = $line_item->getLineItems($order_details->orderId);
+        $reasons = ReturnReason::where('status', 1)->get();
+        $invoice = new Invoice;
+        $attribute = new Attribute;
+
+        return view('orders.pickup', 
+            compact(
+                'shipmentId',
+                'line_items',
+                'branch_id',
+                'order_details',
+                'invoice',
+                'attribute'
+            )
+        );
     }
 
     public function fetchOrdersData() 
@@ -265,7 +304,7 @@ class OrderController extends Controller
         $line_items = $line_item->getLineItems($request->orderId);
         if (count($line_items) > 0) {
                 $shipment = new Shipment;
-                if ($shipment->isShipmentExists($request->shipmentId, $request->receiver)) {
+                if ($shipment->isShipmentExists($request->shipmentId, $request->hub_id)) {
                     return response()->json([
                         'success' =>  false,
                         'message' => 'Shipment ID is already exists.'
@@ -275,7 +314,8 @@ class OrderController extends Controller
                     
                     $orders_details = $orders->getOrderDetails($request->shipmentId);
                     $shipment->sender = "4803";
-                    $shipment->receiver = $request->receiver;
+                    $shipment->receiver = "";
+                    $shipment->hub_id = $request->hub_id;
                     $shipment->shipmentId =  $request->shipmentId;
                     $shipment->shipCarrier =  $orders_details->shipCarrier ? $orders_details->shipCarrier : "N/A";
                     $shipment->shipMethod =  $orders_details->shipMethod;
@@ -318,7 +358,7 @@ class OrderController extends Controller
             ], 200);    
         }
 
-        $orders->changeStatus($request->shipmentId, $status, $request->receiver);
+        $orders->changeStatus($request->shipmentId, $status, $request->hub_id);
 
         return response()->json([
             'success' => true

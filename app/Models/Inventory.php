@@ -80,6 +80,29 @@ class Inventory extends Model
             ->paginate($per_page);
     }
 
+    public function getNearExpiry($per_page) {
+        $range = request()->range ? request()->range : "90";
+        $near_expiry_date = date('Y-m-d', strtotime("+$range days"));
+        return self::select($this->table . '.*', 'P.productDescription')
+            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.sku')
+            ->whereDate('expiration', '<', $near_expiry_date)
+            ->where('lot_code', '!=', null)
+            ->orderBy($this->table . '.expiration', 'desc')
+            ->paginate($per_page);
+    }
+
+    public function getNearExpiryNoPaging() {
+        $range = request()->range ? request()->range : "90";
+        $near_expiry_date = date('Y-m-d', strtotime("+$range days"));
+        return self::select($this->table . '.*', 'P.productDescription')
+            ->leftJoin('products as P', 'P.itemNumber', '=', $this->table . '.sku')
+            ->whereDate('expiration', '<', $near_expiry_date)
+            ->where('lot_code', '!=', null)
+            ->orderBy($this->table . '.expiration', 'desc')
+            ->get();
+    }
+
+
     public function getExpiredFilterPaginate($per_page) {
         $date_from = request()->date_from ? request()->date_from : date('Y-m-d');
         $date_to = request()->date_to ? request()->date_to : date('Y-m-d');
@@ -124,10 +147,7 @@ class Inventory extends Model
 
     public function getFirstExpiry($sku) {
         return self::where('sku', $sku)
-            ->where(function ($query) {
-                $query->whereDate('expiration', '>', date('Y-m-d'))
-                ->orWhere('lot_code', null);
-            })
+            ->whereDate('expiration', '>', date('Y-m-d'))
             ->orderBy('expiration', 'asc')
             ->where('status', 1)
             ->value('lot_code');

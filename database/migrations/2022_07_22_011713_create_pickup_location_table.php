@@ -16,7 +16,7 @@ class CreatePickupLocationTable extends Migration
         Schema::create('pickup_location', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('location_id');
+            $table->string('branch_id');
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });

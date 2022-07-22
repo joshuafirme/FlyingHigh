@@ -1,4 +1,4 @@
-@section('title', 'Hub')
+@section('title', 'Order Pickup')
 @include('layouts.header')
 
 @include('layouts.top-nav')
@@ -7,20 +7,20 @@
 
 @php
 $product = new App\Models\Product();
+$inventory = new App\Models\Inventory();
 @endphp
 
 <div class="content-page">
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="page-title">Pick up</h4>
+                <h4 class="page-title">Order Pickup</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item">Hub</li>
-                            <li class="breadcrumb-item active"><a href="{{ url('/pickup-locations/' . $branch_id) }}"
-                                    class="ic-javascriptVoid">{{ $hub_name }}</a></li>
-                            <li class="breadcrumb-item">Pick up</li>
+                            <li class="breadcrumb-item">Order Pickup</li>
+                            <li class="breadcrumb-item active"><a href="{{ url('/order') }}"
+                                    class="ic-javascriptVoid">Order ID {{ $order_details->orderId }}</a></li>
                         </ol>
                     </div>
                 </div>
@@ -93,7 +93,7 @@ $product = new App\Models\Product();
                                                                             <th>Amount</th>
                                                                         </thead>
                                                                         <tbody>
-                                                                            @foreach ($order_line_items as $item)
+                                                                            @foreach ($line_items as $item)
                                                                                 @if ($item->lineType == 'PN')
                                                                                     @php
                                                                                         $total_amount_due = $total_amount_due + $item->itemUnitPrice;
@@ -128,6 +128,8 @@ $product = new App\Models\Product();
                                 <address class="ic-invoice-addess ic-right-content">
                                     <p class="mb-0">Shipment ID:
                                         {{ $order_details->shipmentId }}</p>
+                                    <p class="mb-0">Order ID:
+                                        {{ $order_details->orderId }}</p>
                                     <p class="mb-0">Order Type:
                                         {{ $order_details->orderSource }}</p>
                                     <p class="mb-0">Ship Method:
@@ -153,8 +155,8 @@ $product = new App\Models\Product();
             <div class="p-2"><strong>Line Items</strong></div>
             <div class="row">
                 <div class="col-12">
-                    <div class="table-responsive">
-                        <table class="table table table-bordered table-hover">
+                    <form id="release-form" class="table-responsive">
+                        <table class="table table table-bordered table-hover mb-2">
                             <thead>
                                 <tr>
                                     <th scope="col">Order ID</th>
@@ -163,27 +165,48 @@ $product = new App\Models\Product();
                                     <th scope="col">Qty Ordered</th>
                                     <th scope="col">Lot Number</th>
                                     <th scope="col">Qty Shipped</th>
-                                    <th scope="col">Ship Date Time</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @if (count($line_items))
                                     @foreach ($line_items as $item)
+                                        @php
+                                            if ($item->lineType == 'PN' || $item->lineType == 'N') {
+                                                continue;
+                                            }
+                                            
+                                            $line_type_txt = '';
+                                            
+                                            if ($item->lineType == 'K') {
+                                                $line_type_txt = 'KIT -';
+                                            } elseif ($item->remarks == 'Component') {
+                                                $line_type_txt = $item->remarks . ' - ';
+                                            }
+                                            
+                                            $lot_code = $inventory->getFirstExpiry($item->partNumber);
+                                        @endphp
                                         <tr>
                                             <td>{{ $item->orderId }}</td>
                                             <td>{{ $item->partNumber }}</td>
-                                            <td>{{ $item->productDescription }}</td>
-                                            <td class="text-center">{{ $item->qtyOrdered }}</td>
-                                            <td>
+                                            <td>{{ $line_type_txt . $item->name }}</td>
+                                            <td class="text-center">{{ $item->quantity }}</td>
+                                            <td style="width: 45%;">
                                                 @if ($product->isLotControlled($item->partNumber))
-                                                    <input type="text" class="form-control" name="lotNumber">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <input type="text" class="form-control" name="lotNumber"
+                                                                value="{{ $lot_code }}" readonly required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <button class="btn btn-sm btn-outline-primary"> Lot Number
+                                                                Inventory</button>
+                                                        </div>
+                                                    </div>
                                                 @else
                                                 @endif
                                             </td>
-                                            <td style="width: 120px;"><input type="number" class="form-control"
-                                                    name="qtyShipped"></td>
-                                            <td><input type="datetime-local" class="form-control"
-                                                    value="{{ date('Y-m-d') }}"></td>
+                                            <td style="width: 10%;"><input type="number" class="form-control"
+                                                    name="qtyShipped" required></td>
                                         </tr>
                                     @endforeach
                                 @else
@@ -202,12 +225,49 @@ $product = new App\Models\Product();
 
                             </tbody>
                         </table>
-                        <div class="float-right m-1">
-                            <button class="btn  btn-outline-primary" id="btn-release">
-                                <i class="fa fa-message"></i> Release
-                            </button>
+
+                        <h5 class="mt-3">Package Details</h5>
+                        <div class="row mb-5">
+                            <div class="col-md-4 mb-2">
+                                <label class="col-form-label">Total Weight</label>
+                                <input type="number" step=".01" class="form-control" name="totalWeight" required>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="col-form-label">Weight Unit of measure</label>
+                                <select class="form-control" name="weightUoM" required>
+                                    @php
+                                        $weights = $attribute->where('type', 'weightUnit')->get();
+                                    @endphp
+                                    @foreach ($weights as $item)
+                                        <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="col-form-label">Freight Charges</label>
+                                <input type="number" step=".01" class="form-control" name="freightCharges"
+                                    required>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="col-form-label">Qty Packages</label>
+                                <input type="number" class="form-control" name="qtyPackages">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="col-form-label">Tracking #</label>
+                                <input type="number" class="form-control" name="trackingNo">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="col-form-label">Date Picked up</label>
+                                <input type="datetime-local" class="form-control" name="shipDateTime"
+                                    value="{{ date('Y-m-d') }}" required>
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <button class="btn  btn-outline-primary mt-3 float-right" type="submit">
+                                    <i class="fa fa-message"></i> Release
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

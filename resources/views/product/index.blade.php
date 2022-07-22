@@ -128,10 +128,10 @@
                                                             title="Product Details"
                                                             data-info="{{ json_encode($item) }}">
                                                             <i class="fa fa-eye"></i></a>
-                                                        <a class="btn btn-sm btn-outline-danger btn-delete"
+                                                       <!-- <a class="btn btn-sm btn-outline-danger btn-delete"
                                                             data-toggle="tooltip" data-placement="top" title="Delete"
                                                             data-id="{{ $item->id }}">
-                                                            <i class="fa fa-trash"></i></a>
+                                                            <i class="fa fa-trash"></i></a>-->
 
                             </div>
                             </td>

@@ -13,12 +13,12 @@ class PickUpLocation extends Model
 
     protected $fillable = [
         'name',
-        'location_id',
+        'branch_id',
         'status'
     ];
 
     
-    public function getLocationName($location_id) {
-        return self::where('location_id', $location_id)->value('name');
+    public function getLocationName($branch_id) {
+        return self::where('branch_id', $branch_id)->value('name');
     }
 }
