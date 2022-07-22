@@ -163,48 +163,6 @@
             });
         }
 
-        function initLoader() {
-            $('.tbl-lot-codes').html('<tr><td colspan="3" class="text-center"><i class="fas fa-circle-notch fa-spin" style="font-size: 21px;"></i></td></tr>');
-        }
-
-        function getLotCodes(sku, type = "edit") {
-            
-            initLoader();    
-            fetch("/api/lotcode/" + sku)
-                .then(data => data.json())
-                .then(result => {
-                    console.log(result)
-                    setTimeout(() => {
-                    $('.tbl-lot-codes').html('');
-                        if (result.length > 0) {
-                                for (let item of result) {
-                                    let lot_code = item.lot_code == 0 ? 'N/A' : item.lot_code;
-                                    let expiration = item.expiration ? item.expiration.substring(0, 10) : 'N/A';
-                                    let html = '<tr id="'+item.id+'">';
-                                    if (type=='edit') {
-                                        html += '<td><input type="text" name="lot_code[]" readonly class="form-control" value="'+ lot_code +'"></td>';
-                                        html += '<td>'+item.stock+'</td>';
-                                        html += '<td><input type="date" name="expiration[]" class="form-control" value="'+ expiration +'"></td>';
-                                        html += '<td><a data-id="'+item.id+'" class="btn-archive" href="#" style="color:#DC0100;">Archive</a></td>';
-                                    }
-                                    else {
-                                        html += '<td>'+ lot_code+'</td>';
-                                        html += '<td>'+ item.stock +'</td>';
-                                        html += '<td>'+ expiration +'</td>';
-                                    }
-                                    html += '</tr>';
-                                    $('.tbl-lot-codes').append(html);
-                                }
-                        }
-                        else {
-                            let html = '<tr>';
-                            html += '<td colspan="4"><div class="alert alert-primary">No data found.</div></td>';
-                            html += '</tr>';
-                            $('.tbl-lot-codes').append(html);
-                        }
-                    }, 300);
-                })
-        }
 
         function incrementStock(sku, qty) {
                 $.ajax({
@@ -267,7 +225,6 @@
                 let modal_type = $(this).attr('modal-type');
                 clearInputs();
                 if (modal_type == 'create') {
-                    $('.tbl-lot-codes').html('');
                     $('[name=status]').val(1);
                     modal.find('.modal-title').text('Create Product');
                     modal.find('form').attr('action', "{{ route('product.store') }}");
@@ -315,15 +272,6 @@
                     }
                     getLotCodes(data.itemNumber);
                 }
-            });
-            
-            $('#btn-add-lot-code').click(function() { 
-                let html = '<tr>';
-                    html += '<td><input type="text" name="lot_code[]" class="form-control"></td>';
-                    html += '<td></td>';
-                    html += '<td><input type="date" name="expiration[]" class="form-control"></td>';
-                html += '</tr>'
-                $('.tbl-lot-codes').append(html);
             });
 
             $('.btn-view-detail').click(function() {

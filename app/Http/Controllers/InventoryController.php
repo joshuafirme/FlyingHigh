@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inventory;
+use App\Models\AdjustmentRemarks;
+use App\Models\StockAdjustment;
 use App\Models\User;
 use Utils;
 
@@ -19,17 +21,34 @@ class InventoryController extends Controller
         });
     }
 
-    public function index(Inventory $lc) {
-        $products = $lc->getAllPaginate(15);
-        return view('inventory.index', compact('products'));
+    public function index(Inventory $inventory) {
+        $products = $inventory->getAllPaginate(15);
+        $remarks = AdjustmentRemarks::where('status', 1)->get();
+        return view('inventory.index', compact('products','remarks'));
     }
 
-    public function previewReport(Inventory $lc){
+    public function search(Inventory $inventory) {
+        $products = $inventory->searchPaginate(request()->sku, 15);
+        $remarks = AdjustmentRemarks::where('status', 1)->get();
+        return view('inventory.index', compact('products','remarks'));
+    }
+
+    public function updateExpiration($id)
+    {
+        Inventory::where('id', $id)->update(['expiration' => request()->expiration]);
+
+        return response()->json([
+            'success' =>  true,
+            'message' => 'Lot Expiration was upated successfully.'
+        ], 200);
+    }
+
+    public function previewReport(Inventory $inventory){
         
-        $items = Utils::objectToArray($lc->getAll());
+        $items = Utils::objectToArray($inventory->getAll());
         $title = "Inventory Report";
-        $headers = $lc->getHeaders();
-        $columns = $lc->getColumns();
+        $headers = $inventory->getHeaders();
+        $columns = $inventory->getColumns();
         
         $output = Utils::renderReport($items, $title, $headers, $columns);
        
@@ -40,12 +59,12 @@ class InventoryController extends Controller
         return $pdf->stream('report.pdf');
     }
     
-    public function downloadReport(Inventory $lc){
+    public function downloadReport(Inventory $inventory){
         
-        $items = Utils::objectToArray($lc->getAll());
+        $items = Utils::objectToArray($inventory->getAll());
         $title = "Inventory Report";
-        $headers = $lc->getHeaders();
-        $columns = $lc->getColumns();
+        $headers = $inventory->getHeaders();
+        $columns = $inventory->getColumns();
         
         $output = Utils::renderReport($items, $title, $headers, $columns);
        

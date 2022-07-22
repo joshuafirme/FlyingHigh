@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\HubController;
+use App\Http\Controllers\PickUpLocationController;
 use App\Http\Controllers\HubInventoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\InventoryController;
@@ -53,14 +54,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/attributes/update/{id}', [AttributeController::class, 'update']);
     Route::post('/attributes/delete/{id}', [AttributeController::class, 'delete']);
 
-    Route::get('/hubs/{hub_id}/search', [HubInventoryController::class, 'searchProduct'])->name('searchProductHub');
-    Route::get('/hubs/{receiver}', [HubInventoryController::class, 'hubInventory']);
-    Route::get('/hubs/{receiver}/pickup/{shipmentId}', [HubInventoryController::class, 'pickup']);
-    Route::get('/hubs/{hub_id}/shipment', [HubInventoryController::class, 'searchShipment']);
+    Route::get('/pickup-locations/{location_id}/search', [HubInventoryController::class, 'searchProduct'])->name('searchProductHub');
+    Route::get('/pickup-locations/{location_id}', [HubInventoryController::class, 'hubInventory']);
+    Route::get('/pickup-locations/{location_id}/pickup/{shipmentId}', [HubInventoryController::class, 'pickup']);
+    Route::get('/pickup-locations/{location_id}/shipment', [HubInventoryController::class, 'searchShipment']);
 
     Route::post('/hub/update/{id}', [HubController::class, 'update']);
     Route::get('/hub/search', [HubController::class, 'search'])->name('searchHub');
     Route::resource('/hub', HubController::class);
+
+    Route::post('/pickup-location/update/{id}', [PickUpLocationController::class, 'update']);
+    Route::get('/pickup-location/search', [PickUpLocationController::class, 'search']);
+    Route::resource('/pickup-location', PickUpLocationController::class);
+    
 
     Route::post('/return-reason/delete/{id}', [ReturnReasonController::class, 'delete']);
     Route::post('/return-reason/update/{id}', [ReturnReasonController::class, 'update']);
@@ -153,6 +159,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/expired/export/{date_from}/{date_to}', [ExpiredController::class, 'exportReport']);
 
     Route::get('/inventory', [InventoryController::class, 'index']);
+    Route::get('/inventory/search', [InventoryController::class, 'search']);
+    Route::post('/inventory/update-expiration/{id}', [InventoryController::class, 'updateExpiration']);
     Route::get('/inventory/preview', [InventoryController::class, 'previewReport']);
     Route::get('/inventory/download', [InventoryController::class, 'downloadReport']);
     Route::get('/inventory/export', [InventoryController::class, 'exportReport']);

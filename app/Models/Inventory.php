@@ -56,11 +56,11 @@ class Inventory extends Model
 
         return self::select($this->table . '.*', 'productDescription')
             ->leftJoin('products as P', DB::raw('CONCAT(P.itemNumber, P.baseUOM)'), '=', DB::raw('CONCAT(sku, uom)'))
-            ->orderBy($this->table . '.expiration')
             ->whereDate('expiration', '>', date('Y-m-d'))
             ->where('P.itemNumber', 'LIKE', '%' . $key . '%')
             ->orWhere('productDescription', 'LIKE', '%' . $key . '%')
             ->union($no_lot_code_list)
+            ->orderBy('expiration','desc')
             ->paginate($per_page);
     }
 

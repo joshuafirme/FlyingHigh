@@ -530,10 +530,10 @@ class Utils
         return 'file_not_exists.';
     }
 
-    public function formatDate($date, $format_time = true) 
+    public static function formatDate($date, $format_time = true) 
     {
         if ($format_time) {
-            return date('M d, Y H:i', strtotime($date));
+            return date('M d, Y h:m:s', strtotime($date));
         }
         return date('M d, Y', strtotime($date));
     }

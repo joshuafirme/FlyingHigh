@@ -13,6 +13,7 @@ use App\Models\ReturnReason;
 use App\Models\Order;
 use App\Models\LineItem;
 use App\Models\Invoice;
+use App\Models\PickUpLocation;
 use App\Models\Attribute;
 use Utils;
 
@@ -22,13 +23,13 @@ class HubInventoryController extends Controller
     
     public function __construct()
     {
-        $this->middleware(function ($request, $next) {
-            if (User::isPermitted($this->page)) { return $next($request); }
-            return abort(401);
-        });
+      //  $this->middleware(function ($request, $next) {
+       //     if (User::isPermitted($this->page)) { return $next($request); }
+     //       return abort(401);
+      //  });
     }
 
-    public function hubInventory($hub_id, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
+    public function hubInventory($hub_id, HubInventory $hub_inv, PickUpLocation $location, Shipment $shipment)
     {
         $shipments = $shipment->getShipmentByHub($hub_id, 10);
         $inventory = $hub_inv->getByHub($hub_id, 15);
@@ -36,11 +37,11 @@ class HubInventoryController extends Controller
         $reasons = ReturnReason::where('status', 1)->get();
         $attribute = new Attribute;
 
-        $hub_name = $hub->getHubName($hub_id);
+        $hub_name = $location->getLocationName($hub_id);
         return view('hubs-inventory.index', compact('shipments', 'hub_name', 'hub_id', 'inventory', 'attribute', 'hub_inv'));
     }
 
-    public function searchShipment($hub_id, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
+    public function searchShipment($hub_id, HubInventory $hub_inv, PickUpLocation $location, Shipment $shipment)
     {
         $key = isset(request()->key) ? request()->key : "";
         $shipments = $shipment->searchShipment($hub_id, $key, 10);
@@ -48,12 +49,12 @@ class HubInventoryController extends Controller
         $reasons = ReturnReason::where('status', 1)->get();
         $attribute = new Attribute;
 
-        $hub_name = $hub->getHubName($hub_id);
+        $hub_name = $location->getLocationName($hub_id);
         return view('hubs-inventory.index', compact('shipments', 'hub_name', 'hub_id', 'hub_inv', 'attribute'));
     }
 
 
-    public function pickup($hub_id, $shipmentId, HubInventory $hub_inv, Hub $hub, Shipment $shipment, LineItem $line_item)
+    public function pickup($hub_id, $shipmentId, HubInventory $hub_inv, PickUpLocation $location, Shipment $shipment, LineItem $line_item)
     {
         $order_details = $this->getOrderDetails($shipmentId);
         $order_line_items = $line_item->getLineItems($order_details->orderId);
@@ -64,7 +65,7 @@ class HubInventoryController extends Controller
         $package_details = $shipment->readOne($shipmentId);
         $attribute = new Attribute;
 
-        $hub_name = $hub->getHubName($hub_id);
+        $hub_name = $location->getLocationName($hub_id);
         return view('hubs-inventory.pickup', 
             compact(
                 'order_line_items',
@@ -94,7 +95,7 @@ class HubInventoryController extends Controller
         return $hub_inv->getAllStock($sku);
     }
 
-    public function searchProduct($hub_id, HubInventory $hub_inv, Hub $hub, Shipment $shipment)
+    public function searchProduct($hub_id, HubInventory $hub_inv, PickUpLocation $location, Shipment $shipment)
     {
         $key = isset(request()->key) ? request()->key : "";
 
@@ -102,7 +103,7 @@ class HubInventoryController extends Controller
         $hubs = Hub::where('status', 1)->get();
         $reasons = ReturnReason::where('status', 1)->get();
 
-        $hub_name = $hub->getHubName($hub_id);
+        $hub_name = $location->getLocationName($hub_id);
         return view('hubs-inventory.index', compact('deliveries', 'hub_name', 'hub_id', 'hub_inv'));
         return view('hubs-inventory.index', compact('products', 'hub_name', 'hub_id', 'hub_inv'));
     }

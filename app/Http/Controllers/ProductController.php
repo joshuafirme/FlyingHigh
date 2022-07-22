@@ -23,7 +23,7 @@ use Cache;
 
 class ProductController extends Controller
 {
-    private $page = "Product";
+    private $page = "SKU Master";
 
     public function __construct()
     {
@@ -62,12 +62,6 @@ class ProductController extends Controller
     public function store(Request $request, Product $product)
     { 
         Cache::forget('all_sku_cache');
-
-        $add_lot_code = json_decode($this->addLotCode($request, $action = 'store'));
-
-        if ($add_lot_code->success == false) {
-            return redirect()->back()->with('danger', $add_lot_code->lot_codes . ' lot code'.$add_lot_code->is_are.' already exists.');
-        }
         
         if ($product->isSkuExists($request->sku, $request->baseUOM)) {
             return redirect()->back()->with('danger', 'SKU is already exists.');
@@ -107,20 +101,6 @@ class ProductController extends Controller
         ]);
         
         Product::where('id',$id)->update($data);
-
-        if ($request['lot_code']) {
-            foreach ($request['lot_code'] as $key => $lot_code) {
-                $expiration = $request->expiration[$key];
-                $lc = new Inventory;
-                $lc->where('lot_code', $lot_code)->update(['expiration' => $expiration]);
-            }
-        }
-        
-        $add_lot_code = json_decode($this->addLotCode($request, $action = 'update'));
-        
-        if ($add_lot_code->success == false) {
-            //return redirect()->back()->with('danger', $add_lot_code->lot_codes . ' lot code'.$add_lot_code->is_are.' already exists.');
-        }
 
         return redirect()->back()->with('success', 'Product was updated successfully.');
     }
@@ -182,83 +162,6 @@ class ProductController extends Controller
         return $product->getHubsStockBySku($sku);
     }
 
-
-    public function importAPI(Request $request, Transaction $trans, Product $product, Inventory $lot_code) 
-    {
-        $path = public_path() . '/purchase_order.json';
-        $data = json_decode(file_get_contents($path));
-
-        if ($trans->isTransactionExists($data->transactionReferenceNumber)) {
-            return response()->json([
-                'success' =>  true,
-                'transactionReferenceNumber' => $data->transactionReferenceNumber,
-                'transactionRType' => $data->transactionType,
-                'message' => 'transferred',
-                'status' => 1
-            ], 200);
-        }
-        else {
-            foreach ($data->purchaseOrderReceiptHeaders as $po) {
-                $is_all_sku_exists = json_decode($product->isAllSKUExists($po->purchaseOrderReceiptDetails));
-                if (!$is_all_sku_exists->result) { 
-                    $sku_count = count($is_all_sku_exists->sku_list);
-                    $these_this = $sku_count > 1 ? 'These' : 'The';
-                    $is_are = $sku_count > 1 ? 'are' : 'is';
-                    return response()->json([
-                        'success' =>  false,
-                        'message' => 'some_sku_not_exists',
-                        'description' => $these_this . ' SKU below ' . $is_are . ' not exists',
-                        'sku_list' => $is_all_sku_exists->sku_list,
-                        'status' => 1
-                    ], 200); 
-                }
-
-                foreach ($po->purchaseOrderReceiptDetails as $item) {
-                    $trans_item = new TransactionLineItems;
-                    $trans_item->transactionReferenceNumber = $data->transactionReferenceNumber;
-                    $trans_item->orderNumber = $po->orderNumber;
-                    $trans_item->orderType = $po->orderType;
-                    
-                    if ($lot_code->isLotCodeExists($item->lotNumber)) {
-                        $lot_code->incrementStock($item->itemNumber, $item->lotNumber, $item->qtyRcdGood);
-                    }
-                    else {
-                        $lot_code->createLotCode($item->itemNumber, $item->itemNumber, $item->lotNumber, $item->qtyRcdGood);
-                    }
-
-                    $trans_item->lineNumber = $item->lineNumber;
-                    $trans_item->itemNumber = $item->itemNumber;
-                    $trans_item->qtyRcdGood = $item->qtyRcdGood;
-                    $trans_item->qtyRcdBad = $item->qtyRcdBad;
-                    $trans_item->billOfLading = $item->billOfLading;
-                    $trans_item->rcvComments = $item->rcvComments;
-                    $trans_item->palletId = $item->palletId;
-                    $trans_item->location = $item->location ;
-                    $trans_item->unitOfMeasure = $item->unitOfMeasure;
-                    $trans_item->lotNumber = $item->lotNumber;
-                    $trans_item->receiptDate = $item->receiptDate;
-                    $trans_item->lotExpiration = $item->lotExpiration;
-
-                    $trans_item->save();
-                }
-            }
-
-            
-            $trans->transactionReferenceNumber = $data->transactionReferenceNumber;
-            $trans->transactionType = $data->transactionType;
-            $trans->save();
-
-            return response()->json([
-                'success' =>  true,
-                'transactionReferenceNumber' => $data->transactionReferenceNumber,
-                'transactionRType' => $data->transactionType,
-                'message' => 'transaction_success',
-                'status' => 1
-            ], 200);
-        }
-
-        
-    }
     
     public function importProduct(Request $request) 
     {
@@ -346,7 +249,7 @@ class ProductController extends Controller
             $lot_code->incrementStock($sku, $lot_number, $qty);
         }
         else { 
-            if ($lot_code->hasStock($sku, $qty)) {
+            if ($lot_code->hasStock($sku, $lot_number, $qty)) {
                  $lot_code->decrementStock($sku, $lot_number, $qty);
             }
             else {
@@ -367,7 +270,7 @@ class ProductController extends Controller
     {
         Product::where('id', $id)->update(['status' => 0]);
         return response()->json([
-            'status' =>  true,
+            'success' =>  true,
             'message' => 'Product was deleted.'
         ], 200);
     }

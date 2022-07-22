@@ -12,18 +12,29 @@ use App\Models\User;
 use App\Models\Inventory;
 use App\Models\Attribute;
 use App\Models\HubTransferList;
+use App\Models\PickUpLocation;
 use Utils;
 use DB;
 use Cache;
 
 class HubTransferController extends Controller
 {
+    private $page = "Pick up Location Transfer";
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (User::isPermitted($this->page)) { return $next($request); }
+            return abort(401);
+        });
+    }
+
     public function index(Inventory $lc) 
     {
         $products = $lc->getAllPaginate(15);
         $lot_code = new Inventory;
         $attribute = new Attribute;
-        $hubs = Hub::where('status', 1)->get();
+        $hubs = PickUpLocation::where('status', 1)->get();
         return view('hub-transfer.index', compact('products', 'hubs', 'lot_code', 'attribute'));
     }
 
@@ -68,7 +79,7 @@ class HubTransferController extends Controller
 
     public function getTransferList() 
     {
-        return HubTransferList::leftJoin('product_lot_codes as pl', 'pl.id', '=', 'lot_code_id')
+        return HubTransferList::leftJoin('inventory as pl', 'pl.id', '=', 'lot_code_id')
             ->get();
     }
 

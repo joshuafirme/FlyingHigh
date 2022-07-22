@@ -13,11 +13,22 @@ use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\POLineItems;
 use App\Models\Transaction;
+use App\Models\User;
 use Utils;
 use DB;
 
 class StockTransferController extends Controller
 {
+    private $page = "Stock Transfer";
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (User::isPermitted($this->page)) { return $next($request); }
+            return abort(401);
+        });
+    }
+
     public function index() 
     {
         $purchase_orders = PurchaseOrder::orderBy('orderDate', 'desc')->paginate(10);

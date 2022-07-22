@@ -31,7 +31,7 @@ class HubController extends Controller
         return view('hub.index', compact('page_title', 'hubs'));
     }
 
-    public function store(Request $requestm, Hub $hub)
+    public function store(Request $request, Hub $hub)
     {
         $all_req = $request->all();
         $all_req['slug'] = Str::slug($all_req['name'], '-');

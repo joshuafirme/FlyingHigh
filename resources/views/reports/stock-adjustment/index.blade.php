@@ -50,7 +50,8 @@
                                                 @php
                                                     $selected = $item->id == request()->remarks_id ? 'selected' : '';
                                                 @endphp
-                                                <option value="{{ $item->id }}" {{ $selected }}>{{ $item->name }}</option>
+                                                <option value="{{ $item->id }}" {{ $selected }}>
+                                                    {{ $item->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -65,14 +66,20 @@
                                 </form>
 
                                 <div class="form-group ml-auto mt-4 mt-sm-2">
+                                    @php
+                                        $param = '';
+                                        if (isset($_GET['sku'])) {
+                                            $param = "?key=". $_GET['sku'];
+                                        }
+                                    @endphp
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/stock-adjustment/export/' . $date_from . '/' . $date_to . '/' . $remarks_id) }}"
+                                        href="{{ url('/reports/stock-adjustment/export/' . $date_from . '/' . $date_to . '/' . $remarks_id . $param) }}"
                                         target="_blank"><i class="fas fa-file-export"></i> Export Excel</a>
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/stock-adjustment/download/' . $date_from . '/' . $date_to . '/' . $remarks_id) }}"
+                                        href="{{ url('/reports/stock-adjustment/download/' . $date_from . '/' . $date_to . '/' . $remarks_id . $param) }}"
                                         target="_blank"><i class="fa fa-download"></i> Download PDF</a>
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ url('/reports/stock-adjustment/preview/' . $date_from . '/' . $date_to . '/' . $remarks_id) }}"
+                                        href="{{ url('/reports/stock-adjustment/preview/' . $date_from . '/' . $date_to . '/' . $remarks_id . $param) }}"
                                         target="_blank"><i class="fa fa-print"></i> Print</a>
                                 </div>
                             </div>
@@ -110,8 +117,8 @@
                                                     <div class="alert alert-danger alert-dismissible fade show"
                                                         role="alert">
                                                         No data found.
-                                                        <button type="button" class="close"
-                                                            data-dismiss="modal" aria-label="Close">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>

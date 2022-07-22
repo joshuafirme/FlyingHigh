@@ -163,20 +163,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-12 mt-4">
-                    <a class="btn btn-sm btn-primary float-right mb-3" id="btn-add-lot-code"><i
-                            class="fa fa-plus"></i> Add Lot Code</a>
-                    <table class="table table-hover pb-3">
-                        <thead id="thead-lot-codes">
-                            <th>JDE Lot Code</th>
-                            <th>Stock</th>
-                            <th>Expiration</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody class="tbl-lot-codes">
-                        </tbody>
-                    </table>
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Close</button>
@@ -498,17 +484,6 @@
                 </button>
             </div>
             <div class="modal-body row g-3 mb-3">
-                <div class="col-sm-12 col-md-12 mb-2">
-                    <table class="table table-hover pb-3">
-                        <thead>
-                            <th>JDE Lot Code</th>
-                            <th>Stock</th>
-                            <th>Expiration</th>
-                        </thead>
-                        <tbody class="tbl-lot-codes">
-                        </tbody>
-                    </table>
-                </div>
                 <div class="col-12">
                     <table class="table table-bordered table-hover tbl-product-details">
                         <thead>

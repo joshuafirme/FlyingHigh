@@ -74,14 +74,14 @@
                         </span></a>
                     <ul class="submenu">
                         @php
-                            $hubs = App\Models\Hub::where('status', 1)->get();
+                            $locations = App\Models\PickUpLocation::where('status', 1)->get();
                             $permissions = App\Models\Role::permissions();
                             
                         @endphp
-                        @foreach ($hubs as $item)
+                        @foreach ($locations as $item)
                             <li class="">
                                 @if (in_array($item->name, $permissions))
-                                    <a href="{{ url('/hubs/' . $item->id) }}">{{ $item->name }}</a>
+                                    <a href="{{ url('/pickup-locations/' . $item->location_id) }}">{{ $item->name }}</a>
                                 @endif
                             </li>
                         @endforeach
@@ -143,14 +143,12 @@
                     <li class=""><a href="{{ url('users') }}">Users</a>
                     </li>
                     <li class=""><a href="{{ url('role') }}">Roles</a></li>
-                    <li class=""><a href="{{ url('/hub') }}">Branch Plants</a></li>
             </li>
             </ul>
             </li>
             <li>
-                <a href="#" class=""><img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAAApUlEQVRIie2VQQ5AMBBFX0QcgMO6ABuO5w5W7NWmFixoNKZTFsRLmrbJTP/Mb5PCl6kBA1jFMEAlETFAriywACZJoFUKePOTyANFuCKdMwOMXN/FECpcOnuJfdazFiXs974ugkW6LWhv1yOd+Oy6rZOzoOhO7npdo6CQA65doajsihaR2PUIv11BfMMugJn1h9NQsP6sB9KTwBbogUwhMgONIu8lLJo3XjTHV1cFAAAAAElFTkSuQmCC" /><span>
-                        Catalog
+                <a href="#" class=""><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABmJLR0QA/wD/AP+gvaeTAAACsElEQVRIiZXWS6hVdRTH8c+9PsiwCMw7uA+1qAi1VJRUdBDXSQWBkRIkWIFhD0UHvgYhKSFmAwfSQNBBgWUq4Q0c+KCMBsUdWYlgmmbi46pXUUIQGzhYa+M+h33OufcHh/P/773+6/vfa629/hu6cQrfoMfw1I5F6MNN/I9v641G4DfsxyB2Ywz6c0EzvYBjmIVd+BHzsAqX6o334NMc9yTw1xaAGbiKJTl/DQOY3WhBD657GKr5+STN1I83czwSNzCnxRobsS8Bz+I01jSwfQy30JbzdlzEGxW2r+BAMRkjQtSfgFlNQI/gP4wqXZuGy3WgV0Ux3Kva6ZohgI5hcd21ArQYr4scLcWFKshQQDtFwdRrGs7iX1EEy/F1I0gz0Gr8gfHNFotcncKCFnaVoJl4RlRVM63Gz60AjUB9IvEnMQ5P4xDewxN4FB/hCiYOFVIG7cj/TnyVjvfiM3yP2/k7jMnDAbyNF3GwBIAtOILH6+zbh+McPsQ5TBUh6izdGyGqbBDH6+41VbtI6mR8nIBJ6fCkCNGWnBdqwwa1T1mpNg+75zlRer8noNA4vCtCtDOvrUNvjtcmqKsRZDd+wZQmG3kKX4ocDOTGekVzLYP+qgItwgnRv5aKhnY9d1loEs7jg5wfFyFSAVpXBTqKhXgpHS0R58UZrE+bP7GitKZTbReoB63P9d3FggF0iHa/reRoOq7l+IToS2UVoLUtQB0jcR+jRUVdLDl5ThzNRPzb1OpyOvwp723DW/gu/z8XxbKdyMGyfLQz+CIN/hbtoVu8C6NVq0vkoMhhb2k8Xpwp5uYTdKXDvSJ0c8XB1IdNDQBlUDmHhZ7HP8VkpTgD3sGTotJeFlX0g9pTsJGKSGzFWEwQofykbDQvHQ7irjiK31f7drdSh/juuiO+ZjZj1AMeMKo0VFfBYAAAAABJRU5ErkJggg=="><span>
+                        Maintenance
                         <span class="float-right menu-arrow">
                             <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -163,6 +161,8 @@
                     </span>
                 </a>
                 <ul class="submenu">
+                    <li class=""><a href="{{ url('/pickup-location') }}">Pick Up Locations</a></li>
+                    <li class=""><a href="{{ url('/hub') }}">Branch Plants</a></li>
                     <li class=""><a href="{{ url('/adjustment-remarks') }}">Adjustment Remarks</a>
                     <li class=""><a href="{{ url('/return-reason') }}">Reason for Return</a>
                     <li class=""><a href="{{ url('/attributes') }}">Attributes</a>

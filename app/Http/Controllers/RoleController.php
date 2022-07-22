@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Hub;
+use App\Models\PickUpLocation;
 use Cache;
 
 class RoleController extends Controller
@@ -28,8 +28,8 @@ class RoleController extends Controller
     public function index(Role $role) { 
         $page_title = "Role | ";
         $role = Role::paginate(5);
-        $hubs = Hub::where('status', 1)->get();
-        return view('role.index', compact('page_title', 'role', 'hubs'));
+        $locations = PickUpLocation::where('status', 1)->get();
+        return view('role.index', compact('page_title', 'role', 'locations'));
     }
 
     /**

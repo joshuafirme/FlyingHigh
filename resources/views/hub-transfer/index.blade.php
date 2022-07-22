@@ -128,11 +128,11 @@
                                     </table>
                             </div>
 
-                            <label for="validationCustom04" class="form-label mt-3">Hub</label>
+                            <label for="validationCustom04" class="form-label mt-3">Pick up Location</label>
                             <select class="form-control" name="hub_id" id="hub" required>
                                 <option selected disabled value="">Choose...</option>
                                 @foreach ($hubs as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    <option value="{{ $item->location_id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
 

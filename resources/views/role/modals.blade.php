@@ -68,12 +68,12 @@
                         <div class="row">
                             <div class="col-8 pt-1">
                                 <div class="custom-control">
-                                    <label>Product</label>
+                                    <label>SKU Master</label>
                                 </div>
                             </div>
                             <div class="col-4 pt-1">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" name="permission[]" id="chkbx-Product" value="Product"
+                                    <input type="checkbox" name="permission[]" id="chkbx-SKUMaster" value="SKU Master"
                                         class="parent-identy-warehouse">
                                 </div>
                             </div>
@@ -83,12 +83,43 @@
                         <div class="row">
                             <div class="col-8 pt-1">
                                 <div class="custom-control">
-                                    <label>Lot Code List</label>
+                                    <label>Inventory</label>
                                 </div>
                             </div>
                             <div class="col-4 pt-1">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" name="permission[]" id="chkbx-LotCodeList" value="Lot Code List"
+                                    <input type="checkbox" name="permission[]" id="chkbx-Inventory" value="Inventory"
+                                        class="parent-identy-warehouse">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="row">
+                            <div class="col-8 pt-1">
+                                <div class="custom-control">
+                                    <label>Stock Transfer</label>
+                                </div>
+                            </div>
+                            <div class="col-4 pt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="permission[]" id="chkbx-StockTransfer" value="Stock Transfer"
+                                        class="parent-identy-warehouse">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="row">
+                            <div class="col-8 pt-1">
+                                <div class="custom-control">
+                                    <label>Pick up Location Transfer</label>
+                                </div>
+                            </div>
+                            <div class="col-4 pt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="permission[]" id="chkbx-PickupLocationTransfer" value="Pick up Location Transfer"
                                         class="parent-identy-warehouse">
                                 </div>
                             </div>
@@ -176,7 +207,7 @@
                         <div class="row my-2">
                             <div class="col-8 pt-1">
                                 <div class="custom-control">
-                                    <label><strong>Hub
+                                    <label><strong>Pick Up Locations
                                         </strong></label>
                                 </div>
                             </div>
@@ -187,7 +218,7 @@
                             </div>
                         </div>
                     </div>
-                    @foreach ($hubs as $item)
+                    @foreach ($locations as $item)
                         <div>
                             <div class="row">
                                 <div class="col-8 pt-1">

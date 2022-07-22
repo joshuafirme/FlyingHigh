@@ -51,7 +51,17 @@ class StockAdjustment extends Model
             ->whereDate('stock_adjustment.created_at', date('Y-m-d'))
             ->paginate($per_page);
     }
-
+    
+    public function getSKUHistoryAdjustment($per_page) {
+        return self::select('stock_adjustment.*', 'P.productDescription', 'AR.name as remarks', 'U.name as adjusted_by')
+            ->leftJoin('users as U', 'U.id', '=', 'stock_adjustment.user_id')
+            ->leftJoin('products as P', 'P.itemNumber', '=', 'stock_adjustment.sku')
+            ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
+            ->orderBy('stock_adjustment.created_at', 'desc')
+            ->where('P.itemNumber', 'LIKE', '%' . request()->sku . '%')
+            ->paginate($per_page);
+    }
+    
    public function filterPaginate($per_page) {
         $remarks = [request()->remarks_id];
         if (!request()->remarks_id) {
@@ -68,6 +78,11 @@ class StockAdjustment extends Model
     }
 
     public function filter($date_from, $date_to) {
+
+        if (request()->key) { 
+            return $this->getSKUHistoryAdjustmentNoPaging();
+        }
+
         $date_from = $date_from ? $date_from : date('Y-m-d');
         $date_to = $date_to ? $date_to : date('Y-m-d');
         $remarks = [request()->remarks_id];
@@ -81,6 +96,16 @@ class StockAdjustment extends Model
             ->orderBy('stock_adjustment.created_at', 'desc')
             ->whereBetween(DB::raw('DATE(stock_adjustment.created_at)'), [$date_from, $date_to])
             ->whereIn('remarks_id', $remarks)
+            ->get();
+    }
+
+    public function getSKUHistoryAdjustmentNoPaging() {
+        return self::select('P.itemNumber','stock_adjustment.*', 'P.productDescription', 'AR.name as remarks', 'U.name as adjusted_by')
+            ->leftJoin('users as U', 'U.id', '=', 'stock_adjustment.user_id')
+            ->leftJoin('products as P', 'P.itemNumber', '=', 'stock_adjustment.sku')
+            ->leftJoin('adjustment_remarks as AR', 'AR.id', '=', 'stock_adjustment.remarks_id')
+            ->orderBy('stock_adjustment.created_at', 'desc')
+            ->where('P.itemNumber', 'LIKE', '%' . request()->key . '%')
             ->get();
     }
     

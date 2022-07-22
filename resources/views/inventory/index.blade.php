@@ -18,6 +18,11 @@
                         <div class="card-body">
                             <div class="mb-4 mt-2 d-md-flex flex-md-wrap">
                                 <div class="form-group ml-auto mt-4 mt-sm-2">
+                                    <button type="button" class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
+                                        data-toggle="modal" data-target="#bulkTransferModal" data-backdrop="static"
+                                        data-keyboard="false"><i class="fa fa-exchange-alt"></i>
+                                        Send Stock Status Report
+                                    </button>
                                     <a class="btn btn-sm btn-primary" href="{{ url('/inventory/export/') }}"
                                         target="_blank"><i class="fas fa-file-export"></i> Export Excel</a>
                                     <a class="btn btn-sm btn-primary" href="{{ url('/inventory/download/') }}"
@@ -25,7 +30,7 @@
                                     <a class="btn btn-sm btn-primary" href="{{ url('/inventory/preview/') }}"
                                         target="_blank"><i class="fa fa-print"></i> Print</a>
                                 </div>
-                                <form action="{{ route('searchProduct') }}" method="get" class="ml-4">
+                                <form action="{{ url('/inventory/search') }}" method="get" class="ml-4">
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" name="key" style="width: 280px;"
                                             placeholder="Search"
@@ -79,8 +84,28 @@
                                                     <td>{{ $item->bufferStock }}</td>
                                                     <td class="{{ $text_class }}">{!! $icon !!}
                                                         {{ $stock_level }}</td>
-                                                    <td>{{ $item->expiration ? Utils::formatDate($item->expiration, false) : 'N/A' }}</td>
-                                                    <td></td>
+                                                    <td>{{ $item->expiration ? Utils::formatDate($item->expiration, true) : 'N/A' }}
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn-sm btn-outline-primary btn-update-exp" data-item="{{ $item }}"
+                                                            data-toggle="tooltip" data-placement="top" title="Update Lot Expiration">
+                                                            <i class="fa fa-edit"></i></a>
+                                                        <a class="btn btn-sm btn-outline-primary btn-stock-adjustment"
+                                                            data-toggle="tooltip" data-placement="top"
+                                                            title="Stock Adjustment" data-item="{{ $item }}"
+                                                            data-backdrop="static" data-keyboard="false"><i
+                                                                class="fas fa-sort-amount-up"></i></i></a>
+                                                        <a class="btn btn-sm btn-outline-primary btn-hubs-stock"
+                                                            data-toggle="tooltip" data-placement="top"
+                                                            title="Hub Stocks"
+                                                            data-itemNumber="{{ $item->itemNumber }}"
+                                                            data-desc="{{ $item->productDescription }}"><i
+                                                                class="fa fa-warehouse"></i></a>
+                                                        <a class="btn btn-sm btn-outline-danger btn-delete"
+                                                            data-toggle="tooltip" data-placement="top" title="Delete"
+                                                            data-id="{{ $item->id }}">
+                                                            <i class="fa fa-trash"></i></a>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         @else
@@ -114,6 +139,10 @@
     </div>
 </div>
 
+@include('inventory.modals')
+
 @include('layouts.footer')
 
 @include('scripts._global_scripts')
+
+@include('inventory.script')

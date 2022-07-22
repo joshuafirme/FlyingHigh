@@ -1,4 +1,4 @@
-@section('title', 'Hub')
+@section('title', 'Pick Up')
 @include('layouts.header')
 
 @include('layouts.top-nav')
@@ -14,11 +14,11 @@ $invoice = new App\Models\Invoice();
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="page-title">Hub</h4>
+                <h4 class="page-title">Pick Up</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Hub</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Pick Up</a></li>
                             <li class="breadcrumb-item active">{{ $hub_name }}</li>
                         </ol>
                     </div>
@@ -35,11 +35,11 @@ $invoice = new App\Models\Invoice();
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link {{ $tab == 'shipments' ? 'active' : '' }}"
-                                        href="{{ url("/hubs/$hub_id?tab=shipments") }}">Shipments</a>
+                                        href="{{ url("/pickup-locations/$hub_id?tab=shipments") }}">Shipments</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {{ $tab == 'inventory' ? 'active' : '' }}"
-                                        href="{{ url("/hubs/$hub_id?tab=inventory") }}">Inventory</a>
+                                        href="{{ url("/pickup-locations/$hub_id?tab=inventory") }}">Inventory</a>
                                 </li>
                             </ul>
 
@@ -57,7 +57,7 @@ $invoice = new App\Models\Invoice();
 
                                     <div class="ml-auto mt-4 mt-sm-2">
 
-                                        <form action="{{ url("/hubs/{$hub_id}/shipment") }}" method="get">
+                                        <form action="{{ url("/pickup-locations/{$hub_id}/shipment") }}" method="get">
                                             <div class="input-group">
                                                 <input type="text" class="form-control" name="key"
                                                     style="width: 280px;"
@@ -141,7 +141,7 @@ $invoice = new App\Models\Invoice();
                                                                 </div>
                                                             </div>
                                                             <a class="btn btn-sm btn-outline-primary float-left m-1"
-                                                                href="{{ url('/hubs/' . $hub_id . '/pickup/' . $item->shipmentId) }}"
+                                                                href="{{ url('/pickup-locations/' . $hub_id . '/pickup/' . $item->shipmentId) }}"
                                                                 target="_blank">Pickup >
                                                             </a>
                                                             <a class="btn btn-sm btn-outline-danger float-left m-1"

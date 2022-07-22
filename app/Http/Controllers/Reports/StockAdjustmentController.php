@@ -12,20 +12,28 @@ use Utils;
 
 class StockAdjustmentController extends Controller
 {
-    public function index(StockAdjustment $sa) {
-        $stock_adjustments = $sa->getAllPaginate(10);
+    public function index(StockAdjustment $sa) 
+    {
+        if (request()->sku) {
+            $stock_adjustments = $sa->getSKUHistoryAdjustment(10);
+        }
+        else {
+            $stock_adjustments = $sa->getAllPaginate(10);
+        }
         $adjustment_remarks = AdjustmentRemarks::where('status', 1)->get();
         return view('reports.stock-adjustment.index', compact('stock_adjustments', 'adjustment_remarks'));
     }
 
-    public function filterStockAdjustment(StockAdjustment $sa) {
+    public function filterStockAdjustment(StockAdjustment $sa) 
+    {
 
         $stock_adjustments = $sa->filterPaginate(10);
         $adjustment_remarks = AdjustmentRemarks::where('status', 1)->get();
         return view('reports.stock-adjustment.index', compact('stock_adjustments', 'adjustment_remarks'));
     }
 
-    public function previewReport($date_from, $date_to, StockAdjustment $sa){
+    public function previewReport($date_from, $date_to, StockAdjustment $sa)
+    {
         
         $items = Utils::objectToArray($sa->filter($date_from, $date_to));
         $title = "Stock Adjustment Report";
@@ -41,7 +49,8 @@ class StockAdjustmentController extends Controller
         return $pdf->stream($date_from.'-to-'.$date_to.'.pdf');
     }
     
-    public function downloadReport($date_from, $date_to, StockAdjustment $sa){
+    public function downloadReport($date_from, $date_to, StockAdjustment $sa)
+    {
         
         $items = Utils::objectToArray($sa->filter($date_from, $date_to));
         $title = "Stock Adjustment Report";

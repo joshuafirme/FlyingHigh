@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Auth;
-use App\Models\Hub;
+use App\Models\PickUpLocation;
 
 class User extends Authenticatable
 {
@@ -29,7 +29,7 @@ class User extends Authenticatable
     ];
 
     public static function isPermitted($page) {
-        $hub = new Hub;
+        $location = new PickUpLocation;
         $is_permitted = false;
 
         if (Auth::check()) {
@@ -40,8 +40,8 @@ class User extends Authenticatable
                 
                 $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                 
-                $hub_id = substr($current_url, strpos($current_url, "hubs/")+5);
-                $hub_name = $hub->getHubName($hub_id);
+                $location_id = substr($current_url, strpos($current_url, "pickup-locations/")+17);
+                $hub_name = $location->getLocationName($location_id);
                 
                 if (in_array($hub_name, $permissions)) {
                     return true;

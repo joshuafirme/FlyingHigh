@@ -1,4 +1,4 @@
-@section('title', 'Product')
+@section('title', 'SKU Master')
 @include('layouts.header')
 
 @include('layouts.top-nav')
@@ -16,12 +16,12 @@
     <div class="content">
         <div class="container-fluid" id="app">
             <div class="page-title-box">
-                <h4 class="page-title">Products</h4>
+                <h4 class="page-title">SKU Master</h4>
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" class="ic-javascriptVoid">Warehouse</a></li>
-                            <li class="breadcrumb-item active">Products</li>
+                            <li class="breadcrumb-item active">SKU Master</li>
                         </ol>
                     </div>
                 </div>
@@ -36,7 +36,8 @@
                                 @include('layouts.alerts')
                                 <div class="font-weight-normal mb-2">
                                     <div>
-                                        <span>Total SKU Count:</span> <span class="font-weight-bold">{{ Utils::numFormat($product_count) }}</span>
+                                        <span>Total SKU Count:</span> <span
+                                            class="font-weight-bold">{{ Utils::numFormat($product_count) }}</span>
                                     </div>
                                     <div>
                                         Last synced: <span id="last_synced"></span>
@@ -64,35 +65,11 @@
                                         <a class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
                                             href="{{ url('/product/export') }}" target="_blank"><i
                                                 class="fas fa-file-export"></i> Export Excel</a>
-                                        <!--<button type="button"
-                                            class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
-                                            data-toggle="modal" data-target="#apiModal" data-backdrop="static"
-                                            data-keyboard="false"><i class="fas fa-box-open"></i>
-                                            Stock Transfer
-                                        </button>-->
-                                        <button type="button"
-                                            class="btn btn-sm btn-primary btn-bulk-transfer w-autos m-1 col-12 col-sm-auto"
-                                            data-toggle="modal" data-target="#bulkTransferModal" data-backdrop="static"
-                                            data-keyboard="false"><i class="fa fa-exchange-alt"></i>
-                                            Hub Transfer
-                                        </button>
                                         <button class="btn btn-sm btn-primary w-autos m-1 col-12 col-sm-auto"
                                             id="btn-sync-skumaster">
                                             <i class="fa fa-sync"></i>
                                             Sync SKU Master
                                         </button>
-                                        <div class="dropdown float-left m-1">
-                                            <button class="btn btn-sm btn-primary dropdown-toggle"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                 Stock Status
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" target="_blank"
-                                                    href="#">Send Stock Status Report</a>
-                                                <a class="dropdown-item" target="_blank"
-                                                    href="#">Print Stock Status Report</a>
-                                            </div>
-                                        </div>
 
                                     </div>
 
@@ -120,9 +97,8 @@
                                             <th scope="col">SKU</th>
                                             <th scope="col">Description</th>
                                             <th scope="col">Base UOM</th>
-                                            <th scope="col">Stock</th>
-                                            <th scope="col">Buffer Stock</th>
-                                            <th scope="col">Stock Level</th>
+                                            <th scope="col">Created</th>
+                                            <th scope="col">Modified</th>
                                             <th scope="col" style="width:20%">Action</th>
                                         </tr>
                                     </thead>
@@ -130,19 +106,6 @@
                                         @if (count($products))
                                             @foreach ($products as $item)
                                                 @php
-                                                    $text_class = 'text-success';
-                                                    $stock_level = 'Normal';
-                                                    $icon = '<i class="fas fa-check-circle"></i>';
-                                                    $stock = $lot_code->getAllStock($item->itemNumber, $item->baseUOM);
-                                                    if ($stock == 0) {
-                                                        $text_class = 'text-danger';
-                                                        $stock_level = 'Out of stock';
-                                                        $icon = '<i class="fas fa-exclamation-circle"></i>';
-                                                    } elseif ($stock <= $item->buffer_stock) {
-                                                        $text_class = 'text-warning';
-                                                        $stock_level = 'Critical';
-                                                        $icon = '<i class="fas fa-exclamation-circle"></i>';
-                                                    }
                                                     $date_now = date('Y-m-d');
                                                 @endphp
                                                 <tr id="{{ $item->id }}">
@@ -152,50 +115,24 @@
                                                             {{ $item->itemNumber }}</a></td>
                                                     <td>{{ $item->productDescription }}</td>
                                                     <td>{{ $item->baseUOM }}</td>
-                                                    <td class="{{ $text_class }}">{{ $stock }}</td>
-                                                    <td>{{ $item->bufferStock }}</td>
-                                                    <td class="{{ $text_class }}">{!! $icon !!}
-                                                        {{ $stock_level }}</td>
+                                                    <td>{{ Utils::formatDate($item->created_at) }}</td>
+                                                    <td>{{ Utils::formatDate($item->updated_at) }}</td>
                                                     <td>
-                                                        <a class="btn btn-sm btn-primary open-modal"
+                                                        <a class="btn btn-sm btn-outline-primary open-modal"
                                                             modal-type="update" data-info="{{ $item }}"
                                                             data-toggle="tooltip" data-placement="top" title="Edit"
                                                             data-desc="{{ $item->productDescription }}"><i
                                                                 class="fa fa-edit"></i></a>
-                                                        <a class="btn btn-sm btn-primary btn-view-detail"
-                                                            data-toggle="tooltip" data-placement="top" title="Product Details / Lot Codes"
+                                                        <a class="btn btn-sm btn-outline-primary btn-view-detail"
+                                                            data-toggle="tooltip" data-placement="top"
+                                                            title="Product Details"
                                                             data-info="{{ json_encode($item) }}">
                                                             <i class="fa fa-eye"></i></a>
-                                                        <a class="btn btn-sm btn-primary btn-stock-adjustment"
-                                                            data-toggle="tooltip" data-placement="top" title="Stock Adjustment"
-                                                            data-sku="{{ $item->itemNumber }}"
-                                                            data-stock="{{ $stock }}"
-                                                            data-desc="{{ $item->productDescription }}"
-                                                            data-backdrop="static" data-keyboard="false"><i
-                                                                class="fas fa-sort-amount-up"></i></i></a>
-                                                        <a class="btn btn-sm btn-primary btn-hubs-stock"
-                                                            data-toggle="tooltip" data-placement="top" title="Hub Stocks"
-                                                            data-itemNumber="{{ $item->itemNumber }}"
-                                                            data-desc="{{ $item->productDescription }}"><i
-                                                                class="fa fa-warehouse"></i></a>
-                                                        <a class="btn btn-sm btn-danger btn-delete"
+                                                        <a class="btn btn-sm btn-outline-danger btn-delete"
                                                             data-toggle="tooltip" data-placement="top" title="Delete"
                                                             data-id="{{ $item->id }}">
                                                             <i class="fa fa-trash"></i></a>
 
-                                                        <!--<a href="#" class="btn btn-dark btn-sm"
-                                                                data-toggle="dropdown" data-backdrop="static"
-                                                                data-keyboard="false" role="button" aria-haspopup="true"
-                                                                aria-expanded="false"><i
-                                                                    class="fas fa-ellipsis-v"></i></a>
-                                                            <div class="dropdown-menu">
-                                                                 <a class="btn dropdown-item btn-transfer"
-                                                                    data-backdrop="static" data-keyboard="false"
-                                                                    data-target="#transferModal" data-toggle="modal"
-                                                                    data-itemNumber="{{ $item->itemNumber }}"
-                                                                    data-desc="{{ $item->productDescription }}"
-                                                                    data-stock="{{ $stock }}"><i
-                                                                        class="fa fa-exchange-alt"></i> Hub Transfer</a>-->
                             </div>
                             </td>
                             </tr>
