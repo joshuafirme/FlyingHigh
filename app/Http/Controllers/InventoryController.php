@@ -43,6 +43,50 @@ class InventoryController extends Controller
         ], 200);
     }
 
+    public function adjustStock(Request $request, StockAdjustment $stock_adjustment, Inventory $inventory) {
+        $sku = $request->sku;
+        $lot_number = $request->lot_code;
+        $qty = $request->qty;
+        $action = $request->action;
+ 
+        if ($action == 'add') {
+            $inventory->incrementStock($sku, $lot_number, $qty, $request->location);
+        }
+        else { 
+            if ($inventory->hasStock($sku, $lot_number, $qty)) 
+            {
+                $inventory->decrementStock($sku, $lot_number, $qty, $request->location);
+
+                if ( ! $inventory->isHDExists($sku, $lot_number, $qty, $request->location) && $request->location == 'AV') {
+
+                    Inventory::create([
+                        'sku' => $sku,
+                        'lot_code' => $lot_number,
+                        'uom' => $request->uom,
+                        'expiration' => $request->expiration,
+                        'stock' => $qty,
+                        'location' => 'HD',
+                        'status' => 0
+                    ]);
+                }
+                else {
+                    $inventory->incrementStock($sku, $lot_number, $qty, 'HD');
+                }
+            }
+            else {
+                 return response()->json([
+                    'message' => 'not_enough_stock'
+                ], 200);
+            }
+        }
+
+        $stock_adjustment->record($sku, $lot_number, $qty, $action, $request->remarks_id);
+
+        return response()->json([
+            'message' => 'success'
+        ], 200);
+    }
+
     public function previewReport(Inventory $inventory){
         
         $items = Utils::objectToArray($inventory->getAll());

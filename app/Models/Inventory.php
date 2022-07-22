@@ -199,15 +199,26 @@ class Inventory extends Model
             ->sum($this->table . '.stock');
     }
 
-    public function incrementStock($sku, $lot_code, $qty) { 
+    public function incrementStock($sku, $lot_code, $qty, $location) { 
         $lot_code = $lot_code ? $lot_code : null;
-        self::where('sku', $sku)->where('lot_code',$lot_code)->increment('stock', $qty);
+        self::where('sku', $sku)
+            ->where('lot_code',$lot_code)
+            ->where('location', $location)
+            ->increment('stock', $qty);
     }
 
-    public function decrementStock($sku, $lot_code, $qty) {
+    public function isHDExists($sku, $lot_code, $qty, $location) { 
+        return self::where('sku', $sku)
+            ->where('lot_code',$lot_code)
+            ->where('location', $location)
+            ->get();
+    }
+
+    public function decrementStock($sku, $lot_code, $qty, $location) {
         $lot_code = $lot_code ? $lot_code : null;
         self::where('sku', $sku)
             ->where('lot_code', $lot_code)
+            ->where('location', $location)
             ->update(['stock' => DB::raw('stock - ' . $qty)]);
     }
 

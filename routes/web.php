@@ -117,7 +117,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/product/hubs/{sku}', [ProductController::class, 'getHubsStockBySku']);
     Route::get('/product/api/import', [ProductController::class, 'importAPI'])->name('importAPI');
     Route::post('/product-import', [ProductController::class, 'importProduct'])->name('importProduct');
-    Route::post('/product/adjust', [ProductController::class, 'adjustStock']);
     Route::post('/product/transfer', [ProductController::class, 'transfer']);
     Route::post('/product/bulk-transfer', [ProductController::class, 'bulkTransfer']);
     Route::post('/product/update/{id}', [ProductController::class, 'update']);
@@ -165,6 +164,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/inventory', [InventoryController::class, 'index']);
     Route::get('/inventory/search', [InventoryController::class, 'search']);
     Route::post('/inventory/update-expiration/{id}', [InventoryController::class, 'updateExpiration']);
+    Route::post('/inventory/adjust', [InventoryController::class, 'adjustStock']);
     Route::get('/inventory/preview', [InventoryController::class, 'previewReport']);
     Route::get('/inventory/download', [InventoryController::class, 'downloadReport']);
     Route::get('/inventory/export', [InventoryController::class, 'exportReport']);

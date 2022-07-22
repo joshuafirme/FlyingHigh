@@ -152,7 +152,7 @@ $inventory = new App\Models\Inventory();
                 </div>
             </div>
             @endif
-            <div class="p-2"><strong>Line Items</strong></div>
+            <div><strong>Line Items</strong></div>
             <div class="row">
                 <div class="col-12">
                     <form id="release-form" class="table-responsive">
@@ -184,6 +184,7 @@ $inventory = new App\Models\Inventory();
                                             }
                                             
                                             $lot_code = $inventory->getFirstExpiry($item->partNumber);
+                                            $expiration = $inventory->getExpiration($lot_code);
                                         @endphp
                                         <tr>
                                             <td>{{ $item->orderId }}</td>
@@ -194,12 +195,12 @@ $inventory = new App\Models\Inventory();
                                                 @if ($product->isLotControlled($item->partNumber))
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <input type="text" class="form-control" name="lotNumber"
-                                                                value="{{ $lot_code }}" readonly required>
+                                                            <input type="text" class="form-control readonly" name="lotNumber"
+                                                                value="{{ $lot_code }}" autocomplete="off" required>
+                                                                <span class="lot-exp"><small>Lot Exp: {{ $expiration }}</small></span>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <button class="btn btn-sm btn-outline-primary"> Lot Number
-                                                                Inventory</button>
+                                                            <a class="btn btn-sm btn-outline-primary w-auto"> <i class="fa fa-warehouse"></i></a>
                                                         </div>
                                                     </div>
                                                 @else

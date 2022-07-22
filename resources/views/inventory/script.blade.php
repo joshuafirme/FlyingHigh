@@ -193,7 +193,7 @@
                         $('#btn-adjust').html("Please wait...");
                         $.ajax({
                                 type: 'POST',
-                                url: "{{ url('/product/adjust') }}",
+                                url: "{{ url('/inventory/adjust') }}",
                                 data: $(this).serialize()
                             })
 

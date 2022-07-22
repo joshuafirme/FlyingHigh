@@ -239,32 +239,6 @@ class ProductController extends Controller
         }
     }
 
-    public function adjustStock(Request $request, StockAdjustment $stock_adjustment, Inventory $lot_code) {
-        $sku = $request->sku;
-        $lot_number = $request->lot_code;
-        $qty = $request->qty;
-        $action = $request->action;
- 
-        if ($action == 'add') {
-            $lot_code->incrementStock($sku, $lot_number, $qty);
-        }
-        else { 
-            if ($lot_code->hasStock($sku, $lot_number, $qty)) {
-                 $lot_code->decrementStock($sku, $lot_number, $qty);
-            }
-            else {
-                 return response()->json([
-                    'message' => 'not_enough_stock'
-                ], 200);
-            }
-        }
-
-        $stock_adjustment->record($sku, $lot_number, $qty, $action, $request->remarks_id);
-
-        return response()->json([
-            'message' => 'success'
-        ], 200);
-    }
 
     public function delete($id)
     {

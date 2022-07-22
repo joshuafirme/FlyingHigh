@@ -55,6 +55,8 @@
                                             <th scope="col">Buffer Stock</th>
                                             <th scope="col">Stock Level</th>
                                             <th scope="col">Expiration</th>
+                                            <th scope="col">Location</th>
+                                            <th scope="col">Condition</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
@@ -74,6 +76,10 @@
                                                         $stock_level = 'Critical';
                                                         $icon = '<i class="fas fa-exclamation-circle"></i>';
                                                     }
+                                                    $show_buffer = true;
+                                                    if ($item->location == 'HD') {
+                                                        $show_buffer = false;
+                                                    }
                                                 @endphp
                                                 <tr>
                                                     <td>{{ $item->sku }}</td>
@@ -81,10 +87,21 @@
                                                     <td>{{ $item->productDescription }}</td>
                                                     <td>{{ $item->uom }}</td>
                                                     <td>{{ $item->stock }}</td>
-                                                    <td>{{ $item->bufferStock }}</td>
-                                                    <td class="{{ $text_class }}">{!! $icon !!}
-                                                        {{ $stock_level }}</td>
+                                                    <td>
+                                                        @if($show_buffer) {{ $item->bufferStock }} @endif
+                                                    </td>
+                                                    <td class="{{ $text_class }}">
+                                                        @if($show_buffer) {!! $icon !!} {{ $stock_level }} @endif
+                                                    </td>
                                                     <td>{{ $item->expiration ? Utils::formatDate($item->expiration, true) : 'N/A' }}
+                                                    </td>
+                                                    <td>{{ $item->location }}</td>
+                                                    <td>
+                                                        @if ($item->location == 'AV')
+                                                            <span class="text-succes">Good</span>
+                                                        @elseif ($item->location == 'HD')
+                                                            <span class="text-danger">Bad</span>
+                                                        @endif
                                                     </td>
                                                     <td>
                                                         <a class="btn btn-sm btn-outline-primary btn-update-exp" data-item="{{ $item }}"

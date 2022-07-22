@@ -29,7 +29,14 @@
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Lot Code</label>
                     <input type="number" class="form-control" name="lot_code" readonly>
-                    </select>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label class="form-label">Unit of measure</label>
+                    <input type="text" class="form-control" name="uom" readonly>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" name="location" readonly>
                 </div>
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Expiration</label>
